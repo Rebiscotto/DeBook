@@ -1,11 +1,11 @@
 <form action="register.php" method="POST">
     <h2>Crea un Account</h2>
     <input type="text" name="username" placeholder="Username" required><br>
-    <br>
+    <p></p>
     <input type="email" name="email" placeholder="Email" required><br>
-    <br>
+    <p> </p>
     <input type="password" name="password" placeholder="Password" required><br>
-    <br>
+    <p></p>
     <button type="submit">Registrati</button>
 </form>
 <?php
