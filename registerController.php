@@ -1,7 +1,7 @@
 <?php
 // 1. Configurazione del Database
 $host = 'localhost';
-$db   = 'nome_tuo_database';
+$db   = 'my_fleone';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
