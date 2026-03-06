@@ -1,28 +1,38 @@
 <?php
 // Gestione della registrazione (logica backend)
-$messaggio = ""; // Variabile per mostrare messaggi a schermo
+$messaggio = ""; 
+
+// 1. Attiviamo i report degli errori per vedere cosa non va nel database
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    require_once "db_connection.php"; // 1. Connessione al database
+    try {
+        require_once "db_connection.php"; 
 
-    $user = $_POST['username'];
-    $email = $_POST['email'];
-    
-    // MAI salvare la password in chiaro! Usiamo password_hash.
-    $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $user = $_POST['username'];
+        $email = $_POST['email'];
+        $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-    // 3. Preparazione della query (Prepared Statements per evitare SQL Injection)
-    $stmt = $conn->prepare("INSERT INTO utenti (username, email, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $user, $email, $pass);
+        // 3. Preparazione della query
+        // NOTA: Se l'errore persiste, controlla che la tabella si chiami davvero 'utenti'
+        $stmt = $conn->prepare("INSERT INTO utenti (username, email, password) VALUES (?, ?, ?)");
+        
+        // Ora bind_param non darà più l'errore "bool" perché il try/catch catturerà il problema prima
+        $stmt->bind_param("sss", $user, $email, $pass);
 
-    if ($stmt->execute()) {
-        $messaggio = "<div class='success-msg'>Registrazione effettuata con successo!</div>";
-    } else {
-        $messaggio = "<div class='error-msg'>Errore: " . $stmt->error . "</div>";
+        if ($stmt->execute()) {
+            $messaggio = "<div class='success-msg'>Registrazione effettuata con successo!</div>";
+        } else {
+            $messaggio = "<div class='error-msg'>Errore durante l'esecuzione.</div>";
+        }
+
+        $stmt->close();
+        $conn->close();
+
+    } catch (Exception $e) {
+        // Se c'è un errore (tabella mancante, colonna errata, ecc.) lo stampiamo qui
+        $messaggio = "<div class='error-msg'>Errore Database: " . $e->getMessage() . "</div>";
     }
-
-    $stmt->close();
-    $conn->close();
 }
 ?>
 <!DOCTYPE html>
