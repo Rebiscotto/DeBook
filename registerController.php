@@ -2,7 +2,7 @@
 // 1. Configurazione del Database
 $host = 'localhost';
 $db   = 'my_fleone';
-$user = 'root';
+$user = 'fleone';
 $pass = '';
 $charset = 'utf8mb4';
 
