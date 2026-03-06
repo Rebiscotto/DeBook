@@ -9,16 +9,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         require_once "db_connection.php"; 
 
-        $user = $_POST['username'];
+        $name = $_POST['nome'];
+        $surname = $_POST['cognome'];
         $email = $_POST['email'];
         $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
         // 3. Preparazione della query
         // NOTA: Se l'errore persiste, controlla che la tabella si chiami davvero 'utenti'
-        $stmt = $conn->prepare("INSERT INTO utenti (username, email, password) VALUES (?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO utenti (nome, cognome, email, password) VALUES (?, ?, ?, ?)");
         
         // Ora bind_param non darà più l'errore "bool" perché il try/catch catturerà il problema prima
-        $stmt->bind_param("sss", $user, $email, $pass);
+        $stmt->bind_param("ssss", $name, $surname, $email, $pass);
 
         if ($stmt->execute()) {
             $messaggio = "<div class='success-msg'>Registrazione effettuata con successo!</div>";
