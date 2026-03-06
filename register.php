@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // 3. Preparazione della query
         // NOTA: Se l'errore persiste, controlla che la tabella si chiami davvero 'utenti'
-        $stmt = $conn->prepare("INSERT INTO utenti (nome, cognome, email, password) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO Utenti (nome, cognome, email, password) VALUES (?, ?, ?, ?)");
         
         // Ora bind_param non darà più l'errore "bool" perché il try/catch catturerà il problema prima
         $stmt->bind_param("ssss", $name, $surname, $email, $pass);
