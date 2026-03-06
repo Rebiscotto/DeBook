@@ -172,9 +172,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h2>Crea un Account</h2>
         <form action="register.php" method="POST">
             <div class="input-group">
-                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="nome" placeholder="Name" required>
             </div>
-            
+            <div class="input-group">
+                <input type="text" name="cognome" placeholder="Surname" required>
+            </div>
             <div class="input-group">
                 <input type="email" name="email" placeholder="Email" required>
             </div>
