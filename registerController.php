@@ -24,12 +24,6 @@ try {
 $email_raw = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password_inviata = $_POST['password'] ?? '';
 
-// Validazione Email
-$email = filter_var($email_raw, FILTER_VALIDATE_EMAIL);
-
-if (!$email) {
-    die("Errore: L'indirizzo email '$email_raw' non è nel formato corretto.");
-}
 
 // Validazione Password
 if (strlen($password_inviata) < 8) {
