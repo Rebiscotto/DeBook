@@ -7,7 +7,7 @@
     <style>
         body { font-family: sans-serif; text-align: center; padding-top: 50px; }
         .container { max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; }
-        .btn {
+        .btn { 
             display: inline-block;
             padding: 10px 20px;
             margin: 10px;
