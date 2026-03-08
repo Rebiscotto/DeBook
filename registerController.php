@@ -1,5 +1,8 @@
 <?php
-// 1. Configurazione del Database
+// 1. Avvio della sessione (indispensabile per il login automatico)
+session_start();
+
+// 2. Configurazione del Database
 $host = 'localhost';
 $db   = 'my_fleone';
 $user = 'fleone';
@@ -19,27 +22,43 @@ try {
     die("Errore di connessione: " . $e->getMessage());
 }
 
-// 2. Ricezione e Pulizia dei dati
-// Usiamo trim() per eliminare spazi vuoti invisibili prima e dopo l'email
-$email_raw = isset($_POST['email']) ? trim($_POST['email']) : '';
+// 3. Ricezione e Pulizia dei dati
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password_inviata = $_POST['password'] ?? '';
 
-
-// Validazione Password
-if (strlen($password_inviata) < 8) {
-    die("Errore: La password deve essere di almeno 8 caratteri.");
+// Validazione minima
+if (empty($email) || strlen($password_inviata) < 8) {
+    die("Errore: Dati non validi o password troppo corta.");
 }
 
-// 3. Criptazione della password
+// 4. Criptazione della password
 $password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
 
-// 4. Scrittura sul Database
+// 5. Scrittura sul Database
 $sql = "INSERT INTO utenti (email, password) VALUES (?, ?)";
 $stmt = $pdo->prepare($sql);
 
 try {
     $stmt->execute([$email, $password_hash]);
-    echo "Utente registrato con successo!";
+    
+    // --- LOGIN AUTOMATICO DOPO REGISTRAZIONE ---
+    
+    // Recuperiamo l'ID appena creato dal database
+    $user_id = $pdo->lastInsertId();
+    
+    // Impostiamo le variabili di sessione che la tua index si aspetta
+    $_SESSION["loggedin"] = true;
+    $_SESSION["id"] = $user_id;
+    $_SESSION["email"] = $email;
+    
+    // Se la tua index usa anche il "nome", lo estraiamo dall'email (es. parte prima della @)
+    // o puoi aggiungere un campo nome nel form di registrazione
+    $_SESSION["nome"] = explode('@', $email)[0]; 
+
+    // Reindirizzamento immediato alla index
+    header("Location: index.php");
+    exit; // Importante per bloccare l'esecuzione dello script dopo il redirect
+
 } catch (\PDOException $e) {
     if ($e->getCode() == 23000) { 
         echo "Errore: Questa email è già registrata.";
