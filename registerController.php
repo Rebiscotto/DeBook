@@ -1,5 +1,8 @@
 <?php
-// 1. Configurazione del Database
+// 1. Inizia il buffering dell'uscita (fondamentale per evitare l'errore "headers already sent")
+ob_start();
+
+// 2. Configurazione del Database
 $host = 'localhost';
 $db   = 'my_fleone';
 $user = 'fleone';
@@ -16,38 +19,45 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
+    ob_end_clean();
     die("Errore di connessione: " . $e->getMessage());
 }
 
-// 2. Ricezione e Pulizia dei dati
-$email = isset($_POST['email']) ? trim($_POST['email']) : ''; // Corretto il nome variabile
+// 3. Ricezione e Pulizia dei dati
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password_inviata = $_POST['password'] ?? '';
 
 // Validazione Password
 if (strlen($password_inviata) < 8) {
+    ob_end_clean();
     die("Errore: La password deve essere di almeno 8 caratteri.");
 }
 
-// 3. Criptazione della password
+// 4. Criptazione della password
 $password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
 
-// 4. Scrittura sul Database
+// 5. Scrittura sul Database
 $sql = "INSERT INTO utenti (email, password) VALUES (?, ?)";
 $stmt = $pdo->prepare($sql);
 
 try {
     $stmt->execute([$email, $password_hash]);
     
-    // REGISTRAZIONE RIUSCITA: Reindirizzamento alla index
-    // Nota: Non deve esserci alcun "echo" o HTML prima di questa riga
+    // --- REGISTRAZIONE RIUSCITA ---
+    // Pulisce ogni eventuale spazio o testo generato finora
+    ob_end_clean(); 
+    
+    // Reindirizzamento alla index (assicurati che il percorso sia corretto)
     header("Location: index.php?status=success");
     exit(); 
 
 } catch (\PDOException $e) {
+    // In caso di errore, svuota il buffer e mostra l'errore
+    ob_end_clean();
     if ($e->getCode() == 23000) {
-        echo "Errore: Questa email è già registrata.";
+        die("Errore: Questa email è già registrata.");
     } else {
-        echo "Errore durante il salvataggio: " . $e->getMessage();
+        die("Errore durante il salvataggio: " . $e->getMessage());
     }
 }
 ?>
