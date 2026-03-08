@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Controllo se l'utente è loggato
 $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 ?>
@@ -14,191 +13,138 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <style>
         :root {
             --dark: #1a1a1a;
-            --light-grey: #f4f4f9;
-            --grey-side: #d9d9d9;
+            --grey-side: #e0e0e0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
 
-        body { background-color: #fff; overflow-x: hidden; }
+        body { background-color: #fff; overflow: hidden; height: 100vh; position: relative; }
 
-        /* Navbar con Omino e Menu */
-        .navbar {
-            display: flex;
-            justify-content: flex-end;
-            padding: 20px 40px;
+        /* Header e Navbar */
+        .header-nav {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            z-index: 1000;
         }
+
+        .logo-link img { height: 70px; cursor: pointer; transition: transform 0.2s; }
+        .logo-link img:hover { transform: scale(1.05); }
 
         .user-menu-container { position: relative; }
+        .user-icon { font-size: 2.2rem; color: var(--dark); cursor: pointer; }
 
-        .user-icon {
-            font-size: 1.8rem;
-            color: var(--dark);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .user-icon:hover { transform: scale(1.1); }
-
-        /* Menu a Tendina */
         .dropdown-menu {
             position: absolute;
             right: 0;
-            top: 40px;
+            top: 50px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 180px;
-            display: none; /* Nascosto di default */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: none;
             flex-direction: column;
-            overflow: hidden;
+            min-width: 180px;
         }
-
         .dropdown-menu.active { display: flex; }
+        .dropdown-menu a { padding: 12px; text-decoration: none; color: var(--dark); font-family: 'Arial', sans-serif; font-size: 0.9rem; border-bottom: 1px solid #eee; }
 
-        .dropdown-menu a {
-            padding: 12px 20px;
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 0.9rem;
-            border-bottom: 1px solid #eee;
-        }
+        /* Layout */
+        .wrapper { display: flex; height: 100vh; width: 100%; }
 
-        .dropdown-menu a:hover { background-color: var(--light-grey); }
-
-        /* Layout Principale */
-        .main-container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        /* Colonne Laterali Vendi/Compra */
-        .side-panel {
+        .side {
             width: 15%;
             background-color: var(--grey-side);
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: background 0.3s;
             text-decoration: none;
+            transition: 0.3s;
         }
+        .side:hover { background-color: #d0d0d0; }
+        .side h2 { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 3rem; color: var(--dark); }
 
-        .side-panel:hover { background-color: #cccccc; }
-
-        .side-panel h2 {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
-            font-size: 2.5rem;
-            color: var(--dark);
-            letter-spacing: 5px;
-            font-weight: 800;
-        }
-
-        /* Area Centrale */
-        .content {
+        .center-content {
             width: 70%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px;
+            padding: 110px 40px 20px 40px;
             text-align: center;
+            overflow-y: auto; /* Permette lo scroll se il testo è lungo */
         }
 
-        .header-section h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
+        .hero-text h1 { font-size: 3.2rem; color: var(--dark); line-height: 1; margin-bottom: 15px; }
+        .hero-text p { font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin-bottom: 20px; }
 
-        .description {
-            max-width: 600px;
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
+        .image-container img { max-height: 40vh; width: auto; object-fit: contain; margin-top: 20px; }
 
-        .hero-image {
-            width: 100%;
-            max-width: 500px;
-            margin-top: auto;
-        }
-
-        .hero-image img { width: 100%; height: auto; }
-
-        .footer-link {
-            margin-top: 20px;
-            text-decoration: underline;
-            color: var(--dark);
+        .footer-text {
+            font-family: 'Arial', sans-serif;
             font-weight: bold;
+            text-decoration: underline;
+            margin: 15px 0;
             cursor: pointer;
+            color: var(--dark);
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
+    <header class="header-nav">
+        <a href="index.php" class="logo-link">
+            <img src="Screenshot 2026-03-08 215514.png" alt="Debook Logo">
+        </a>
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#"><i class="fa-solid fa-user"></i> Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
-                    <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
-                    <a href="logout.php" style="color: #d9534f;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
+                    <a href="logout.php" style="color: red;">Logout</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
                     <a href="register.php">Registrati</a>
                 <?php endif; ?>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="main-container">
-        <a href="vendi.php" class="side-panel">
-            <h2>VENDI</h2>
-        </a>
+    <div class="wrapper">
+        <a href="vendi.php" class="side"><h2>VENDI</h2></a>
 
-        <div class="content">
-            <div class="header-section">
+        <div class="center-content">
+            <div class="hero-text">
                 <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
-                <p class="description">
-                    "Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.<br>
-                    <strong>Prezzi da studente, per gli studenti.</strong>
-                </p>
-            </div>
-
-            <div class="hero-image">
-                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti in libreria">
+                <p>"Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti.</p>
             </div>
 
             <p id="showBtn" class="footer-text">Scopri di più</p>
 
-    <div id="extraContainer" style="display: none;">
-        <div id="extraText">
-            <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
-                Inserisci qui il tuo testo lungo... Debook nasce con l'obiettivo di rendere 
-                l'istruzione più accessibile a tutti, creando un ponte tra chi ha finito un 
-                percorso di studi e chi lo sta iniziando.
-            </p>
+            <div id="extraContainer" style="display: none;">
+                <div id="extraText">
+                    <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
+                        Inserisci qui il tuo testo lungo... Debook nasce con l'obiettivo di rendere 
+                        l'istruzione più accessibile a tutti, creando un ponte tra chi ha finito un 
+                        percorso di studi e chi lo sta iniziando.
+                    </p>
+                </div>
+                <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
+            </div>
+            <div class="image-container">
+                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti in biblioteca">
+            </div>
         </div>
-        <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
-    </div>
 
-        <a href="compra.php" class="side-panel">
-            <h2>COMPRA</h2>
-        </a>
+        <a href="compra.php" class="side"><h2>COMPRA</h2></a>
     </div>
 
     <script>
-       // Gestione Menu Omino
+        // Gestione Menu Omino
 const btn = document.getElementById('userBtn');
 const menu = document.getElementById('userDropdown');
 btn.onclick = (e) => {
