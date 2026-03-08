@@ -195,19 +195,31 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     </div>
 
     <script>
-        // Gestione apertura/chiusura tendina
-        const userBtn = document.getElementById('userBtn');
-        const userDropdown = document.getElementById('userDropdown');
+       // Gestione Menu Omino
+const btn = document.getElementById('userBtn');
+const menu = document.getElementById('userDropdown');
+btn.onclick = (e) => {
+    menu.classList.toggle('active');
+    e.stopPropagation();
+};
+window.onclick = () => menu.classList.remove('active');
 
-        userBtn.addEventListener('click', (e) => {
-            userDropdown.classList.toggle('active');
-            e.stopPropagation();
-        });
+// --- LOGICA ESPANDI/RIDUCI ---
+const showBtn = document.getElementById('showBtn');
+const hideBtn = document.getElementById('hideBtn');
+const extraText = document.getElementById('extraText');
 
-        // Chiudi il menu se si clicca fuori
-        window.addEventListener('click', () => {
-            userDropdown.classList.remove('active');
-        });
+showBtn.onclick = () => {
+    extraText.classList.add('active'); // Espande il testo
+    showBtn.style.display = 'none';    // Nasconde "Scopri di più"
+};
+
+hideBtn.onclick = () => {
+    extraText.classList.remove('active'); // Riduce il testo
+    showBtn.style.display = 'block';      // Mostra di nuovo "Scopri di più"
+    // Torna su dolcemente all'inizio del contenuto
+    document.querySelector('.center-content').scrollTo({ top: 0, behavior: 'smooth' });
+};
     </script>
 </body>
 </html>
