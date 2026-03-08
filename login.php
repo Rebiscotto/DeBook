@@ -119,8 +119,8 @@
         
         <form method="post" action="login_controller.php">
             <div class="input-group">
-                Username<br>
-                <input type="text" name="username" required>
+                Email<br>
+                <input type="text" name="email" required>
             </div>
             
             <div class="input-group">
