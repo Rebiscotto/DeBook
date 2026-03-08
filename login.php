@@ -110,10 +110,7 @@
 <body>
 
     <div class="login-card">
-        <div class="logo-title">DEBOOK</div>
-        <div class="cart-icon">
-            <i class="fa-solid fa-cart-shopping"></i>
-        </div>
+        <img src="immagini/tastologo.jpg" alt="Debook Logo">
 
         <h1>Esegui il login</h1>
         

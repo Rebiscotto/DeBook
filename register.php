@@ -162,10 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <div class="login-card">
-        <div class="logo-title">DEBOOK</div>
-        <div class="cart-icon">
-            <i class="fa-solid fa-cart-shopping"></i>
-        </div>
+        <img src="immagini/tastologo.jpg" alt="Debook Logo">
 
         <?php if(!empty($messaggio)) echo $messaggio; ?>
 
