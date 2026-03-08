@@ -130,26 +130,48 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
             <div id="extraContainer" style="display: none;">
                 <div id="extraText">
-                    <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
-                        Perché nasce DeBook: Trasformare la spesa scolastica in valore condiviso
-L’idea di DeBook nasce da un’osservazione semplice, quanto comune a migliaia di famiglie e studenti: il paradosso dei libri scolastici. Ogni anno, l’inizio della scuola porta con sé l’onere di una spesa economica rilevante per l’acquisto dei manuali. Eppure, mentre molte famiglie faticano a sostenere questi costi, migliaia di libri in perfette condizioni rimangono fermi sugli scaffali di chi ha appena concluso un ciclo di studi. Questi volumi, carichi di conoscenza ma destinati a prendere polvere, rappresentano un potenziale sprecato, sia economico che ambientale.
+                    <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 20px; border-radius: 12px; background-color: #f9f9f9; border: 1px solid #eee;">
 
-Oltre il prestito, verso la comunità
-Nonostante esistano sistemi di prestito o comodato d’uso, la realtà scolastica ci dice che la maggior parte degli studenti continua a preferire l’acquisto del proprio manuale. DeBook nasce per colmare il vuoto tra la necessità di possedere un libro e il desiderio di farlo in modo sostenibile e accessibile.
+    <h2 style="color: #2c3e50; font-size: 1.5rem; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3498db; pb: 10px; padding-bottom: 10px;">
+        Perché nasce <strong>DeBook</strong>?
+    </h2>
 
-Abbiamo guardato ai modelli di economia circolare più evoluti, come Vinted, e ci siamo chiesti: perché non portare questa efficienza all’interno della scuola?
+    <p style="font-size: 1rem; margin-bottom: 20px;">
+        L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. 
+        Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi in ottime condizioni restano inutilizzati sugli scaffali di chi ha terminato gli studi. 
+        Un potenziale sprecato, sia per il portafoglio che per l'ambiente.
+    </p>
 
-La nostra Visione
-DeBook non è solo una piattaforma di compravendita; è un progetto che mira a trasformare l’istituto scolastico in una comunità collaborativa. La nostra missione si fonda su tre pilastri:
+    <div style="background: #fff; padding: 15px; border-left: 4px solid #3498db; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; color: #2980b9; font-size: 1.1rem;">Oltre il prestito, verso la comunità</h3>
+        <p style="margin-bottom: 0; font-size: 0.95rem;">
+            DeBook colma il vuoto tra la necessità di possedere un manuale e il desiderio di farlo in modo <strong>sostenibile</strong>. 
+            Ci siamo chiesti: <em>perché non portare l'efficienza di piattaforme come Vinted direttamente tra i banchi di scuola?</em>
+        </p>
+    </div>
 
-Economia Circolare: Incentiviamo il riuso, riducendo lo spreco di carta e l'impatto ambientale legato alla produzione di nuovi volumi.
+    <h3 style="text-align: center; font-size: 1.2rem; color: #2c3e50;">La nostra Visione</h3>
+    
+    <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #e1f5fe; color: #0288d1; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🌱</span>
+            <span><strong>Economia Circolare:</strong> Riduciamo lo spreco di carta e l'impatto ambientale incentivando il riuso sistematico.</span>
+        </li>
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #e8f5e9; color: #388e3c; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">💰</span>
+            <span><strong>Accessibilità:</strong> Rendiamo il diritto allo studio meno gravoso, permettendo di recuperare parte dell'investimento iniziale.</span>
+        </li>
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #fff3e0; color: #f57c00; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🤝</span>
+            <span><strong>Fiducia e Sicurezza:</strong> Scambi a mano tra compagni di scuola. Niente costi di spedizione, solo trasparenza e volti noti.</span>
+        </li>
+    </ul>
 
-Accessibilità: Vogliamo che il diritto allo studio sia meno gravoso, permettendo agli studenti di recuperare parte dell’investimento e ad altri di acquistare testi a prezzi contenuti.
+    <p style="text-align: center; font-style: italic; margin-top: 25px; color: #555; border-top: 1px solid #eee; padding-top: 15px;">
+        Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.
+    </p>
 
-Fiducia e Sicurezza: Abbiamo scelto di circoscrivere l’app all’ambiente scolastico. Gli scambi avvengono esclusivamente a mano, tra compagni di scuola, eliminando i costi di spedizione e garantendo la massima trasparenza.
-
-Scegliere DeBook significa credere in una scuola dove la collaborazione tra pari genera valore reale, dove un libro che ha già insegnato molto può continuare a farlo tra le mani di un altro studente.
-                    </p>
+</section>
                 </div>
                 <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
             </div>
