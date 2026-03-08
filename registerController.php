@@ -1,11 +1,5 @@
 <?php
-// 1. ABILITA IL BUFFERING (Fondamentale: impedisce invii accidentali al browser)
-ob_start();
-
-// 2. INIZIA LA SESSIONE
-session_start();
-
-// 3. Configurazione del Database
+// 1. Configurazione del Database
 $host = 'localhost';
 $db   = 'my_fleone';
 $user = 'fleone';
@@ -21,48 +15,42 @@ $options = [
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
-
-    // 4. Ricezione dati
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $password_inviata = $_POST['password'] ?? '';
-
-    if (empty($email) || strlen($password_inviata) < 8) {
-        header("Location: register.php?error=dati_invalidi");
-        exit;
-    }
-
-    // 5. Hash e Inserimento
-    $password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO Utenti (email, password) VALUES (?, ?)";
-    $stmt = $pdo->prepare($sql);
-    
-    if ($stmt->execute([$email, $password_hash])) {
-        // --- SE L'ESECUZIONE HA SUCCESSO ---
-        
-        $user_id = $pdo->lastInsertId();
-
-        // Prepariamo la sessione
-        $_SESSION["loggedin"] = true;
-        $_SESSION["id"] = $user_id;
-        $_SESSION["email"] = $email;
-        $_SESSION["nome"] = explode('@', $email)[0];
-
-        // Svuota ogni eventuale testo/spazio generato per errore
-        ob_end_clean(); 
-
-        // Reindirizzamento
-        header("Location: index.php");
-        exit;
-    }
-
 } catch (\PDOException $e) {
-    ob_end_clean();
+    die("Errore di connessione: " . $e->getMessage());
+}
+
+// 2. Ricezione e Pulizia dei dati
+// Usiamo trim() per eliminare spazi vuoti invisibili prima e dopo l'email
+$email_raw = isset($_POST['email']) ? trim($_POST['email']) : '';
+$password_inviata = $_POST['password'] ?? '';
+
+// Validazione Email
+$email = filter_var($email_raw, FILTER_VALIDATE_EMAIL);
+
+if (!$email) {
+    die("Errore: L'indirizzo email '$email_raw' non è nel formato corretto.");
+}
+
+// Validazione Password
+if (strlen($password_inviata) < 8) {
+    die("Errore: La password deve essere di almeno 8 caratteri.");
+}
+
+// 3. Criptazione della password
+$password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
+
+// 4. Scrittura sul Database
+$sql = "INSERT INTO utenti (email, password) VALUES (?, ?)";
+$stmt = $pdo->prepare($sql);
+
+try {
+    $stmt->execute([$email, $password_hash]);
+    echo "Utente registrato con successo!";
+} catch (\PDOException $e) {
     if ($e->getCode() == 23000) { 
-        header("Location: register.php?error=email_esistente");
+        echo "Errore: Questa email è già registrata.";
     } else {
-        // Se c'è un errore tecnico, lo stampiamo per debuggare
-        die("Errore DB: " . $e->getMessage());
+        echo "Errore durante il salvataggio: " . $e->getMessage();
     }
-    exit;
 }
 ?>
