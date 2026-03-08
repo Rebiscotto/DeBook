@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 // Controllo se l'utente è loggato
@@ -13,8 +12,6 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <title>Debook - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
- 
         :root {
             --dark: #1a1a1a;
             --light-grey: #f4f4f9;
@@ -179,12 +176,18 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             </div>
 
             <div class="hero-image">
-                
-            <img src="https://img.freepik.com/free-vector/young-people-library_23-2148530368.jpg" alt="Studenti in libreria">
-            
+                <img src="https://img.freepik.com/free-vector/young-people-library_23-2148530368.jpg" alt="Studenti in libreria">
+            </div>
+
             <p id="showBtn" class="footer-text">Scopri di più</p>
 
-            </div>
+    <div id="extraText">
+        <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
+            [Qui inserirai il tuo testo lungo successivamente...]
+        </p>
+        <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
+    </div>
+        </div>
 
         <a href="compra.php" class="side-panel">
             <h2>COMPRA</h2>
