@@ -1,6 +1,6 @@
 <?php
 session_start();
-// Controllo se l'utente è loggato
+// Controllo sessione per gestire l'omino e il menu
 $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 ?>
@@ -14,131 +14,131 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <style>
         :root {
             --dark: #1a1a1a;
-            --light-grey: #f4f4f9;
-            --grey-side: #d9d9d9;
+            --grey-side: #e0e0e0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
 
-        body { background-color: #fff; overflow-x: hidden; }
+        body { background-color: #fff; overflow: hidden; height: 100vh; }
 
-        /* Navbar con Omino e Menu */
+        /* Navbar e Menu Omino */
         .navbar {
-            display: flex;
-            justify-content: flex-end;
-            padding: 20px 40px;
             position: absolute;
-            width: 100%;
-            z-index: 100;
+            top: 20px;
+            right: 40px;
+            z-index: 1000;
         }
 
         .user-menu-container { position: relative; }
 
         .user-icon {
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--dark);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: 0.3s;
         }
 
-        .user-icon:hover { transform: scale(1.1); }
-
-        /* Menu a Tendina */
         .dropdown-menu {
             position: absolute;
             right: 0;
-            top: 40px;
+            top: 45px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 180px;
-            display: none; /* Nascosto di default */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: none;
             flex-direction: column;
-            overflow: hidden;
+            min-width: 160px;
         }
 
         .dropdown-menu.active { display: flex; }
 
         .dropdown-menu a {
-            padding: 12px 20px;
+            padding: 12px;
             text-decoration: none;
             color: var(--dark);
+            font-family: 'Arial', sans-serif;
             font-size: 0.9rem;
             border-bottom: 1px solid #eee;
         }
 
-        .dropdown-menu a:hover { background-color: var(--light-grey); }
+        .dropdown-menu a:hover { background: #f5f5f5; }
 
-        /* Layout Principale */
-        .main-container {
+        /* Struttura a 3 colonne */
+        .wrapper {
             display: flex;
             height: 100vh;
             width: 100%;
         }
 
-        /* Colonne Laterali Vendi/Compra */
-        .side-panel {
+        .side {
             width: 15%;
             background-color: var(--grey-side);
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: background 0.3s;
             text-decoration: none;
+            transition: 0.3s;
         }
 
-        .side-panel:hover { background-color: #cccccc; }
+        .side:hover { background-color: #d0d0d0; }
 
-        .side-panel h2 {
+        .side h2 {
             writing-mode: vertical-rl;
-            text-orientation: mixed;
             transform: rotate(180deg);
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--dark);
-            letter-spacing: 5px;
-            font-weight: 800;
+            letter-spacing: 4px;
         }
 
-        /* Area Centrale */
-        .content {
+        .center-content {
             width: 70%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px;
+            padding: 20px 40px;
             text-align: center;
         }
 
-        .header-section h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
+        /* Testi centrali */
+        .logo-area { width: 100%; text-align: left; padding-bottom: 20px; }
+        .logo-area img { height: 50px; } /* Se hai un file logo.png */
 
-        .description {
-            max-width: 600px;
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .hero-image {
-            width: 100%;
-            max-width: 500px;
-            margin-top: auto;
-        }
-
-        .hero-image img { width: 100%; height: auto; }
-
-        .footer-link {
-            margin-top: 20px;
-            text-decoration: underline;
+        .hero-text h1 {
+            font-size: 3.5rem;
             color: var(--dark);
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        .hero-text p {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.85rem;
+            color: #555;
+            max-width: 500px;
+            margin: 0 auto 20px auto;
+        }
+
+        /* Immagine caricata */
+        .image-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .image-container img {
+            max-height: 50vh;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-text {
+            font-family: 'Arial', sans-serif;
             font-weight: bold;
+            text-decoration: underline;
+            margin-top: 10px;
             cursor: pointer;
         }
     </style>
@@ -150,9 +150,8 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#"><i class="fa-solid fa-user"></i> Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
-                    <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
-                    <a href="logout.php" style="color: #d9534f;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
+                    <a href="logout.php" style="color: red;">Logout</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
                     <a href="register.php">Registrati</a>
@@ -161,46 +160,45 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         </div>
     </nav>
 
-    <div class="main-container">
-        <a href="vendi.php" class="side-panel">
+    <div class="wrapper">
+        <a href="vendi.php" class="side">
             <h2>VENDI</h2>
         </a>
 
-        <div class="content">
-            <div class="header-section">
+        <div class="center-content">
+            <div class="logo-area">
+                <strong style="font-size: 1.5rem;">DEBOOK</strong>
+            </div>
+
+            <div class="hero-text">
                 <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
-                <p class="description">
-                    "Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.<br>
-                    <strong>Prezzi da studente, per gli studenti.</strong>
+                <p>
+                    "Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.
                 </p>
             </div>
 
-            <div class="hero-image">
-                <img src="https://files.fm/u/ugax9rwx9h" alt="Studenti in libreria">
+            <div class="image-container">
+                <img src="ritaglio.png" alt="Studenti in biblioteca">
             </div>
 
-            <p class="footer-link">Scopri di più</p>
+            <p class="footer-text">Scopri di più</p>
         </div>
 
-        <a href="compra.php" class="side-panel">
+        <a href="compra.php" class="side">
             <h2>COMPRA</h2>
         </a>
     </div>
 
     <script>
-        // Gestione apertura/chiusura tendina
-        const userBtn = document.getElementById('userBtn');
-        const userDropdown = document.getElementById('userDropdown');
+        const btn = document.getElementById('userBtn');
+        const menu = document.getElementById('userDropdown');
 
-        userBtn.addEventListener('click', (e) => {
-            userDropdown.classList.toggle('active');
+        btn.addEventListener('click', (e) => {
+            menu.classList.toggle('active');
             e.stopPropagation();
         });
 
-        // Chiudi il menu se si clicca fuori
-        window.addEventListener('click', () => {
-            userDropdown.classList.remove('active');
-        });
+        window.onclick = () => menu.classList.remove('active');
     </script>
 </body>
 </html>
