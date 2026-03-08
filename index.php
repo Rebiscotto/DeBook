@@ -1,10 +1,7 @@
 
-Ecco il codice aggiornato. Ho inserito l'immagine del logo (Screenshot 2026-03-08 215514.png) in alto a sinistra. Il logo è racchiuso in un tag <a> che punta a index.php, agendo quindi come un tasto che ricarica la home page.
-
-File: index.php con Logo cliccabile
-PHP
 <?php
 session_start();
+// Controllo se l'utente è loggato
 $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 ?>
@@ -18,186 +15,193 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <style>
         :root {
             --dark: #1a1a1a;
-            --grey-side: #e0e0e0;
+            --light-grey: #f4f4f9;
+            --grey-side: #d9d9d9;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
 
-        body { background-color: #fff; overflow: hidden; height: 100vh; position: relative; }
+        body { background-color: #fff; overflow-x: hidden; }
 
-        /* Header che contiene Logo (sinistra) e Omino (destra) */
-        .header-nav {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+        /* Navbar con Omino e Menu */
+        .navbar {
             display: flex;
-            justify-content: space-between; /* Spinge gli elementi ai lati opposti */
-            align-items: center;
-            padding: 15px 30px;
-            z-index: 1000;
-        }
-
-        /* Stile per il Logo cliccabile */
-        .logo-link img {
-            height: 70px; /* Dimensione del logo */
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .logo-link img:hover {
-            transform: scale(1.05); /* Effetto ingrandimento al passaggio del mouse */
+            justify-content: flex-end;
+            padding: 20px 40px;
+            position: absolute;
+            width: 100%;
+            z-index: 100;
         }
 
         .user-menu-container { position: relative; }
 
         .user-icon {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: var(--dark);
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
+        .user-icon:hover { transform: scale(1.1); }
+
+        /* Menu a Tendina */
         .dropdown-menu {
             position: absolute;
             right: 0;
-            top: 50px;
+            top: 40px;
             background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: none;
-            flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             min-width: 180px;
+            display: none; /* Nascosto di default */
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .dropdown-menu.active { display: flex; }
 
         .dropdown-menu a {
-            padding: 12px;
+            padding: 12px 20px;
             text-decoration: none;
             color: var(--dark);
-            font-family: 'Arial', sans-serif;
             font-size: 0.9rem;
             border-bottom: 1px solid #eee;
         }
 
-        .dropdown-menu a:hover { background: #f5f5f5; }
+        .dropdown-menu a:hover { background-color: var(--light-grey); }
 
-        /* Struttura a 3 colonne */
-        .wrapper { display: flex; height: 100vh; width: 100%; }
+        /* Layout Principale */
+        .main-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
 
-        .side {
+        /* Colonne Laterali Vendi/Compra */
+        .side-panel {
             width: 15%;
             background-color: var(--grey-side);
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
             text-decoration: none;
-            transition: 0.3s;
         }
 
-        .side:hover { background-color: #d0d0d0; }
+        .side-panel:hover { background-color: #cccccc; }
 
-        .side h2 {
+        .side-panel h2 {
             writing-mode: vertical-rl;
+            text-orientation: mixed;
             transform: rotate(180deg);
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: var(--dark);
+            letter-spacing: 5px;
+            font-weight: 800;
         }
 
-        .center-content {
+        /* Area Centrale */
+        .content {
             width: 70%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 110px 40px 20px 40px; /* Spazio per non coprire il contenuto col logo */
+            padding: 40px;
             text-align: center;
         }
 
-        .hero-text h1 {
-            font-size: 3.2rem;
-            color: var(--dark);
-            line-height: 1;
-            margin-bottom: 15px;
-        }
-
-        .hero-text p {
-            font-family: 'Arial', sans-serif;
-            font-size: 0.9rem;
-            color: #444;
-            max-width: 550px;
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
             margin-bottom: 20px;
+            letter-spacing: -1px;
         }
 
-        .image-container img {
-            max-height: 45vh;
-            width: auto;
-            object-fit: contain;
+        .description {
+            max-width: 600px;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
 
-        .footer-text {
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            margin-top: auto;
+        }
+
+        .hero-image img { width: 100%; height: auto; }
+
+        .footer-link {
+            margin-top: 20px;
             text-decoration: underline;
-            margin-top: 15px;
+            color: var(--dark);
+            font-weight: bold;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <header class="header-nav">
-        <a href="index.php" class="logo-link">
-            <img src="Screenshot 2026-03-08 215514.png" alt="Debook Logo">
-        </a>
-
+    <nav class="navbar">
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
-                    <a href="logout.php" style="color: red;">Esci (Logout)</a>
+                    <a href="#"><i class="fa-solid fa-user"></i> Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
+                    <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
+                    <a href="logout.php" style="color: #d9534f;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
                     <a href="register.php">Registrati</a>
                 <?php endif; ?>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <div class="wrapper">
-        <a href="vendi.php" class="side"><h2>VENDI</h2></a>
+    <div class="main-container">
+        <a href="vendi.php" class="side-panel">
+            <h2>VENDI</h2>
+        </a>
 
-        <div class="center-content">
-            <div class="hero-text">
+        <div class="content">
+            <div class="header-section">
                 <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
-                <p>
-                    "Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti.
+                <p class="description">
+                    "Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.<br>
+                    <strong>Prezzi da studente, per gli studenti.</strong>
                 </p>
             </div>
 
-            <div class="image-container">
-                <img src="ritaglio.png" alt="Studenti in biblioteca">
+            <div class="hero-image">
+                <img src="https://img.freepik.com/free-vector/young-people-library_23-2148530368.jpg" alt="Studenti in libreria">
             </div>
 
-            <p class="footer-text">Scopri di più</p>
+            <p class="footer-link">Scopri di più</p>
         </div>
 
-        <a href="compra.php" class="side"><h2>COMPRA</h2></a>
+        <a href="compra.php" class="side-panel">
+            <h2>COMPRA</h2>
+        </a>
     </div>
 
     <script>
-        const btn = document.getElementById('userBtn');
-        const menu = document.getElementById('userDropdown');
+        // Gestione apertura/chiusura tendina
+        const userBtn = document.getElementById('userBtn');
+        const userDropdown = document.getElementById('userDropdown');
 
-        // Mostra/Nasconde la tendina al click sull'omino
-        btn.addEventListener('click', (e) => {
-            menu.classList.toggle('active');
+        userBtn.addEventListener('click', (e) => {
+            userDropdown.classList.toggle('active');
             e.stopPropagation();
         });
 
-        // Chiude la tendina cliccando ovunque fuori
-        window.onclick = () => menu.classList.remove('active');
+        // Chiudi il menu se si clicca fuori
+        window.addEventListener('click', () => {
+            userDropdown.classList.remove('active');
+        });
     </script>
 </body>
 </html>
