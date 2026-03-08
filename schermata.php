@@ -1,0 +1,214 @@
+<?php
+session_start();
+$is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
+$nome_utente = $is_logged ? $_SESSION["nome"] : "";
+?>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debook - Benvenuto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark: #1a1a1a;
+            --blue-accent: #3498db;
+            --light-grey: #f9f9f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
+
+        body { background-color: #fff; height: 100vh; position: relative; overflow-x: hidden; }
+
+        /* Header e Navbar */
+        .header-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            z-index: 1000;
+            background-color: rgba(255,255,255,0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo-link img { height: 60px; cursor: pointer; transition: transform 0.2s; }
+        .logo-link img:hover { transform: scale(1.05); }
+
+        .user-menu-container { position: relative; }
+        .user-icon { font-size: 2.2rem; color: var(--dark); cursor: pointer; transition: color 0.2s; }
+        .user-icon:hover { color: var(--blue-accent); }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            min-width: 200px;
+            overflow: hidden;
+        }
+        .dropdown-menu.active { display: flex; }
+        .dropdown-menu a { 
+            padding: 15px 20px; 
+            text-decoration: none; 
+            color: var(--dark); 
+            font-family: 'Arial', sans-serif; 
+            font-size: 1rem; 
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        .dropdown-menu a:last-child { border-bottom: none; }
+        .dropdown-menu a:hover { background-color: #f5f5f5; }
+
+        /* Layout Centrale */
+        .wrapper { display: flex; min-height: 100vh; width: 100%; pt: 80px; }
+
+        .center-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 120px 20px 60px 20px;
+            text-align: center;
+        }
+
+        .hero-text h1 { font-size: 3.5rem; color: var(--dark); line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; }
+        .hero-text h2 { font-family: 'Arial', sans-serif; font-size: 1.2rem; color: #555; max-width: 700px; margin: 0 auto 30px auto; font-weight: normal; }
+
+        .image-container img { max-height: 35vh; width: auto; object-fit: contain; margin-bottom: 30px; border-radius: 15px; }
+
+        .footer-text {
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: underline;
+            margin: 20px 0;
+            cursor: pointer;
+            color: var(--blue-accent);
+            transition: opacity 0.2s;
+        }
+        .footer-text:hover { opacity: 0.7; }
+
+        /* Stile per la spiegazione extra */
+        #extraContainer { width: 100%; max-width: 800px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <header class="header-nav">
+        <a href="index.php" class="logo-link">
+            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+        </a>
+        <div class="user-menu-container">
+            <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
+            <div class="dropdown-menu" id="userDropdown">
+                <?php if($is_logged): ?>
+                    <a href="#"><b>Ciao, <?php echo htmlspecialchars($nome_utente); ?></b></a>
+                    <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
+                    <a href="logout.php" style="color: #e74c3c; font-weight: bold;">Logout</a>
+                <?php else: ?>
+                    <a href="login.php"><i class="fa-solid fa-right-to-bracket"></i> Accedi</a>
+                    <a href="register.php"><i class="fa-solid fa-user-plus"></i> Registrati</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="center-content">
+            <div class="hero-text">
+                <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
+                <h2>"Il sapere costa meno se è condiviso." Entra a far parte della prima community scolastica per il riuso dei libri.</h2>
+            </div>
+            
+            <div class="image-container">
+                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti e libri">
+            </div>
+
+            <p id="showBtn" class="footer-text">Scopri il progetto DeBook</p>
+
+            <div id="extraContainer" style="display: none;">
+                <div id="extraText">
+                    <section style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; text-align: left; padding: 30px; border-radius: 15px; background-color: var(--light-grey); border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+
+                        <h2 style="color: #2c3e50; font-size: 1.6rem; text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--blue-accent); padding-bottom: 10px;">
+                            Perché nasce <strong>DeBook</strong>?
+                        </h2>
+
+                        <p style="font-size: 1.05rem; margin-bottom: 20px;">
+                            L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. 
+                            Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi in ottime condizioni restano inutilizzati sugli scaffali di chi ha terminato gli studi. 
+                        </p>
+
+                        <div style="background: #fff; padding: 20px; border-left: 5px solid var(--blue-accent); margin-bottom: 25px;">
+                            <h3 style="margin-top: 0; color: var(--blue-accent); font-size: 1.2rem;">Oltre il prestito, verso la comunità</h3>
+                            <p style="margin-bottom: 0; font-size: 1rem;">
+                                DeBook colma il vuoto tra la necessità di possedere un manuale e il desiderio di farlo in modo <strong>sostenibile</strong>. 
+                                Abbiamo portato l'efficienza dell'economia circolare direttamente tra i banchi di scuola.
+                            </p>
+                        </div>
+
+                        <h3 style="text-align: center; font-size: 1.3rem; color: #2c3e50; margin-bottom: 20px;">I Nostri Valori</h3>
+                        
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                                <span style="font-size: 1.5rem; margin-right: 15px;">🌱</span>
+                                <span><strong>Economia Circolare:</strong> Riduciamo lo spreco di carta e l'impatto ambientale incentivando il riuso.</span>
+                            </li>
+                            <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                                <span style="font-size: 1.5rem; margin-right: 15px;">💰</span>
+                                <span><strong>Accessibilità:</strong> Rendiamo il diritto allo studio meno gravoso per tutte le famiglie.</span>
+                            </li>
+                            <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                                <span style="font-size: 1.5rem; margin-right: 15px;">🤝</span>
+                                <span><strong>Fiducia:</strong> Scambi a mano tra compagni. Niente spedizioni, solo trasparenza.</span>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+                <p id="hideBtn" class="footer-text">Chiudi spiegazione</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestione Menu Omino
+        const btn = document.getElementById('userBtn');
+        const menu = document.getElementById('userDropdown');
+        
+        btn.onclick = (e) => {
+            menu.classList.toggle('active');
+            e.stopPropagation();
+        };
+
+        window.onclick = () => menu.classList.remove('active');
+
+        // Logica Espandi/Riduci
+        const showBtn = document.getElementById('showBtn');
+        const hideBtn = document.getElementById('hideBtn');
+        const extraContainer = document.getElementById('extraContainer');
+
+        showBtn.onclick = () => {
+            showBtn.style.display = 'none';
+            extraContainer.style.display = 'block';
+            extraContainer.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        hideBtn.onclick = () => {
+            extraContainer.style.display = 'none';
+            showBtn.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    </script>
+</body>
+</html>
