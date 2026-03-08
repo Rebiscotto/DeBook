@@ -13,7 +13,6 @@ if (isset($_POST["email"])) {
             $utente= mysqli_fetch_assoc($result);
             $_SESSION["loggedin"] = true;
             $_SESSION["email"] = $utente["email"];
-            $_SESSION["ruolo"] = $utente["ruolo"];
             echo "<h4>Benvenuto ". $utente['email'];
 
     } else 
