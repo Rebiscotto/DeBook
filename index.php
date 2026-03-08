@@ -181,13 +181,16 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
             <p id="showBtn" class="footer-text">Scopri di più</p>
 
-    <div id="hideBtn">
-        <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
-            [Qui inserirai il tuo testo lungo successivamente...]
-        </p>
-        <p id="extraText" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
-    </div>
+    <div id="extraContainer" style="display: none;">
+        <div id="extraText">
+            <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
+                Inserisci qui il tuo testo lungo... Debook nasce con l'obiettivo di rendere 
+                l'istruzione più accessibile a tutti, creando un ponte tra chi ha finito un 
+                percorso di studi e chi lo sta iniziando.
+            </p>
         </div>
+        <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
+    </div>
 
         <a href="compra.php" class="side-panel">
             <h2>COMPRA</h2>
@@ -204,20 +207,23 @@ btn.onclick = (e) => {
 };
 window.onclick = () => menu.classList.remove('active');
 
-// --- LOGICA ESPANDI/RIDUCI ---
-const showBtn = document.getElementById('showBtn');
-const hideBtn = document.getElementById('hideBtn');
-const extraText = document.getElementById('extraText');
+// --- LOGICA ESPANDI/RIDUCI AGGIORNATA ---
+const showBtn = document.getElementById('showBtn');     // Tasto "Scopri di più"
+const hideBtn = document.getElementById('hideBtn');     // Tasto "Vedi meno"
+const extraContainer = document.getElementById('extraContainer'); // Contenitore testo + tasto chiudi
 
+// Quando premo "Scopri di più"
 showBtn.onclick = () => {
-    extraText.classList.add('active'); // Espande il testo
-    showBtn.style.display = 'none';    // Nasconde "Scopri di più"
+    showBtn.style.display = 'none';          // Scompare il tasto "Scopri di più"
+    extraContainer.style.display = 'block';  // Appare il blocco (testo + tasto "Vedi meno")
 };
 
+// Quando premo "Vedi meno"
 hideBtn.onclick = () => {
-    extraText.classList.remove('active'); // Riduce il testo
-    showBtn.style.display = 'block';      // Mostra di nuovo "Scopri di più"
-    // Torna su dolcemente all'inizio del contenuto
+    extraContainer.style.display = 'none';   // Scompare tutto il blocco extra
+    showBtn.style.display = 'block';         // Riappare il tasto "Scopri di più"
+    
+    // Torna su dolcemente all'inizio della sezione
     document.querySelector('.center-content').scrollTo({ top: 0, behavior: 'smooth' });
 };
     </script>
