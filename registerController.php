@@ -43,16 +43,23 @@ $stmt = $pdo->prepare($sql);
 try {
     $stmt->execute([$email, $password_hash]);
     
-    // --- REGISTRAZIONE RIUSCITA ---
-    // Pulisce ogni eventuale spazio o testo generato finora
-    ob_end_clean(); 
-    
-    // Reindirizzamento alla index (assicurati che il percorso sia corretto)
-    header("Location: index.php?status=success");
-    exit(); 
+    // --- SOLUZIONE DEFINITIVA ---
+    // Proviamo il reindirizzamento PHP classico
+    if (!headers_sent()) {
+        header("Location: index.php?status=success");
+        exit();
+    } else {
+        // Se PHP dice che gli header sono già stati inviati, usiamo JavaScript
+        echo '<script type="text/javascript">
+                window.location.href = "index.php?status=success";
+              </script>';
+        echo '<noscript>
+                <meta http-equiv="refresh" content="0;url=index.php?status=success" />
+              </noscript>';
+        exit();
+    }
 
 } catch (\PDOException $e) {
-    // In caso di errore, svuota il buffer e mostra l'errore
     ob_end_clean();
     if ($e->getCode() == 23000) {
         die("Errore: Questa email è già registrata.");
@@ -60,4 +67,4 @@ try {
         die("Errore durante il salvataggio: " . $e->getMessage());
     }
 }
-?>
+?>  
