@@ -66,4 +66,73 @@ try {
         echo "Errore durante il salvataggio: " . $e->getMessage();
     }
 }
+?><?php
+// 1. Inizio della sessione - Fondamentale che sia la primissima riga
+session_start();
+
+// 2. Configurazione del Database
+$host = 'localhost';
+$db   = 'my_fleone';
+$user = 'fleone';
+$pass = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+
+    // 3. Ricezione e Pulizia dei dati
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $password_inviata = $_POST['password'] ?? '';
+
+    // Validazione Password e Email
+    if (empty($email) || strlen($password_inviata) < 8) {
+        // Se i dati sono invalidi, torna al form con un avviso
+        header("Location: register.php?error=invalid_data");
+        exit;
+    }
+
+    // 4. Criptazione della password
+    $password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
+
+    // 5. Tentativo di scrittura sul Database
+    $sql = "INSERT INTO utenti (email, password) VALUES (?, ?)";
+    $stmt = $pdo->prepare($sql);
+    
+    // Il codice prosegue oltre questa riga SOLO se l'execute non lancia eccezioni
+    $stmt->execute([$email, $password_hash]);
+
+    // --- SE SIAMO QUI, LA REGISTRAZIONE È ANDATA A BUON FINE ---
+
+    // Recuperiamo l'ID appena generato
+    $user_id = $pdo->lastInsertId();
+
+    // Creiamo la sessione di login
+    $_SESSION["loggedin"] = true;
+    $_SESSION["id"] = $user_id;
+    $_SESSION["email"] = $email;
+    $_SESSION["nome"] = explode('@', $email)[0]; // Usa la parte prima della @ come nome
+
+    // Reindirizzamento alla Index
+    header("Location: index.php");
+    exit;
+
+} catch (\PDOException $e) {
+    // --- SE SIAMO QUI, C'È STATO UN ERRORE ---
+    
+    if ($e->getCode() == 23000) { 
+        // Caso: Email già presente nel database
+        header("Location: register.php?error=email_exists");
+    } else {
+        // Altri errori del database
+        header("Location: register.php?error=db_fail");
+    }
+    exit;
+}
 ?>
