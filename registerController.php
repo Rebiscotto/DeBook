@@ -33,7 +33,7 @@ try {
 
     // 5. Hash e Inserimento
     $password_hash = password_hash($password_inviata, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO utenti (email, password) VALUES (?, ?)";
+    $sql = "INSERT INTO Utenti (email, password) VALUES (?, ?)";
     $stmt = $pdo->prepare($sql);
     
     if ($stmt->execute([$email, $password_hash])) {
