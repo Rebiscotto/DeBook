@@ -98,7 +98,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
     <header class="header-nav">
         <a href="index.php" class="logo-link">
-            <img src="https://drive.google.com/file/d/1abwQK1JTYcPZmNsFwBGbIq0aSHaIaVNi/view?usp=drive_link" alt="Debook Logo">
+            <img src="Screenshot 2026-03-08 215514.png" alt="Debook Logo">
         </a>
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
