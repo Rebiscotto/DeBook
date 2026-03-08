@@ -131,9 +131,24 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             <div id="extraContainer" style="display: none;">
                 <div id="extraText">
                     <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
-                        Inserisci qui il tuo testo lungo... Debook nasce con l'obiettivo di rendere 
-                        l'istruzione più accessibile a tutti, creando un ponte tra chi ha finito un 
-                        percorso di studi e chi lo sta iniziando.
+                        Perché nasce DeBook: Trasformare la spesa scolastica in valore condiviso
+L’idea di DeBook nasce da un’osservazione semplice, quanto comune a migliaia di famiglie e studenti: il paradosso dei libri scolastici. Ogni anno, l’inizio della scuola porta con sé l’onere di una spesa economica rilevante per l’acquisto dei manuali. Eppure, mentre molte famiglie faticano a sostenere questi costi, migliaia di libri in perfette condizioni rimangono fermi sugli scaffali di chi ha appena concluso un ciclo di studi. Questi volumi, carichi di conoscenza ma destinati a prendere polvere, rappresentano un potenziale sprecato, sia economico che ambientale.
+
+Oltre il prestito, verso la comunità
+Nonostante esistano sistemi di prestito o comodato d’uso, la realtà scolastica ci dice che la maggior parte degli studenti continua a preferire l’acquisto del proprio manuale. DeBook nasce per colmare il vuoto tra la necessità di possedere un libro e il desiderio di farlo in modo sostenibile e accessibile.
+
+Abbiamo guardato ai modelli di economia circolare più evoluti, come Vinted, e ci siamo chiesti: perché non portare questa efficienza all’interno della scuola?
+
+La nostra Visione
+DeBook non è solo una piattaforma di compravendita; è un progetto che mira a trasformare l’istituto scolastico in una comunità collaborativa. La nostra missione si fonda su tre pilastri:
+
+Economia Circolare: Incentiviamo il riuso, riducendo lo spreco di carta e l'impatto ambientale legato alla produzione di nuovi volumi.
+
+Accessibilità: Vogliamo che il diritto allo studio sia meno gravoso, permettendo agli studenti di recuperare parte dell’investimento e ad altri di acquistare testi a prezzi contenuti.
+
+Fiducia e Sicurezza: Abbiamo scelto di circoscrivere l’app all’ambiente scolastico. Gli scambi avvengono esclusivamente a mano, tra compagni di scuola, eliminando i costi di spedizione e garantendo la massima trasparenza.
+
+Scegliere DeBook significa credere in una scuola dove la collaborazione tra pari genera valore reale, dove un libro che ha già insegnato molto può continuare a farlo tra le mani di un altro studente.
                     </p>
                 </div>
                 <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
