@@ -181,11 +181,11 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
             <p id="showBtn" class="footer-text">Scopri di più</p>
 
-    <div id="extraText">
+    <div id="hideBtn">
         <p style="font-family: 'Arial', sans-serif; font-size: 0.9rem; color: #444; max-width: 550px; margin: 0 auto;">
             [Qui inserirai il tuo testo lungo successivamente...]
         </p>
-        <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
+        <p id="extraText" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
     </div>
         </div>
 
