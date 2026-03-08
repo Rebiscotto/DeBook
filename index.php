@@ -14,24 +14,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
 
-        /* Permette lo scorrimento solo nella colonna centrale quando serve */
-.center-content {
-    overflow-y: auto; 
-    scrollbar-width: thin; /* Per Firefox */
-}
-
-/* Nasconde il testo extra inizialmente e prepara l'animazione */
-#extraText {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-out;
-    margin-bottom: 20px;
-}
-
-#extraText.active {
-    max-height: 1000px; /* Altezza massima arbitraria per l'espansione */
-} 
-
+ 
         :root {
             --dark: #1a1a1a;
             --light-grey: #f4f4f9;
