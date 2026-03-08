@@ -98,13 +98,14 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
     <header class="header-nav">
         <a href="index.php" class="logo-link">
-            <img src="Screenshot 2026-03-08 215514.png" alt="Debook Logo">
+            <img src="https://drive.google.com/file/d/1abwQK1JTYcPZmNsFwBGbIq0aSHaIaVNi/view?usp=drive_link" alt="Debook Logo">
         </a>
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
+                    <a href="#">Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
+                    <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
                     <a href="logout.php" style="color: red;">Logout</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
@@ -122,7 +123,9 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
                 <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
                 <p>"Il sapere costa meno se è condiviso." Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti.</p>
             </div>
-
+                    <div class="image-container">
+                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti in biblioteca">
+            </div>
             <p id="showBtn" class="footer-text">Scopri di più</p>
 
             <div id="extraContainer" style="display: none;">
@@ -135,9 +138,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
                 </div>
                 <p id="hideBtn" class="footer-text" style="margin-top: 15px;">Vedi meno</p>
             </div>
-            <div class="image-container">
-                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti in biblioteca">
-            </div>
+           
         </div>
 
         <a href="compra.php" class="side"><h2>COMPRA</h2></a>
