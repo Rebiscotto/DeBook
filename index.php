@@ -176,7 +176,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             </div>
 
             <div class="hero-image">
-                <img src="https://img.freepik.com/free-vector/young-people-library_23-2148530368.jpg" alt="Studenti in libreria">
+                <img src="https://files.fm/u/ugax9rwx9h" alt="Studenti in libreria">
             </div>
 
             <p class="footer-link">Scopri di più</p>
