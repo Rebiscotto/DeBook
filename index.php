@@ -1,3 +1,9 @@
+Ecco il codice aggiornato per la tua index.php. Ho inserito il logo in alto a sinistra come richiesto, rendendolo un tasto cliccabile che ricarica la home page (index.php).
+
+Ho anche pulito leggermente il CSS per assicurarmi che il logo non interferisca con il resto del layout.
+
+File: index.php aggiornato
+PHP
 <?php
 session_start();
 // Controllo sessione per gestire l'omino e il menu
@@ -19,14 +25,30 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
 
-        body { background-color: #fff; overflow: hidden; height: 100vh; }
+        body { background-color: #fff; overflow: hidden; height: 100vh; position: relative; }
 
-        /* Navbar e Menu Omino */
-        .navbar {
+        /* Navbar Superiore (Logo a sinistra e Omino a destra) */
+        .header-nav {
             position: absolute;
-            top: 20px;
-            right: 40px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
             z-index: 1000;
+        }
+
+        /* Stile per il Logo cliccabile */
+        .logo-home {
+            height: 60px; /* Regola l'altezza in base alle tue preferenze */
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .logo-home:hover {
+            opacity: 0.8;
         }
 
         .user-menu-container { position: relative; }
@@ -48,7 +70,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             display: none;
             flex-direction: column;
-            min-width: 160px;
+            min-width: 180px;
         }
 
         .dropdown-menu.active { display: flex; }
@@ -96,19 +118,16 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 40px;
+            padding: 100px 40px 20px 40px; /* Padding superiore aumentato per far spazio al logo */
             text-align: center;
         }
-
-        /* Testi centrali */
-        .logo-area { width: 100%; text-align: left; padding-bottom: 20px; }
-        .logo-area img { height: 50px; } /* Se hai un file logo.png */
 
         .hero-text h1 {
             font-size: 3.5rem;
             color: var(--dark);
             line-height: 1;
             margin-bottom: 15px;
+            text-transform: uppercase;
         }
 
         .hero-text p {
@@ -119,7 +138,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             margin: 0 auto 20px auto;
         }
 
-        /* Immagine caricata */
+        /* Immagine centrale */
         .image-container {
             flex-grow: 1;
             display: flex;
@@ -145,12 +164,16 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 </head>
 <body>
 
-    <nav class="navbar">
+    <header class="header-nav">
+        <a href="index.php">
+            <img src="Screenshot 2026-03-08 215514.png" alt="Debook Logo" class="logo-home">
+        </a>
+
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
+                    <a href="#"><strong>Profilo: <?php echo htmlspecialchars($nome_utente); ?></strong></a>
                     <a href="logout.php" style="color: red;">Logout</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
@@ -158,7 +181,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
                 <?php endif; ?>
             </div>
         </div>
-    </nav>
+    </header>
 
     <div class="wrapper">
         <a href="vendi.php" class="side">
@@ -166,10 +189,6 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         </a>
 
         <div class="center-content">
-            <div class="logo-area">
-                <strong style="font-size: 1.5rem;">DEBOOK</strong>
-            </div>
-
             <div class="hero-text">
                 <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
                 <p>
@@ -178,7 +197,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             </div>
 
             <div class="image-container">
-                <img src="https://gemini.google.com/share/85983d653ae9" alt="Studenti in biblioteca">
+                <img src="ritaglio.png" alt="Studenti in biblioteca">
             </div>
 
             <p class="footer-text">Scopri di più</p>
@@ -198,6 +217,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             e.stopPropagation();
         });
 
+        // Chiude il menu se si clicca altrove
         window.onclick = () => menu.classList.remove('active');
     </script>
 </body>
