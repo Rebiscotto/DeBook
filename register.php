@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if(!empty($messaggio)) echo $messaggio; ?>
 
         <h2>Crea un Account</h2>
-        <form action="register.php" method="POST">
+        <form action="registerController.php" method="POST">
             <div class="input-group">
                 <input type="text" name="nome" placeholder="Name" required>
             </div>
