@@ -178,7 +178,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             </div>
 
             <div class="image-container">
-                <img src="ritaglio.png" alt="Studenti in biblioteca">
+                <img src="http://googleusercontent.com/image_generation_content/0" alt="Studenti in biblioteca">
             </div>
 
             <p class="footer-text">Scopri di più</p>
