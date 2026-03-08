@@ -36,11 +36,8 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
                 $_SESSION["email"] = $utente["email"];
                 $_SESSION["nome"] = $utente["nome"];
 
-                echo "<h4>Benvenuto " . htmlspecialchars($utente['nome']) . "!</h4>";
-                echo "<p>Accesso effettuato. <a href='../index.php'>Vai alla Home</a></p>";
-                
-                // Opzionale: reindirizzamento automatico dopo 2 secondi
-                // header("refresh:2;url=../index.php");
+                header('Location: ../index.php');
+                exit();
 
             } else {
                 // Password errata
