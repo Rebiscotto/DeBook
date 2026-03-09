@@ -129,19 +129,7 @@ if(!$is_logged) {
         <a href="index.php" class="logo-link">
             <img src="immagini/tastologo.png" alt="Debook Logo">
         </a>
-        <div class="user-menu-container">
-            <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
-            <div class="dropdown-menu" id="userDropdown">
-                <?php if($is_logged): ?>
-                    <a href="#">Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
-                    <a href="#"><i class="fa-solid fa-book"></i> I miei ordini</a>
-                    <a href="logout.php" style="color: red;">Logout</a>
-                <?php else: ?>
-                    <a href="login.php">Accedi</a>
-                    <a href="register.php">Registrati</a>
-                <?php endif; ?>
-            </div>
-        </div>
+       
     </header>
 
     <div class="form-container">
