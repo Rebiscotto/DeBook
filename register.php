@@ -162,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <div class="login-card">
-        <img src="immagini/tastologo.jpg" alt="Debook Logo">
+        <img src="immagini/tastologo.png" alt="Debook Logo">
 
         <?php if(!empty($messaggio)) echo $messaggio; ?>
 

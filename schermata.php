@@ -105,7 +105,7 @@ PHP
 
     <header class="header-nav">
         <a href="schermata.php" class="logo-link">
-            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+            <img src="immagini/tastologo.png" alt="Debook Logo">
         </a>
         
         <div class="user-menu-container">
