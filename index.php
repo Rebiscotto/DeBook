@@ -116,7 +116,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     </header>
 
     <div class="wrapper">
-        <a href="vendi.php" class="side"><h2>VENDI</h2></a>
+        <a href="Vendi.php" class="side"><h2>VENDI</h2></a>
 
         <div class="center-content">
             <div class="hero-text">
