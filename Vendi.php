@@ -124,7 +124,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
     <div class="container">
         <a href="index.php" class="logo-link">
-            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+            <img src="immagini/tastologo.png" alt="Debook Logo">
         </a>
 
         <h1>Inserisci i dati di vendita</h1>

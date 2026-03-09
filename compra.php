@@ -127,7 +127,7 @@ if(!$is_logged) {
 
     <header class="header-nav">
         <a href="index.php" class="logo-link">
-            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+            <img src="immagini/tastologo.png" alt="Debook Logo">
         </a>
         <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
