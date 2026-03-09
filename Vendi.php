@@ -1,3 +1,12 @@
+
+        <?php
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -114,10 +123,9 @@
 <body>
 
     <div class="container">
-        <div class="header">
-            <div class="logo">DEBOOK 🛒</div>
-            <div style="font-size: 24px;">👤</div> 
-        </div>
+        <a href="index.php" class="logo-link">
+            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+        </a>
 
         <h1>Inserisci i dati di vendita</h1>
 
@@ -151,6 +159,7 @@
             
         </form>
     </div>
-
+ 
 </body>
 </html>
+
