@@ -124,7 +124,7 @@ PHP
         </div>
         
         <div class="image-container">
-            <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti e libri">
+            <img src="immagini/home.jpg" alt="Studenti e libri">
         </div>
 
         <p id="showBtn" class="footer-text">Scopri il progetto DeBook</p>
