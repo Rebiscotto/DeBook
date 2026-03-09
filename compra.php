@@ -16,123 +16,121 @@ if(!$is_logged) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debook - Compra un libro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>DEBOOK - Trova il tuo libro</title>
     <style>
-        :root {
-            --dark: #1a1a1a;
-            --buy-color: #2980b9; /* Un tocco di blu per differenziare l'acquisto dalla vendita */
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
-
-        body { 
-            background-color: #f4f4f4; 
-            min-height: 100vh; 
+        /* Stili generali sincronizzati con la pagina Vendi */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e6e6; /* Sfondo grigio chiaro uniforme */
+            margin: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        /* --- STILI HEADER (Identici alla Home e a Vendi) --- */
-        .header-nav {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .logo-link img { height: 70px; cursor: pointer; transition: transform 0.2s; }
-        .logo-link img:hover { transform: scale(1.05); }
-
-        .user-menu-container { position: relative; }
-        .user-icon { font-size: 2.2rem; color: var(--dark); cursor: pointer; }
-
-        .dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: 50px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: none;
-            flex-direction: column;
-            min-width: 180px;
-        }
-        .dropdown-menu.active { display: flex; }
-        .dropdown-menu a { padding: 12px; text-decoration: none; color: var(--dark); font-family: 'Arial', sans-serif; font-size: 0.9rem; border-bottom: 1px solid #eee; }
-
-        /* --- STILI FORM DI ACQUISTO --- */
-        .form-container {
+        /* Contenitore bianco centrale */
+        .container {
             background-color: #ffffff;
-            width: 90%;
-            max-width: 600px;
-            margin-top: 50px;
+            width: 70%;
+            max-width: 900px;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Stile Logo */
+        .logo-link img {
+            height: 70px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .logo-link img:hover {
+            transform: scale(1.05);
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 36px;
+            font-weight: 900;
             text-transform: uppercase;
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 30px;
-            color: var(--dark);
+            color: #000;
         }
 
-        form { display: flex; flex-direction: column; gap: 20px; }
+        /* Stile del form sincronizzato */
+        form {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
 
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-        label { font-family: 'Arial', sans-serif; font-weight: bold; font-size: 16px; color: #333; }
+        label {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000;
+        }
 
         input[type="text"] {
             width: 100%;
-            padding: 12px;
-            font-family: 'Arial', sans-serif;
-            font-size: 15px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
             outline: none;
             transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus { border-color: var(--buy-color); }
+        input[type="text"]:focus {
+            border-color: #000;
+        }
 
+        /* Bottone di invio nero come in Vendi */
         button {
-            background-color: var(--dark);
+            background-color: #000;
             color: #fff;
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: 900;
             padding: 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
-            margin-top: 10px;
+            margin-top: 20px;
             transition: background-color 0.3s;
         }
 
-        button:hover { background-color: var(--buy-color); }
+        button:hover {
+            background-color: #333;
+        }
 
-        .nota { font-family: 'Arial', sans-serif; font-size: 12px; color: #777; margin-top: -3px; }
+        .nota {
+            font-size: 12px;
+            color: #666;
+            margin-top: -5px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
-    <header class="header-nav">
+    <div class="container">
         <a href="index.php" class="logo-link">
             <img src="immagini/tastologo.png" alt="Debook Logo">
         </a>
-       
-    </header>
 
-    
         <h1>Trova il tuo libro</h1>
 
         <form action="#" method="GET">
@@ -149,14 +147,15 @@ if(!$is_logged) {
             </div>
 
             <div class="form-group">
-                <label for="indirizzo">Indirizzo di Consegna / Incontro</label>
+                <label for="indirizzo">Indirizzo di Incontro</label>
                 <input type="text" id="indirizzo" name="indirizzo" placeholder="Es. Via Roma 10, Milano (MI)" required>
-                <span class="nota">Inserisci la via per lo scambio a mano o per l'eventuale spedizione.</span>
+                <span class="nota">Inserisci la tua zona per trovare venditori vicini a te per lo scambio a mano.</span>
             </div>
 
             <button type="submit">Cerca Libri Disponibili</button>
             
         </form>
-    
+    </div>
+ 
 </body>
 </html>
