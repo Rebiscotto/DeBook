@@ -132,7 +132,7 @@ if(!$is_logged) {
        
     </header>
 
-    <div class="form-container">
+    
         <h1>Trova il tuo libro</h1>
 
         <form action="#" method="GET">
@@ -157,17 +157,6 @@ if(!$is_logged) {
             <button type="submit">Cerca Libri Disponibili</button>
             
         </form>
-    </div>
-
-    <script>
-        // Gestione Menu Omino (Uguale alle altre pagine)
-        const btn = document.getElementById('userBtn');
-        const menu = document.getElementById('userDropdown');
-        btn.onclick = (e) => {
-            menu.classList.toggle('active');
-            e.stopPropagation();
-        };
-        window.onclick = () => menu.classList.remove('active');
-    </script>
+    
 </body>
 </html>
