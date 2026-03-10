@@ -180,35 +180,38 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             <a href="Vendi.php" class="btn-pill">VENDI</a>
         </div>
 
-        <div class="center-content">
-            
-            <div class="banner-header">
-                <div class="banner-inner">
-                    <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
-                </div>
-            </div>
-
-            <div class="description-strip">
-                <span class="quote">"Il sapere costa meno se è condiviso."</span>
-                <p>Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.</p>
-                <span class="bold-sub">Prezzi da studente, per gli studenti.</span>
-            </div>
-
-            <div class="image-container">
-                <img src="immagini/home.jpg" alt="Libreria">
-            </div>
-
-            <p id="showBtn" class="footer-text">Scopri di più</p>
-
-            <div id="extraContainer" style="display: none;">
-                <section style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 0 auto; padding: 30px; text-align: left; background: white; border-radius: 20px;">
-                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Perché nasce DeBook?</h2>
-                    <p>L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi restano inutilizzati.</p>
-                    <p style="margin-top:15px;">Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.</p>
-                </section>
-                <p id="hideBtn" class="footer-text">Vedi meno</p>
-            </div>
+        <div class="center-content" style="text-align: center;"> 
+    
+    <div class="banner-header" style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <div class="banner-inner" style="width: 100%; text-align: center;">
+            <h1 style="margin: 0;">IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
         </div>
+    </div>
+
+    <div class="description-strip" style="text-align: center; width: 100%;">
+        <span class="quote" style="display: block; font-style: italic; margin-bottom: 10px;">"Il sapere costa meno se è condiviso."</span>
+        <p style="margin: 0 auto; max-width: 800px;">
+            Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. 
+            È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.
+        </p>
+        <span class="bold-sub" style="display: block; font-weight: bold; margin-top: 15px;">Prezzi da studente, per gli studenti.</span>
+    </div>
+
+    <div class="image-container" style="margin: 20px 0;">
+        <img src="immagini/home.jpg" alt="Libreria" style="max-width: 350px; height: auto;">
+    </div>
+
+    <p id="showBtn" class="footer-text" style="display: inline-block; cursor: pointer;">Scopri di più</p>
+
+    <div id="extraContainer" style="display: none; width: 100%;">
+        <section style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 30px; text-align: center; background: white; border-radius: 20px;">
+            <h2 style="color: #2c3e50; margin-bottom: 20px;">Perché nasce DeBook?</h2>
+            <p>L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi restano inutilizzati.</p>
+            <p style="margin-top:15px;">Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.</p>
+        </section>
+        <p id="hideBtn" class="footer-text" style="display: inline-block; cursor: pointer; margin-top: 15px;">Vedi meno</p>
+    </div>
+</div>
 
         <div class="side">
             <a href="compra.php" class="btn-pill">COMPRA</a>
