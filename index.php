@@ -198,7 +198,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
         <a href="index.php" class="logo-link">
 
-            <img src="immagini/tastologo.jpg" alt="Debook Logo">
+            <img src="immagini/tastologo.png" alt="Debook Logo">
 
         </a>
 
@@ -234,7 +234,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
     <div class="wrapper">
 
-        <a href="vendi.php" class="side"><h2>VENDI</h2></a>
+        <a href="Vendi.php" class="side"><h2>VENDI</h2></a>
 
 
 
@@ -250,7 +250,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
 
                     <div class="image-container">
 
-                <img src="https://previews.123rf.com/images/jemastock/jemastock2208/jemastock220802856/191195860-mom-and-son-buying-supplies.jpg" alt="Studenti in biblioteca">
+                <img src="immagini/home.jpg" alt="Studenti in biblioteca">
 
             </div>
 
