@@ -140,9 +140,9 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         <div class="logo">
             <img src="immagini/tastologo.png" alt="Debook Logo">
         </div>
-        <div class="user-menu">
+        <div class="user-menu-container">
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
-            <div class="dropdown" id="userDropdown">
+            <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
                     <a href="#">Profilo (<?php echo htmlspecialchars($nome_utente); ?>)</a>
                     <a href="logout.php" style="color: red;">Logout</a>
@@ -177,39 +177,83 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         <button class="btn-scopri" id="showBtn">Scopri di più</button>
         
         <div id="extraContainer">
-            <h2>Perché nasce DeBook?</h2>
-            <p>L’idea nasce per combattere il paradosso dei libri scolastici inutilizzati...</p>
+            <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 20px; border-radius: 12px; background-color: #f9f9f9; border: 1px solid #eee;">
+
+    <h2 style="color: #2c3e50; font-size: 1.5rem; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3498db; pb: 10px; padding-bottom: 10px;">
+        Perché nasce <strong>DeBook</strong>?
+    </h2>
+
+    <p style="font-size: 1rem; margin-bottom: 20px;">
+        L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. 
+        Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi in ottime condizioni restano inutilizzati sugli scaffali di chi ha terminato gli studi. 
+        Un potenziale sprecato, sia per il portafoglio che per l'ambiente.
+    </p>
+
+    <div style="background: #fff; padding: 15px; border-left: 4px solid #3498db; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; color: #2980b9; font-size: 1.1rem;">Oltre il prestito, verso la comunità</h3>
+        <p style="margin-bottom: 0; font-size: 0.95rem;">
+            DeBook colma il vuoto tra la necessità di possedere un manuale e il desiderio di farlo in modo <strong>sostenibile</strong>. 
+            Ci siamo chiesti: <em>perché non portare l'efficienza di piattaforme come Vinted direttamente tra i banchi di scuola?</em>
+        </p>
+    </div>
+
+    <h3 style="text-align: center; font-size: 1.2rem; color: #2c3e50;">La nostra Visione</h3>
+    
+    <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #e1f5fe; color: #0288d1; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🌱</span>
+            <span><strong>Economia Circolare:</strong> Riduciamo lo spreco di carta e l'impatto ambientale incentivando il riuso sistematico.</span>
+        </li>
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #e8f5e9; color: #388e3c; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">💰</span>
+            <span><strong>Accessibilità:</strong> Rendiamo il diritto allo studio meno gravoso, permettendo di recuperare parte dell'investimento iniziale.</span>
+        </li>
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <span style="background: #fff3e0; color: #f57c00; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🤝</span>
+            <span><strong>Fiducia e Sicurezza:</strong> Scambi a mano tra compagni di scuola. Niente costi di spedizione, solo trasparenza e volti noti.</span>
+        </li>
+    </ul>
+
+    <p style="text-align: center; font-style: italic; margin-top: 25px; color: #555; border-top: 1px solid #eee; padding-top: 15px;">
+        Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.
+    </p>
+
+</section>
             <button class="btn-scopri" id="hideBtn" style="margin-top: 20px;">Vedi meno</button>
         </div>
     </div>
 
     <script>
-        // Gestione Dropdown
+        // Gestione Menu Dropdown (Omino)
         const btn = document.getElementById('userBtn');
         const menu = document.getElementById('userDropdown');
+        
         btn.onclick = (e) => {
             menu.classList.toggle('active');
             e.stopPropagation();
         };
 
-        // Gestione Mostra/Nascondi
+        // Chiude il menu se clicchi fuori
+        window.onclick = () => menu.classList.remove('active');
+
+        // Gestione Logica Espandi/Riduci Spiegazione
         const showBtn = document.getElementById('showBtn');
         const hideBtn = document.getElementById('hideBtn');
-        const extra = document.getElementById('extraContainer');
+        const extraContainer = document.getElementById('extraContainer');
 
         showBtn.onclick = () => {
-            extra.style.display = 'block';
             showBtn.style.display = 'none';
-            extra.scrollIntoView({ behavior: 'smooth' });
+            extraContainer.style.display = 'block';
+            // Scroll fluido verso la nuova sezione
+            extraContainer.scrollIntoView({ behavior: 'smooth' });
         };
 
         hideBtn.onclick = () => {
-            extra.style.display = 'none';
-            showBtn.style.display = 'inline-block';
+            extraContainer.style.display = 'none';
+            showBtn.style.display = 'block';
+            // Ritorna in cima alla pagina con animazione
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
-
-        window.onclick = () => menu.classList.remove('active');
     </script>
 </body>
 </html>
