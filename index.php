@@ -198,7 +198,7 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     </div>
 
     <div class="image-container" style="margin: 20px 0;">
-        <img src="immagini/home.jpg" alt="Libreria" style="max-width: 350px; height: auto;">
+        <img src="immagini/home2.jpg" alt="Libreria" style="max-width: 350px; height: auto;">
     </div>
 
     <p id="showBtn" class="footer-text" style="display: inline-block; cursor: pointer;">Scopri di più</p>
