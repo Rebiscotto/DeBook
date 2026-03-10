@@ -204,11 +204,90 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <p id="showBtn" class="footer-text" style="display: inline-block; cursor: pointer;">Scopri di più</p>
 
     <div id="extraContainer" style="display: none; width: 100%;">
-        <section style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 30px; text-align: center; background: white; border-radius: 20px;">
-            <h2 style="color: #2c3e50; margin-bottom: 20px;">Perché nasce DeBook?</h2>
-            <p>L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>. Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi restano inutilizzati.</p>
-            <p style="margin-top:15px;">Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.</p>
-        </section>
+        <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 20px; border-radius: 12px; background-color: #f9f9f9; border: 1px solid #eee;">
+
+
+
+    <h2 style="color: #2c3e50; font-size: 1.5rem; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3498db; pb: 10px; padding-bottom: 10px;">
+
+        Perché nasce <strong>DeBook</strong>?
+
+    </h2>
+
+
+
+    <p style="font-size: 1rem; margin-bottom: 20px;">
+
+        L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>.
+
+        Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi in ottime condizioni restano inutilizzati sugli scaffali di chi ha terminato gli studi.
+
+        Un potenziale sprecato, sia per il portafoglio che per l'ambiente.
+
+    </p>
+
+
+
+    <div style="background: #fff; padding: 15px; border-left: 4px solid #3498db; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+
+        <h3 style="margin-top: 0; color: #2980b9; font-size: 1.1rem;">Oltre il prestito, verso la comunità</h3>
+
+        <p style="margin-bottom: 0; font-size: 0.95rem;">
+
+            DeBook colma il vuoto tra la necessità di possedere un manuale e il desiderio di farlo in modo <strong>sostenibile</strong>.
+
+            Ci siamo chiesti: <em>perché non portare l'efficienza di piattaforme come Vinted direttamente tra i banchi di scuola?</em>
+
+        </p>
+
+    </div>
+
+
+
+    <h3 style="text-align: center; font-size: 1.2rem; color: #2c3e50;">La nostra Visione</h3>
+
+   
+
+    <ul style="list-style: none; padding: 0;">
+
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+
+            <span style="background: #e1f5fe; color: #0288d1; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🌱</span>
+
+            <span><strong>Economia Circolare:</strong> Riduciamo lo spreco di carta e l'impatto ambientale incentivando il riuso sistematico.</span>
+
+        </li>
+
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+
+            <span style="background: #e8f5e9; color: #388e3c; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">💰</span>
+
+            <span><strong>Accessibilità:</strong> Rendiamo il diritto allo studio meno gravoso, permettendo di recuperare parte dell'investimento iniziale.</span>
+
+        </li>
+
+        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+
+            <span style="background: #fff3e0; color: #f57c00; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🤝</span>
+
+            <span><strong>Fiducia e Sicurezza:</strong> Scambi a mano tra compagni di scuola. Niente costi di spedizione, solo trasparenza e volti noti.</span>
+
+        </li>
+
+    </ul>
+
+
+
+    <p style="text-align: center; font-style: italic; margin-top: 25px; color: #555; border-top: 1px solid #eee; padding-top: 15px;">
+
+        Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.
+
+    </p>
+
+
+
+</section>
+
         <p id="hideBtn" class="footer-text" style="display: inline-block; cursor: pointer; margin-top: 15px;">Vedi meno</p>
     </div>
 </div>
