@@ -152,7 +152,7 @@
 
         <div class="register-section">
             <p>Non hai ancora un account?</p>
-            <a href="registrazione.php" class="register-btn">REGISTRATI</a>
+            <a href="register.php" class="register-btn">REGISTRATI</a>
         </div>
     </div>
 
