@@ -146,12 +146,6 @@ if(!$is_logged) {
                 <span class="nota">Ci aiuta a trovare l'edizione esatta adottata dai tuoi professori.</span>
             </div>
 
-            <div class="form-group">
-                <label for="indirizzo">Indirizzo di Incontro</label>
-                <input type="text" id="indirizzo" name="indirizzo" placeholder="Es. Via Roma 10, Milano (MI)" required>
-                <span class="nota">Inserisci la tua zona per trovare venditori vicini a te per lo scambio a mano.</span>
-            </div>
-
             <button type="submit">Cerca Libri Disponibili</button>
             
         </form>
