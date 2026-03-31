@@ -15,10 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
         // 3. Preparazione della query
-        // NOTA: Se l'errore persiste, controlla che la tabella si chiami davvero 'utenti'
         $stmt = $conn->prepare("INSERT INTO Utenti (nome, cognome, email, password) VALUES (?, ?, ?, ?)");
         
-        // Ora bind_param non darà più l'errore "bool" perché il try/catch catturerà il problema prima
         $stmt->bind_param("ssss", $name, $surname, $email, $pass);
 
         if ($stmt->execute()) {
@@ -31,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->close();
 
     } catch (Exception $e) {
-        // Se c'è un errore (tabella mancante, colonna errata, ecc.) lo stampiamo qui
         $messaggio = "<div class='error-msg'>Errore Database: " . $e->getMessage() . "</div>";
     }
 }
@@ -71,33 +68,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-align: center;
         }
 
-        /* Stile del titolo DEBOOK */
-        .logo-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #1a1a1a;
+        .login-card img {
+            max-width: 150px;
             margin-bottom: 20px;
         }
 
-        /* Stile dell'icona del carrello */
-        .cart-icon {
-            font-size: 4.5rem;
-            color: #1a1a1a;
-            margin-bottom: 25px;
-        }
-
-        /* Stile per il tuo H2 "Crea un Account" */
         h2 {
             font-size: 1.1rem;
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Stile dei gruppi di input */
         .input-group {
             margin-bottom: 15px;
         }
@@ -116,8 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-color: #1a1a1a;
         }
 
-        /* Stile del bottone di submit */
-        .login-btn {
+        /* Stile comune per bottoni e link-bottone */
+        .login-btn, .login-link {
             display: inline-block;
             width: 100%;
             padding: 14px;
@@ -132,31 +116,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none; /* Rimuove sottolineatura dai link */
         }
 
-        .login-btn:hover {
+        .login-btn:hover, .login-link:hover {
             background-color: #1a1a1a;
             color: #ffffff;
         }
 
-        /* Stili per i messaggi di successo/errore PHP */
-        .success-msg {
-            color: #155724;
-            background-color: #d4edda;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+        /* Sezione footer della card per il redirect */
+        .login-redirect {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-        
-        .error-msg {
-            color: #721c24;
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+
+        .login-redirect p {
             font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 5px;
         }
+
+        /* Messaggi PHP */
+        .success-msg { color: #155724; background-color: #d4edda; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+        .error-msg { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -177,13 +160,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="input-group">
                 <input type="email" name="email" placeholder="Email" required>
             </div>
-            
             <div class="input-group">
                 <input type="password" name="password" placeholder="Password" required>
             </div>
             
             <button type="submit" class="login-btn">Registrati</button>
         </form>
+
+        <div class="login-redirect">
+            <p>Hai già un account?</p>
+            <a href="login.php" class="login-link">Accedi</a>
+        </div>
     </div>
 
 </body>
