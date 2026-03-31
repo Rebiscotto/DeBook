@@ -45,7 +45,7 @@ if(!$is_logged) {
             height: 70px;
             cursor: pointer;
             transition: transform 0.2s;
-            margin-bottom: 20px;
+            margin-bottom:  20px;
         }
         
         .logo-link img:hover {
