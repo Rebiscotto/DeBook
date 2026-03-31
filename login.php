@@ -33,33 +33,23 @@
             text-align: center;
         }
 
-        /* Stile del titolo DEBOOK */
-        .logo-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #1a1a1a;
+        /* Logo */
+        .login-card img {
+            max-width: 150px;
             margin-bottom: 20px;
-        }
-
-        /* Stile dell'icona del carrello */
-        .cart-icon {
-            font-size: 4.5rem;
-            color: #1a1a1a;
-            margin-bottom: 25px;
         }
 
         /* Stile per il tuo H1 "Esegui il login" */
         h1 {
             font-size: 1.1rem;
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Stile dei gruppi di input (Username e Password) */
+        /* Stile dei gruppi di input */
         .input-group {
             margin-bottom: 15px;
             text-align: left;
@@ -72,7 +62,7 @@
         .input-group input[type="password"] {
             width: 100%;
             padding: 12px;
-            margin-top: 6px; /* Spazio tra l'etichetta e il campo */
+            margin-top: 6px;
             border: 1px solid #d1d1d1;
             border-radius: 8px;
             font-size: 1rem;
@@ -84,14 +74,14 @@
             border-color: #1a1a1a;
         }
 
-        /* Stile del bottone di submit (forma ovale) */
+        /* Bottone Login (Principale) */
         .login-btn {
             display: inline-block;
             width: 100%;
             padding: 14px;
             margin-top: 15px;
-            background-color: transparent;
-            color: #1a1a1a;
+            background-color: #1a1a1a; /* Sfondo pieno per differenziarlo */
+            color: #ffffff;
             border: 2px solid #1a1a1a;
             border-radius: 50px;
             font-size: 1.1rem;
@@ -102,8 +92,40 @@
         }
 
         .login-btn:hover {
-            background-color: #1a1a1a;
-            color: #ffffff;
+            background-color: transparent;
+            color: #1a1a1a;
+        }
+
+        /* Sezione Registrazione */
+        .register-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .register-section p {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        /* Bottone Registrati (Secondario) */
+        .register-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none; /* Rimuove sottolineatura link */
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -127,9 +149,12 @@
             
             <input type="submit" value="LOGIN" class="login-btn">
         </form>
+
+        <div class="register-section">
+            <p>Non hai ancora un account?</p>
+            <a href="registrazione.php" class="register-btn">REGISTRATI</a>
+        </div>
     </div>
 
 </body>
 </html>
-
-
