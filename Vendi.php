@@ -148,11 +148,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             </div>
 
             <div class="form-group">
-                <label for="iban">Codice IBAN</label>
-                <input type="text" id="iban" name="iban" placeholder="IT00 A000 0000 0000 0000 0000 00" 
+                <label for="isbn">Codice ISBN</label>
+                <input type="text" id="isbn" name="isbn" placeholder="IT00 A000 0000 0000 0000 0000 00" 
                        pattern="[A-Z]{2}[0-9]{2}[a-zA-Z0-9]{1,30}" 
                        title="Inserisci un codice IBAN valido (es. IT...)" required>
-                <span class="nota">L'IBAN ci serve per inviarti i soldi una volta venduto il libro.</span>
+                <span class="nota">L'ISBN ci serve per inviarti i soldi una volta venduto il libro.</span>
             </div>
 
             <button type="submit">Metti in Vendita</button>
