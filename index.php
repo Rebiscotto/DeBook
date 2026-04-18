@@ -172,10 +172,45 @@ $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
             </div>
 
             <p id="showBtn" class="footer-text">Scopri di più</p>
-            <div id="extraContainer" style="display: none; padding: 20px; background: #f9f9f9; margin: 10px; border-radius: 10px;">
-                <p>DeBook nasce per rendere i libri accessibili a tutti gli studenti.</p>
-                <p id="hideBtn" class="footer-text">Vedi meno</p>
-            </div>
+            <div id="extraContainer" style="display: none;">
+            <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 20px; background-color: var(--white); border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
+
+                <h2 style="color: var(--dark-text); font-size: 1.6rem; text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--accent-beige); padding-bottom: 10px;">
+                    Perché nasce <strong>DeBook</strong>?
+                </h2>
+
+                <p style="font-size: 1.05rem; margin-bottom: 20px;">
+                    L’idea di DeBook nasce per risolvere il <strong>paradosso dei libri scolastici</strong>: 
+                    spese ingenti per le famiglie ogni anno, mentre migliaia di volumi in ottimo stato restano inutilizzati negli armadi di chi ha concluso gli studi. 
+                </p>
+
+                <div style="background: var(--bg-page); padding: 20px; border-left: 5px solid var(--accent-beige); margin-bottom: 25px; border-radius: 0 10px 10px 0;">
+                    <h3 style="margin-top: 0; color: var(--dark-text); font-size: 1.2rem;">Dalla scuola, per la scuola</h3>
+                    <p style="margin-bottom: 0; font-size: 1rem;">
+                        DeBook trasforma l'istituto in una comunità collaborativa. Portiamo la semplicità dello scambio online direttamente tra i corridoi scolastici.
+                    </p>
+                </div>
+
+                <h3 style="text-align: center; font-size: 1.3rem; color: var(--dark-text); margin-bottom: 20px;">I Nostri Valori</h3>
+                
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #e1f5fe; color: #0288d1; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">🌱</span>
+                        <span style="padding-top: 5px;"><strong>Economia Circolare:</strong> Allunghiamo la vita dei libri e riduciamo l'impatto ambientale.</span>
+                    </li>
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #e8f5e9; color: #388e3c; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">💰</span>
+                        <span style="padding-top: 5px;"><strong>Accessibilità:</strong> Abbattiamo i costi scolastici rendendo lo studio alla portata di tutti.</span>
+                    </li>
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #fff3e0; color: #f57c00; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">🤝</span>
+                        <span style="padding-top: 5px;"><strong>Sicurezza:</strong> Scambi diretti e a mano tra compagni di istituto.</span>
+                    </li>
+                </ul>
+            </section>
+            
+            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Chiudi spiegazione</div>
+        </div>
         </div>
 
         <div class="side"><a href="compra.php" class="btn-pill">COMPRA</a></div>
