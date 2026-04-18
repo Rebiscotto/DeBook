@@ -171,7 +171,7 @@ $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
                 <img src="immagini/home2.png" alt="Libreria">
             </div>
 
-            <p id="showBtn" class="footer-text">Scopri di più</p>
+            <p id="showBtn" class="footer-text">Scopri il progetto DeBook</p>
             <div id="extraContainer" style="display: none;">
             <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 20px; background-color: var(--white); border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
 
@@ -209,7 +209,7 @@ $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
                 </ul>
             </section>
             
-            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Chiudi spiegazione</div>
+            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Vedi Meno</div>
         </div>
         </div>
 

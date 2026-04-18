@@ -255,7 +255,7 @@
                 </ul>
             </section>
             
-            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Chiudi spiegazione</div>
+            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Vedi Meno</div>
         </div>
     </div>
 
