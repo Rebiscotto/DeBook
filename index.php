@@ -4,6 +4,7 @@ $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
 
 // Recupero dati dalla sessione
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
+$nome_utente = $is_logged ? $_SESSION["cognome"] : "";
 $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
 ?>
 
@@ -201,6 +202,7 @@ $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
                 <?php if($is_logged): ?>
                     <div class="user-info-box">
                         <p>Nome: <strong><?php echo htmlspecialchars($nome_utente); ?></strong></p>
+                        <p>Cognome: <strong><?php echo htmlspecialchars($cognome_utente); ?></strong></p>
                         <p>Email: <strong><?php echo htmlspecialchars($email_utente); ?></strong></p>
                     </div>
                     
