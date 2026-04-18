@@ -149,10 +149,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
             <div class="form-group">
                 <label for="isbn">Codice ISBN</label>
-                <input type="text" id="isbn" name="isbn" placeholder="IT00 A000 0000 0000 0000 0000 00" 
+                <input type="text" id="isbn" name="isbn" placeholder="" 
                        pattern="[A-Z]{2}[0-9]{2}[a-zA-Z0-9]{1,30}" 
-                       title="Inserisci un codice IBAN valido (es. IT...)" required>
-                <span class="nota">L'ISBN ci serve per inviarti i soldi una volta venduto il libro.</span>
+                       title="Inserisci un codice ISBN valido " required>
+                <span class="nota">L'ISBN è il codice unico del libro, si trova sul retro del libro o all'interno della copertina</span>
             </div>
 
             <button type="submit">Metti in Vendita</button>
