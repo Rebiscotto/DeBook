@@ -1,7 +1,11 @@
 <?php
 session_start();
 $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
+
+// Recupero dati dalla sessione
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
+$email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
+$data_reg = $is_logged ? ($_SESSION["data_registrazione"] ?? "Non disponibile") : "";
 ?>
 
 <!DOCTYPE html>
@@ -14,8 +18,8 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     <style>
         /* TAVOLOZZA COLORI */
         :root {
-            --bg-page: #e2e2e2;      /* Grigio chiaro sfondo */
-            --accent-beige: #e9d5c3; /* Beige bottoni e banner */
+            --bg-page: #e2e2e2;
+            --accent-beige: #e9d5c3;
             --white: #ffffff;
             --dark-text: #2c2e34;
         }
@@ -42,23 +46,63 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         .logo-link img { height: 60px; transition: 0.2s; }
         .user-icon { font-size: 2.2rem; color: var(--dark-text); cursor: pointer; }
 
+        /* DROPDOWN MENU */
+        .user-menu-container { position: relative; }
+
         .dropdown-menu {
-            position: absolute; right: 0; top: 50px;
-            background: white; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: none; flex-direction: column; min-width: 200px;
+            position: absolute; 
+            right: 0; 
+            top: 55px;
+            background: white; 
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: none; 
+            flex-direction: column; 
+            min-width: 260px;
             overflow: hidden;
+            z-index: 1001;
         }
+        
         .dropdown-menu.active { display: flex; }
-        .dropdown-menu a { 
-            padding: 15px; text-decoration: none; color: var(--dark-text); 
-            font-family: 'Arial', sans-serif; font-size: 0.9rem; border-bottom: 1px solid #eee; 
+
+        /* Box dati utente dentro la tendina */
+        .user-info-box {
+            padding: 20px;
+            background-color: #fcfaf8;
+            border-bottom: 2px solid var(--accent-beige);
         }
+
+        .user-info-box p {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 8px;
+            text-transform: none;
+        }
+
+        .user-info-box strong {
+            color: var(--dark-text);
+            display: block;
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+
+        .dropdown-menu a { 
+            padding: 15px 20px; 
+            text-decoration: none; 
+            color: var(--dark-text); 
+            font-family: 'Arial', sans-serif; 
+            font-size: 0.95rem; 
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .dropdown-menu a:hover { background-color: #f9f9f9; }
+        .dropdown-menu a i { margin-right: 10px; width: 20px; text-align: center; }
 
         /* LAYOUT PRINCIPALE */
         .wrapper { display: flex; height: 100vh; width: 100%; }
 
-        /* Colonne laterali (Vendi/Compra) trasformate in bottoni ovali nell'immagine */
         .side {
             width: 20%;
             display: flex;
@@ -71,29 +115,27 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             background-color: var(--accent-beige);
             color: var(--dark-text);
             padding: 40px 30px;
-            border-radius: 100px; /* Forma ovale perfetta */
-            writing-mode: horizontal-tb;
+            border-radius: 100px;
             font-size: 2rem;
             transition: 0.3s;
             border: none;
             width: 80%;
             text-align: center;
+            cursor: pointer;
         }
         .btn-pill:hover { transform: scale(1.05); background-color: #dfc4ab; }
 
-        /* CONTENUTO CENTRALE */
         .center-content {
             width: 60%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 40px;
+            padding-top: 80px; /* Aumentato per non coprire col logo */
             overflow-y: auto;
-            scrollbar-width: none; /* Nasconde scrollbar Firefox */
+            scrollbar-width: none;
         }
-        .center-content::-webkit-scrollbar { display: none; } /* Nasconde scrollbar Chrome */
+        .center-content::-webkit-scrollbar { display: none; }
 
-        /* Banner Titolo */
         .banner-header {
             background-color: var(--white);
             padding: 15px;
@@ -114,7 +156,6 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             line-height: 1.1;
         }
 
-        /* Fascia descrittiva */
         .description-strip {
             background-color: var(--accent-beige);
             width: 100%;
@@ -129,14 +170,10 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             color: #444;
         }
 
-        .description-strip .quote { font-style: italic; margin-bottom: 10px; display: block; }
-        .description-strip .bold-sub { font-weight: bold; margin-top: 15px; display: block; }
-
-        /* Immagine Libreria */
         .image-container img {
             max-width: 350px;
             height: auto;
-            mix-blend-mode: multiply; /* Aiuta a fondere lo sfondo dell'immagine */
+            mix-blend-mode: multiply;
         }
 
         .footer-text {
@@ -150,7 +187,6 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             display: inline-block;
         }
 
-        /* Sezione extra */
         #extraContainer { width: 100%; padding-bottom: 50px; }
     </style>
 </head>
@@ -164,9 +200,14 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
             <i class="fa-solid fa-circle-user user-icon" id="userBtn"></i>
             <div class="dropdown-menu" id="userDropdown">
                 <?php if($is_logged): ?>
-                    <a href="#">Profilo di <?php echo htmlspecialchars($nome_utente); ?></a>
+                    <div class="user-info-box">
+                        <p>Nome: <strong><?php echo htmlspecialchars($nome_utente); ?></strong></p>
+                        <p>Email: <strong><?php echo htmlspecialchars($email_utente); ?></strong></p>
+                        <p>Iscritto il: <strong><?php echo htmlspecialchars($data_reg); ?></strong></p>
+                    </div>
+                    
                     <a href="#"><i class="fa-solid fa-book"></i> I miei libri</a>
-                    <a href="logout.php" style="color: red;">Logout</a>
+                    <a href="logout.php" style="color: #d9534f;"><i class="fa-solid fa-right-from-bracket"></i> Esci</a>
                 <?php else: ?>
                     <a href="login.php">Accedi</a>
                     <a href="register.php">Registrati</a>
@@ -181,116 +222,44 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
         </div>
 
         <div class="center-content" style="text-align: center;"> 
-    
-    <div class="banner-header" style="display: flex; justify-content: center; margin-bottom: 30px;">
-        <div class="banner-inner" style="width: 100%; text-align: center;">
-            <h1 style="margin: 0;">IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
+            <div class="banner-header" style="display: flex; justify-content: center; margin-bottom: 30px;">
+                <div class="banner-inner" style="width: 100%; text-align: center;">
+                    <h1 style="margin: 0;">IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
+                </div>
+            </div>
+
+            <div class="description-strip" style="text-align: center; width: 100%;">
+                <span class="quote" style="display: block; font-style: italic; margin-bottom: 10px; font-family: 'Arial', sans-serif;">"Il sapere costa meno se è condiviso."</span>
+                <p style="margin: 0 auto; max-width: 800px;">
+                    Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. 
+                    È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.
+                </p>
+                <span class="bold-sub" style="display: block; font-weight: bold; margin-top: 15px; font-family: 'Arial', sans-serif;">Prezzi da studente, per gli studenti.</span>
+            </div>
+
+            <div class="image-container" style="margin: 20px 0;">
+                <img src="immagini/home2.png" alt="Libreria">
+            </div>
+
+            <p id="showBtn" class="footer-text">Scopri di più</p>
+
+            <div id="extraContainer" style="display: none;">
+                <section style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 20px; border-radius: 12px; background-color: #f9f9f9; border: 1px solid #eee; text-align: left;">
+                    <h2 style="color: #2c3e50; font-size: 1.5rem; text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--accent-beige); padding-bottom: 10px;">
+                        Perché nasce <strong>DeBook</strong>?
+                    </h2>
+                    <p style="margin-bottom: 20px;">
+                        L’idea di DeBook nasce da un’osservazione semplice: il paradosso dei libri scolastici. 
+                        Migliaia di volumi in ottime condizioni restano inutilizzati, mentre le famiglie affrontano spese ingenti ogni anno.
+                    </p>
+                    <div style="background: #fff; padding: 15px; border-left: 4px solid var(--accent-beige); margin-bottom: 25px;">
+                        <h3 style="margin-top: 0; color: #2c2e34; font-size: 1.1rem;">Oltre il prestito, verso la comunità</h3>
+                        <p style="font-size: 0.95rem;">Perché non portare l'efficienza tra i banchi di scuola? Scambi a mano, trasparenza e volti noti.</p>
+                    </div>
+                </section>
+                <p id="hideBtn" class="footer-text">Vedi meno</p>
+            </div>
         </div>
-    </div>
-
-    <div class="description-strip" style="text-align: center; width: 100%;">
-        <span class="quote" style="display: block; font-style: italic; margin-bottom: 10px;">"Il sapere costa meno se è condiviso."</span>
-        <p style="margin: 0 auto; max-width: 800px;">
-            Perché pagare di più? Qui trovi libri usati venduti direttamente da altri studenti. 
-            È il modo più intelligente per svuotare gli zaini e riempire le menti senza svuotare il portafoglio.
-        </p>
-        <span class="bold-sub" style="display: block; font-weight: bold; margin-top: 15px;">Prezzi da studente, per gli studenti.</span>
-    </div>
-
-    <div class="image-container" style="margin: 20px 0;">
-        <img src="immagini/home2.png" alt="Libreria" style="max-width: 350px; height: auto;">
-    </div>
-
-    <p id="showBtn" class="footer-text" style="display: inline-block; cursor: pointer;">Scopri di più</p>
-
-    <div id="extraContainer" style="display: none; width: 100%;">
-        <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 20px auto; padding: 20px; border-radius: 12px; background-color: #f9f9f9; border: 1px solid #eee;">
-
-
-
-    <h2 style="color: #2c3e50; font-size: 1.5rem; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #3498db; pb: 10px; padding-bottom: 10px;">
-
-        Perché nasce <strong>DeBook</strong>?
-
-    </h2>
-
-
-
-    <p style="font-size: 1rem; margin-bottom: 20px;">
-
-        L’idea di DeBook nasce da un’osservazione semplice: <strong>il paradosso dei libri scolastici</strong>.
-
-        Mentre molte famiglie affrontano spese ingenti ogni anno, migliaia di volumi in ottime condizioni restano inutilizzati sugli scaffali di chi ha terminato gli studi.
-
-        Un potenziale sprecato, sia per il portafoglio che per l'ambiente.
-
-    </p>
-
-
-
-    <div style="background: #fff; padding: 15px; border-left: 4px solid #3498db; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-
-        <h3 style="margin-top: 0; color: #2980b9; font-size: 1.1rem;">Oltre il prestito, verso la comunità</h3>
-
-        <p style="margin-bottom: 0; font-size: 0.95rem;">
-
-            DeBook colma il vuoto tra la necessità di possedere un manuale e il desiderio di farlo in modo <strong>sostenibile</strong>.
-
-            Ci siamo chiesti: <em>perché non portare l'efficienza di piattaforme come Vinted direttamente tra i banchi di scuola?</em>
-
-        </p>
-
-    </div>
-
-
-
-    <h3 style="text-align: center; font-size: 1.2rem; color: #2c3e50;">La nostra Visione</h3>
-
-   
-
-    <ul style="list-style: none; padding: 0;">
-
-        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-
-            <span style="background: #e1f5fe; color: #0288d1; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🌱</span>
-
-            <span><strong>Economia Circolare:</strong> Riduciamo lo spreco di carta e l'impatto ambientale incentivando il riuso sistematico.</span>
-
-        </li>
-
-        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-
-            <span style="background: #e8f5e9; color: #388e3c; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">💰</span>
-
-            <span><strong>Accessibilità:</strong> Rendiamo il diritto allo studio meno gravoso, permettendo di recuperare parte dell'investimento iniziale.</span>
-
-        </li>
-
-        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-
-            <span style="background: #fff3e0; color: #f57c00; padding: 5px 10px; border-radius: 50%; margin-right: 12px; font-weight: bold;">🤝</span>
-
-            <span><strong>Fiducia e Sicurezza:</strong> Scambi a mano tra compagni di scuola. Niente costi di spedizione, solo trasparenza e volti noti.</span>
-
-        </li>
-
-    </ul>
-
-
-
-    <p style="text-align: center; font-style: italic; margin-top: 25px; color: #555; border-top: 1px solid #eee; padding-top: 15px;">
-
-        Scegliere DeBook significa credere in una scuola dove la <strong>collaborazione tra pari</strong> genera valore reale.
-
-    </p>
-
-
-
-</section>
-
-        <p id="hideBtn" class="footer-text" style="display: inline-block; cursor: pointer; margin-top: 15px;">Vedi meno</p>
-    </div>
-</div>
 
         <div class="side">
             <a href="compra.php" class="btn-pill">COMPRA</a>
@@ -298,16 +267,26 @@ $nome_utente = $is_logged ? $_SESSION["nome"] : "";
     </div>
 
     <script>
-        // Gestione Dropdown
-        const btn = document.getElementById('userBtn');
-        const menu = document.getElementById('userDropdown');
-        btn.onclick = (e) => {
-            menu.classList.toggle('active');
-            e.stopPropagation();
-        };
-        window.onclick = () => menu.classList.remove('active');
+        // Gestione Dropdown Utente
+        const userBtn = document.getElementById('userBtn');
+        const userDropdown = document.getElementById('userDropdown');
 
-        // Gestione Espandi/Riduci
+        userBtn.onclick = (e) => {
+            userDropdown.classList.toggle('active');
+            e.stopPropagation(); // Evita che il click chiuda subito il menu
+        };
+
+        // Chiudi la tendina cliccando ovunque fuori
+        window.onclick = (event) => {
+            if (userDropdown.classList.contains('active')) {
+                // Se il click NON è sul bottone e NON è dentro la tendina
+                if (!userDropdown.contains(event.target) && event.target !== userBtn) {
+                    userDropdown.classList.remove('active');
+                }
+            }
+        };
+
+        // Gestione Espandi/Riduci Contenuto
         const showBtn = document.getElementById('showBtn');
         const hideBtn = document.getElementById('hideBtn');
         const extraContainer = document.getElementById('extraContainer');
