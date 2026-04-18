@@ -1,6 +1,3 @@
-Perfetto, ho rinominato concettualmente il file e pulito ulteriormente il codice per renderlo una "Landing Page" (pagina di atterraggio) solida e professionale.
-
-Ecco il codice completo per il tuo file schermata.php. Ho aggiunto un piccolo tocco di stile al logo per far capire all'utente che è cliccabile e ricarica la pagina.
 
 PHP
 <!DOCTYPE html>
