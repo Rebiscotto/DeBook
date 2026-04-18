@@ -35,6 +35,7 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
                 $_SESSION["id"] = $utente["IdUtente"];
                 $_SESSION["email"] = $utente["email"];
                 $_SESSION["nome"] = $utente["nome"];
+                $_SESSION["cognome"] = $utente['cognome'];
 
                 header('Location: ../index.php');
                 exit();
