@@ -4,7 +4,7 @@ $is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
 
 // Recupero dati dalla sessione
 $nome_utente = $is_logged ? $_SESSION["nome"] : "";
-$nome_utente = $is_logged ? $_SESSION["cognome"] : "";
+$cognome_utente = $is_logged ? $_SESSION["cognome"] : "";
 $email_utente = $is_logged ? ($_SESSION["email"] ?? "Non disponibile") : "";
 ?>
 
