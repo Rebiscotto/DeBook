@@ -1,5 +1,4 @@
 
-PHP
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -8,94 +7,178 @@ PHP
     <title>Debook - Benvenuto</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* TAVOLOZZA COLORI (Importata dalla Home) */
         :root {
-            --dark: #1a1a1a;
-            --blue-accent: #3498db;
-            --light-grey: #f9f9f9;
+            --bg-page: #e2e2e2;      /* Grigio chiaro sfondo */
+            --accent-beige: #e9d5c3; /* Beige bottoni e banner */
+            --white: #ffffff;
+            --dark-text: #2c2e34;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial Black', 'Arial', sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Arial Black', sans-serif; 
+        }
 
-        body { background-color: #fff; min-height: 100vh; position: relative; overflow-x: hidden; }
+        body { 
+            background-color: var(--bg-page); 
+            min-height: 100vh; 
+            position: relative; 
+            overflow-x: hidden; 
+        }
 
-        /* Header e Navbar */
+        /* NAVBAR */
         .header-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
+            position: absolute;
+            top: 0; 
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
             z-index: 1000;
-            background-color: rgba(255,255,255,0.95);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid #eee;
         }
 
-        /* Logo che ricarica la pagina */
-        .logo-link img { height: 60px; cursor: pointer; transition: transform 0.2s; }
+        .logo-link img { 
+            height: 60px; 
+            transition: transform 0.2s; 
+        }
         .logo-link img:hover { transform: scale(1.05); }
 
         .user-menu-container { position: relative; }
-        .user-icon { font-size: 2.2rem; color: var(--dark); cursor: pointer; transition: color 0.2s; }
-        .user-icon:hover { color: var(--blue-accent); }
+        .user-icon { 
+            font-size: 2.2rem; 
+            color: var(--dark-text); 
+            cursor: pointer; 
+            transition: color 0.2s;
+        }
+        .user-icon:hover { color: #555; }
 
-        /* Menu Dropdown - Solo Login e Registrazione */
+        /* Menu Dropdown */
         .dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: 55px;
-            background: white;
-            border: 1px solid #ddd;
+            position: absolute; 
+            right: 0; 
+            top: 50px;
+            background: white; 
             border-radius: 8px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none; 
+            flex-direction: column; 
             min-width: 180px;
             overflow: hidden;
         }
         .dropdown-menu.active { display: flex; }
         .dropdown-menu a { 
-            padding: 15px 20px; 
+            padding: 15px; 
             text-decoration: none; 
-            color: var(--dark); 
+            color: var(--dark-text); 
             font-family: 'Arial', sans-serif; 
-            font-size: 1rem; 
-            border-bottom: 1px solid #eee;
+            font-size: 0.95rem; 
+            border-bottom: 1px solid #eee; 
             transition: background 0.2s;
         }
-        .dropdown-menu a:last-child { border-bottom: none; }
-        .dropdown-menu a:hover { background-color: #f5f5f5; }
+        .dropdown-menu a:hover { background-color: #f9f9f9; }
 
-        /* Layout Centrale */
+        /* LAYOUT PRINCIPALE CENTRATO */
         .center-content {
             width: 100%;
+            max-width: 900px; /* Contiene il layout al centro */
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 140px 20px 60px 20px;
+            padding-top: 120px; /* Spazio per la navbar assoluta */
+            padding-bottom: 60px;
             text-align: center;
         }
 
-        .hero-text h1 { font-size: 3.5rem; color: var(--dark); line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; }
-        .hero-text h2 { font-family: 'Arial', sans-serif; font-size: 1.2rem; color: #555; max-width: 700px; margin: 0 auto 30px auto; font-weight: normal; }
-
-        .image-container img { max-height: 35vh; width: auto; object-fit: contain; margin-bottom: 30px; border-radius: 15px; }
-
-        .footer-text {
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: underline;
-            margin: 20px 0;
-            cursor: pointer;
-            color: var(--blue-accent);
+        /* Banner Titolo */
+        .banner-header {
+            background-color: var(--white);
+            padding: 15px;
+            border-radius: 60px;
+            margin-bottom: 30px;
+            width: 90%;
+            display: flex; 
+            justify-content: center;
         }
 
-        #extraContainer { width: 100%; max-width: 800px; margin-top: 20px; }
+        .banner-inner {
+            background-color: var(--accent-beige);
+            padding: 25px 20px;
+            border-radius: 50px;
+            width: 100%;
+        }
+
+        .banner-inner h1 {
+            font-size: 2.2rem;
+            color: var(--dark-text);
+            line-height: 1.1;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* Fascia descrittiva */
+        .description-strip {
+            background-color: var(--accent-beige);
+            width: 100%;
+            padding: 30px 10%;
+            margin-bottom: 30px;
+        }
+
+        .description-strip p {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #444;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .description-strip .quote { 
+            font-style: italic; 
+            margin-bottom: 15px; 
+            display: block; 
+            font-weight: bold;
+        }
+
+        /* Immagine */
+        .image-container img {
+            max-height: 35vh;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            mix-blend-mode: multiply; /* Aiuta a fondere l'immagine con lo sfondo grigio */
+        }
+
+        /* Pulsanti stile "Pillola" della Home */
+        .footer-text {
+            background-color: var(--accent-beige);
+            color: var(--dark-text);
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin: 20px 0;
+            display: inline-block;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .footer-text:hover { 
+            transform: scale(1.05); 
+            background-color: #dfc4ab; 
+        }
+
+        /* Sezione Extra */
+        #extraContainer { 
+            width: 100%; 
+            padding: 0 20px;
+        }
     </style>
 </head>
 <body>
@@ -115,56 +198,64 @@ PHP
     </header>
 
     <div class="center-content">
-        <div class="hero-text">
-            <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
-            <h2>"Il sapere costa meno se è condiviso." Entra a far parte della prima community scolastica dedicata al riuso dei libri.</h2>
+        
+        <div class="banner-header">
+            <div class="banner-inner">
+                <h1>IL SAPERE NON HA PREZZO<br>MA QUI COSTA POCHISSIMO</h1>
+            </div>
+        </div>
+
+        <div class="description-strip">
+            <p>
+                <span class="quote">"Il sapere costa meno se è condiviso."</span>
+                Entra a far parte della prima community scolastica dedicata al riuso dei libri.
+            </p>
         </div>
         
         <div class="image-container">
             <img src="immagini/home.jpg" alt="Studenti e libri">
         </div>
 
-        <p id="showBtn" class="footer-text">Scopri il progetto DeBook</p>
+        <div id="showBtn" class="footer-text">Scopri il progetto DeBook</div>
 
         <div id="extraContainer" style="display: none;">
-            <div id="extraText">
-                <section style="font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; text-align: left; padding: 30px; border-radius: 15px; background-color: var(--light-grey); border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <section style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 20px; background-color: var(--white); border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left;">
 
-                    <h2 style="color: #2c3e50; font-size: 1.6rem; text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--blue-accent); padding-bottom: 10px;">
-                        Perché nasce <strong>DeBook</strong>?
-                    </h2>
+                <h2 style="color: var(--dark-text); font-size: 1.6rem; text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--accent-beige); padding-bottom: 10px;">
+                    Perché nasce <strong>DeBook</strong>?
+                </h2>
 
-                    <p style="font-size: 1.05rem; margin-bottom: 20px;">
-                        L’idea di DeBook nasce per risolvere il <strong>paradosso dei libri scolastici</strong>: 
-                        spese ingenti per le famiglie ogni anno, mentre migliaia di volumi in ottimo stato restano inutilizzati negli armadi di chi ha concluso gli studi. 
+                <p style="font-size: 1.05rem; margin-bottom: 20px;">
+                    L’idea di DeBook nasce per risolvere il <strong>paradosso dei libri scolastici</strong>: 
+                    spese ingenti per le famiglie ogni anno, mentre migliaia di volumi in ottimo stato restano inutilizzati negli armadi di chi ha concluso gli studi. 
+                </p>
+
+                <div style="background: var(--bg-page); padding: 20px; border-left: 5px solid var(--accent-beige); margin-bottom: 25px; border-radius: 0 10px 10px 0;">
+                    <h3 style="margin-top: 0; color: var(--dark-text); font-size: 1.2rem;">Dalla scuola, per la scuola</h3>
+                    <p style="margin-bottom: 0; font-size: 1rem;">
+                        DeBook trasforma l'istituto in una comunità collaborativa. Portiamo la semplicità dello scambio online direttamente tra i corridoi scolastici.
                     </p>
+                </div>
 
-                    <div style="background: #fff; padding: 20px; border-left: 5px solid var(--blue-accent); margin-bottom: 25px;">
-                        <h3 style="margin-top: 0; color: var(--blue-accent); font-size: 1.2rem;">Dalla scuola, per la scuola</h3>
-                        <p style="margin-bottom: 0; font-size: 1rem;">
-                            DeBook trasforma l'istituto in una comunità collaborativa. Portiamo la semplicità dello scambio online direttamente tra i corridoi scolastici.
-                        </p>
-                    </div>
-
-                    <h3 style="text-align: center; font-size: 1.3rem; color: #2c3e50; margin-bottom: 20px;">I Nostri Valori</h3>
-                    
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
-                            <span style="font-size: 1.5rem; margin-right: 15px;">🌱</span>
-                            <span><strong>Economia Circolare:</strong> Allunghiamo la vita dei libri e riduciamo l'impatto ambientale.</span>
-                        </li>
-                        <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
-                            <span style="font-size: 1.5rem; margin-right: 15px;">💰</span>
-                            <span><strong>Accessibilità:</strong> Abbattiamo i costi scolastici rendendo lo studio alla portata di tutti.</span>
-                        </li>
-                        <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
-                            <span style="font-size: 1.5rem; margin-right: 15px;">🤝</span>
-                            <span><strong>Sicurezza:</strong> Scambi diretti e a mano tra compagni di istituto.</span>
-                        </li>
-                    </ul>
-                </section>
-            </div>
-            <p id="hideBtn" class="footer-text">Chiudi spiegazione</p>
+                <h3 style="text-align: center; font-size: 1.3rem; color: var(--dark-text); margin-bottom: 20px;">I Nostri Valori</h3>
+                
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #e1f5fe; color: #0288d1; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">🌱</span>
+                        <span style="padding-top: 5px;"><strong>Economia Circolare:</strong> Allunghiamo la vita dei libri e riduciamo l'impatto ambientale.</span>
+                    </li>
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #e8f5e9; color: #388e3c; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">💰</span>
+                        <span style="padding-top: 5px;"><strong>Accessibilità:</strong> Abbattiamo i costi scolastici rendendo lo studio alla portata di tutti.</span>
+                    </li>
+                    <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                        <span style="background: #fff3e0; color: #f57c00; padding: 8px; border-radius: 50%; margin-right: 15px; font-size: 1.2rem; line-height: 1;">🤝</span>
+                        <span style="padding-top: 5px;"><strong>Sicurezza:</strong> Scambi diretti e a mano tra compagni di istituto.</span>
+                    </li>
+                </ul>
+            </section>
+            
+            <div id="hideBtn" class="footer-text" style="font-size: 0.9rem; padding: 10px 25px;">Chiudi spiegazione</div>
         </div>
     </div>
 
@@ -190,12 +281,12 @@ PHP
             showBtn.style.display = 'none';
             extraContainer.style.display = 'block';
             // Scroll fluido verso la nuova sezione
-            extraContainer.scrollIntoView({ behavior: 'smooth' });
+            extraContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         hideBtn.onclick = () => {
             extraContainer.style.display = 'none';
-            showBtn.style.display = 'block';
+            showBtn.style.display = 'inline-block';
             // Ritorna in cima alla pagina con animazione
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
