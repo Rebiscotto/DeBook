@@ -135,7 +135,10 @@ $result = $conn->query($query);
                         <p style="font-family:Arial; color:#666; font-size:0.9rem; margin-bottom:10px;">di <?php echo htmlspecialchars($row['autore']); ?></p>
                         
                         <p class="seller-info">
-                            <i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($row['nome_venditore']); ?>
+                        <i class="fa-solid fa-user"></i> 
+                        <a href="profilo.php?id=<?php echo $row['IdVenditore']; ?>" style="color:#888; text-decoration:none;">
+                        <?php echo htmlspecialchars($row['nome_venditore']); ?>
+                        </a>
                         </p>
 
                         <div class="price-tag">

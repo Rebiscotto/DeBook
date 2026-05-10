@@ -110,6 +110,17 @@ $lista_chat = $stmt_l->get_result();
 <body>
 
     <header class="header-nav">
+        <div class="chat-header" style="display:flex; justify-content:space-between; align-items:center;">
+    <a href="profilo.php?id=<?php echo $chat_con; ?>" style="text-decoration:none; color:black;">
+        <i class="fa-solid fa-circle-user"></i> 
+        <strong><?php echo htmlspecialchars($interlocutore['nome']); ?></strong> 
+        <small style="color:#888; font-size:0.7rem;">(Vedi Profilo)</small>
+    </a>
+    
+    <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">
+        Lascia Feedback
+    </a>
+</div>
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
         <a href="index.php" style="text-decoration:none; color:black;"><i class="fa-solid fa-house"></i></a>
         <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">Vota Venditore</a>
