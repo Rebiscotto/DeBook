@@ -48,7 +48,15 @@ $libro = $stmt->get_result()->fetch_assoc();
             <div style="font-size: 2.5rem; font-family: 'Arial Black'; margin: 20px 0;"><?php echo number_format($libro['prezzo'], 2); ?> €</div>
             
             <div style="background:#f9f9f9; padding:15px; border-radius:15px; margin-bottom:20px;">
-                <small>Venditore</small><br><strong><?php echo $libro['nome']." ".$libro['cognome']; ?></strong>
+                <p class="seller-info">
+    Venduto da: 
+    <a href="profilo.php?id=<?php echo $libro['IdVenditore']; ?>" style="text-decoration:none; color:var(--dark-text); font-weight:bold;">
+        <i class="fa-solid fa-user-check"></i> <?php echo htmlspecialchars($libro['nome_venditore']); ?>
+        <span style="color:#f39c12; font-size:0.9rem; margin-left:5px;">
+            (Vedi Recensioni)
+        </span>
+    </a>
+</p>
             </div>
 
             <?php if($_SESSION['id'] != $libro['IdVenditore']): ?>
