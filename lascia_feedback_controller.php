@@ -4,36 +4,36 @@ require_once 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
     
-    // Recupero i dati assicurandomi che i nomi in $_POST siano corretti
+    // Mappatura dati verso le tue colonne del DB
     $IdMittente = $_SESSION['id']; 
     $IdDestinatario = intval($_POST['IdDestinatario']); 
-    $NStelle = intval($_POST['voto']); // Il numero di stelle dal form
-    $messaggio = trim($_POST['commento']); // Il testo del feedback
+    $NStelle = intval($_POST['voto']); 
+    $messaggio = trim($_POST['commento']); 
     
-    // Se non gestisci ancora le transazioni, mettiamo un valore fittizio o NULL
+    // Se non hai un sistema di transazioni attivo, mettiamo NULL o 0
     $IdTransazione = NULL; 
 
     if($IdDestinatario > 0 && $NStelle > 0) {
         
-        // Query con i tuoi nomi esatti: IdMittente, IdDestinatario, messaggio, NStelle, IdTransazione
-        $sql = "INSERT INTO Feedback (IdMittente, IdDestinatario, messaggio, NStelle, IdTransazione) VALUES (?, ?, ?, ?, ?)";
+        // Query con i nomi esatti: messaggio, NStelle, IdMittente, IdDestinatario, IdTransazione
+        $sql = "INSERT INTO Feedback (messaggio, NStelle, IdMittente, IdDestinatario, IdTransazione) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         
         if ($stmt) {
-            // "iiisi" significa: int, int, int, string, int (o NULL)
-            $stmt->bind_param("iiisi", $IdMittente, $IdDestinatario, $NStelle, $messaggio, $IdTransazione);
+            // "siiii" -> string (messaggio), int (NStelle), int (IdMittente), int (IdDestinatario), int (IdTransazione)
+            $stmt->bind_param("siiii", $messaggio, $NStelle, $IdMittente, $IdDestinatario, $IdTransazione);
             
             if ($stmt->execute()) {
                 header("Location: profilo.php?id=" . $IdDestinatario);
                 exit;
             } else {
-                echo "Errore esecuzione: " . $stmt->error;
+                die("Errore esecuzione: " . $stmt->error);
             }
         } else {
-            echo "Errore database: " . $conn->error;
+            die("Errore database: " . $conn->error);
         }
     } else {
-        echo "Dati mancanti o non validi.";
+        die("Dati non validi.");
     }
 }
 ?>

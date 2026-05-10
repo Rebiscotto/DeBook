@@ -7,7 +7,7 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
 $id_destinatario = isset($_GET['to']) ? intval($_GET['to']) : null;
 if (!$id_destinatario) { header("Location: index.php"); exit; }
 
-// Recuperiamo il nome di chi stiamo votando
+// Recuperiamo il nome del venditore per mostrarlo nel titolo
 $st_u = $conn->prepare("SELECT nome FROM Utenti WHERE IdUtente = ?");
 $st_u->bind_param("i", $id_destinatario);
 $st_u->execute();
@@ -21,6 +21,7 @@ $dest = $st_u->get_result()->fetch_assoc();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debook - Lascia Feedback</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .feedback-box { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; }
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; margin: 20px 0; }
@@ -33,23 +34,20 @@ $dest = $st_u->get_result()->fetch_assoc();
 <body>
     <div class="feedback-box">
         <h2 style="font-family:'Arial Black';">VALUTA <?php echo strtoupper($dest['nome']); ?></h2>
-        <p style="color:#777;">Com'è andata la tua esperienza?</p>
-
         <form action="lascia_feedback_controller.php" method="POST">
-            <input type="hidden" name="id_destinatario" value="<?php echo $id_destinatario; ?>">
+            <input type="hidden" name="IdDestinatario" value="<?php echo $id_destinatario; ?>">
             
             <div class="star-rating">
-                <input type="radio" id="star5" name="NStelle" value="5" required><label for="star5">★</label>
-                <input type="radio" id="star4" name="NStelle" value="4"><label for="star4">★</label>
-                <input type="radio" id="star3" name="NStelle" value="3"><label for="star3">★</label>
-                <input type="radio" id="star2" name="NStelle" value="2"><label for="star2">★</label>
-                <input type="radio" id="star1" name="NStelle" value="1"><label for="star1">★</label>
+                <input type="radio" id="star5" name="voto" value="5" required><label for="star5">★</label>
+                <input type="radio" id="star4" name="voto" value="4"><label for="star4">★</label>
+                <input type="radio" id="star3" name="voto" value="3"><label for="star3">★</label>
+                <input type="radio" id="star2" name="voto" value="2"><label for="star2">★</label>
+                <input type="radio" id="star1" name="voto" value="1"><label for="star1">★</label>
             </div>
 
-            <textarea name="messaggio" rows="4" placeholder="Scrivi un piccolo commento sulla trattativa..."></textarea>
+            <textarea name="commento" rows="4" placeholder="Com'è andata la trattativa?" required></textarea>
             
-            <button type="submit" class="btn-submit" style="width:100%;">INVIA RECENSIONE</button>
-            <a href="chat.php?with=<?php echo $id_destinatario; ?>" style="display:block; margin-top:15px; color:#aaa; text-decoration:none; font-size:0.8rem;">Annulla</a>
+            <button type="submit" class="btn-submit" style="width:100%;">INVIA FEEDBACK</button>
         </form>
     </div>
 </body>
