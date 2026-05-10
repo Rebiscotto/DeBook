@@ -164,10 +164,78 @@ $lista_chat = $stmt_l->get_result();
         </div>
     </div>
 
-    <script>
-        // Scroll automatico in fondo alla chat al caricamento
-        var objDiv = document.getElementById("chatBox");
-        if(objDiv) objDiv.scrollTop = objDiv.scrollHeight;
+    
+        <script>
+        const chatBox = document.getElementById("chatBox");
+        const chatForm = document.querySelector(".chat-input-bar");
+        const msgInput = document.querySelector("input[name='messaggio']");
+        
+        // 1. Richiesta Permesso Notifiche al primo caricamento
+        document.addEventListener('DOMContentLoaded', function() {
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+            if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        <?php if($chat_con): ?>
+            let messageCount = chatBox ? chatBox.children.length : 0;
+
+            // 2. Funzione per caricare i messaggi in tempo reale
+            function loadMessages() {
+                fetch('fetch_messages.php?with=<?php echo $chat_con; ?>')
+                .then(response => response.text())
+                .then(html => {
+                    // Contiamo quanti messaggi arrivano dal server
+                    let tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    let newCount = tempDiv.querySelectorAll('.msg').length;
+
+                    // Se ci sono messaggi NUOVI
+                    if (newCount > messageCount) {
+                        chatBox.innerHTML = html;
+                        chatBox.scrollTop = chatBox.scrollHeight; // Scroll automatico in basso
+                        
+                        // Controllo per le NOTIFICHE: l'ultimo messaggio è di chi lo riceve?
+                        let lastMsg = tempDiv.lastElementChild;
+                        if(lastMsg && lastMsg.classList.contains('received')) {
+                            // Lancia la notifica del telefono/PC
+                            if ("Notification" in window && Notification.permission === "granted") {
+                                new Notification("Debook", {
+                                    body: "Hai ricevuto un nuovo messaggio!",
+                                    icon: "immagini/tastologo.png"
+                                });
+                            }
+                        }
+                        messageCount = newCount;
+                    } else if (chatBox.innerHTML.trim() === "") {
+                        // Se la chat era vuota al caricamento iniziale
+                        chatBox.innerHTML = html;
+                    }
+                });
+            }
+
+            // Esegui il controllo ogni 2.5 secondi
+            setInterval(loadMessages, 2500);
+
+            // 3. Invio Messaggio SENZA ricaricare la pagina (AJAX)
+            if(chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Blocca il ricaricamento della pagina
+                    
+                    let formData = new FormData(chatForm);
+                    
+                    fetch('send_message.php', {
+                        method: 'POST',
+                        body: formData
+                    }).then(() => {
+                        msgInput.value = ''; // Svuota la casella di testo
+                        loadMessages(); // Ricarica subito la chat per far apparire il tuo messaggio
+                    });
+                });
+            }
+        <?php endif; ?>
     </script>
+    
 </body>
 </html>

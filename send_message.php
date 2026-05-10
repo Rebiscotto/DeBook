@@ -20,6 +20,6 @@ if (!empty($testo)) {
     $stmt->execute();
 }
 
-header("Location: chat.php?with=" . $id_destinatario);
-exit;
+//header("Location: chat.php?with=" . $id_destinatario);
+//exit;
 ?>
