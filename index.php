@@ -1,12 +1,11 @@
 <?php
 session_start();
-// Se l'utente NON è loggato, lo rimandiamo alla landing page (schermata.php)
+// Controllo accesso: se non è loggato va alla presentazione
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: schermata.php");
     exit;
 }
 
-// Recupero dati dalla sessione
 $nome_utente = $_SESSION["nome"] ?? "Utente";
 $cognome_utente = $_SESSION["cognome"] ?? "";
 $email_utente = $_SESSION["email"] ?? "";
@@ -17,19 +16,15 @@ $email_utente = $_SESSION["email"] ?? "";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debook - Dashboard</title>
+    <title>Debook - Area Personale</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* CSS specifico per il layout centrato della Index */
-        body {
-            overflow-x: hidden;
-            background-color: var(--bg-page);
-        }
+        body { background-color: var(--bg-page); overflow-x: hidden; }
 
         .center-content {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -38,115 +33,113 @@ $email_utente = $_SESSION["email"] ?? "";
             text-align: center;
         }
 
-        /* Banner Titolo (Stile Schermata.php) */
+        /* Banner Titolo */
         .banner-header {
             background-color: var(--white);
             padding: 15px;
             border-radius: 60px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             width: 100%;
             box-shadow: var(--shadow);
         }
-
         .banner-inner {
             background-color: var(--accent-beige);
             padding: 25px 20px;
             border-radius: 50px;
         }
-
         .banner-inner h1 {
-            font-size: clamp(1.2rem, 5vw, 2.2rem);
+            font-size: clamp(1.1rem, 4vw, 2rem);
             color: var(--dark-text);
             text-transform: uppercase;
             margin: 0;
         }
 
-        /* Sezione Azioni (I tasti Vendi e Compra) */
-        .action-container {
+        /* SEZIONE OPERATIVA: VENDI - IMMAGINE - COMPRA */
+        .action-row {
             display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            width: 100%;
+            align-items: center;
             justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 50px;
         }
 
-        .btn-action {
+        .btn-main {
             flex: 1;
-            max-width: 250px;
+            max-width: 200px;
             background-color: var(--white);
-            border: 5px solid var(--dark-text);
+            border: 4px solid var(--dark-text);
             color: var(--dark-text);
-            padding: 25px 10px;
+            padding: 20px 10px;
             border-radius: 30px;
             font-family: 'Arial Black', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: 0.3s;
             box-shadow: var(--shadow);
         }
-
-        .btn-action:hover {
+        .btn-main:hover {
             background-color: var(--dark-text);
             color: var(--white);
             transform: scale(1.05);
         }
 
-        .btn-action i {
-            display: block;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .main-img-container {
+            flex: 1.5;
+            max-width: 400px;
+        }
+        .main-img-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            mix-blend-mode: multiply;
         }
 
-        /* Menu Dropdown */
-        .user-dropdown {
-            position: absolute;
-            top: 70px;
-            right: 30px;
-            background: white;
-            border-radius: 15px;
+        /* SEZIONE DESCRIZIONE (stile Card) */
+        .info-section {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 30px;
             box-shadow: var(--shadow);
-            width: 260px;
-            display: none;
-            flex-direction: column;
-            z-index: 2000;
-            overflow: hidden;
             text-align: left;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .info-section h2 {
+            border-bottom: 3px solid var(--accent-beige);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
+        .value-list { list-style: none; padding: 0; }
+        .value-list li { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px; font-family: Arial; }
+
+        /* Dropdown */
+        .user-dropdown {
+            position: absolute; top: 70px; right: 30px; background: white; border-radius: 15px; 
+            box-shadow: var(--shadow); width: 260px; display: none; flex-direction: column; z-index: 2000;
+        }
         .user-dropdown.active { display: flex; }
-
-        .dropdown-links a {
-            padding: 15px;
-            text-decoration: none;
-            color: var(--dark-text);
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: Arial, sans-serif;
-        }
-
+        .dropdown-links a { padding: 15px; text-decoration: none; color: var(--dark-text); display: flex; align-items: center; gap: 12px; font-family: Arial; border-bottom: 1px solid #eee; }
         .dropdown-links a:hover { background-color: var(--accent-beige); }
 
-        @media (max-width: 600px) {
-            .action-container { flex-direction: column; align-items: center; }
-            .btn-action { width: 100%; }
+        @media (max-width: 768px) {
+            .action-row { flex-direction: column; }
+            .btn-main { width: 100%; max-width: none; order: 2; }
+            .main-img-container { order: 1; margin-bottom: 20px; }
         }
     </style>
 </head>
 <body>
 
     <header class="header-nav">
-        <a href="index.php" class="logo-link">
-            <img src="immagini/tastologo.png" alt="Debook Logo">
-        </a>
-        
+        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
         <div style="position: relative;">
             <i class="fa-solid fa-circle-user" style="font-size: 2.5rem; cursor: pointer;" id="userBtn"></i>
             <div class="user-dropdown" id="userDropdown">
-                <div style="padding: 15px; background: #f8f8f8; border-bottom: 1px solid #eee;">
-                    <div style="font-weight: bold;"><?php echo htmlspecialchars($nome_utente . " " . $cognome_utente); ?></div>
-                    <div style="font-size: 0.8rem; color: #777;"><?php echo htmlspecialchars($email_utente); ?></div>
+                <div style="padding: 15px; background: #f8f8f8; border-bottom: 1px solid #eee; font-family: Arial;">
+                    <strong><?php echo htmlspecialchars($nome_utente . " " . $cognome_utente); ?></strong>
                 </div>
                 <div class="dropdown-links">
                     <a href="dashboard.php"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
@@ -166,42 +159,45 @@ $email_utente = $_SESSION["email"] ?? "";
             </div>
         </div>
 
-        <h2 style="margin: 20px 0; color: #555;">Benvenuto, <?php echo htmlspecialchars($nome_utente); ?>! Cosa vuoi fare oggi?</h2>
-
-        <div class="action-container">
-            <a href="vendi.php" class="btn-action">
-                <i class="fa-solid fa-plus-circle"></i>
-                VENDI
-            </a>
-            <a href="compra.php" class="btn-action">
-                <i class="fa-solid fa-search"></i>
-                COMPRA
-            </a>
+        <div class="action-row">
+            <a href="vendi.php" class="btn-main">VENDI</a>
+            
+            <div class="main-img-container">
+                <img src="immagini/home.jpg" alt="Debook Students">
+            </div>
+            
+            <a href="compra.php" class="btn-main">COMPRA</a>
         </div>
 
-        <div style="margin-top: 40px; width: 100%; max-width: 600px;">
-            <p style="font-family: Arial; line-height: 1.5; color: #666;">
-                Gestisci i tuoi annunci, parla con gli acquirenti e tieni traccia dei tuoi scambi scolastici direttamente dalla tua area personale.
+        <div class="info-section">
+            <h2>Perché nasce DeBook?</h2>
+            <p style="font-family: Arial; margin-bottom: 20px;">
+                L’idea di DeBook nasce per risolvere il <strong>paradosso dei libri scolastici</strong>: 
+                spese ingenti per le famiglie ogni anno, mentre migliaia di volumi restano inutilizzati negli armadi.
             </p>
-            <a href="dashboard.php" class="btn-submit" style="margin-top: 20px; text-decoration: none;">VAI ALLA DASHBOARD</a>
+
+            <div style="background: var(--bg-page); padding: 20px; border-left: 5px solid var(--accent-beige); margin-bottom: 25px; border-radius: 0 15px 15px 0;">
+                <h3 style="margin-top: 0; font-size: 1.1rem;">Dalla scuola, per la scuola</h3>
+                <p style="font-family: Arial; font-size: 0.95rem; margin: 0;">
+                    DeBook trasforma l'istituto in una comunità collaborativa, portando la semplicità dello scambio online tra i corridoi.
+                </p>
+            </div>
+
+            <ul class="value-list">
+                <li><span>🌱</span> <strong>Economia Circolare:</strong> Allunghiamo la vita dei libri e riduciamo l'impatto ambientale.</li>
+                <li><span>💰</span> <strong>Accessibilità:</strong> Abbattiamo i costi scolastici rendendo lo studio alla portata di tutti.</li>
+                <li><span>🤝</span> <strong>Sicurezza:</strong> Scambi diretti e a mano tra compagni di istituto.</li>
+            </ul>
         </div>
 
+        <a href="dashboard.php" class="btn-submit" style="text-decoration: none;">VAI ALLA TUA DASHBOARD</a>
     </div>
 
     <script>
-        const userBtn = document.getElementById('userBtn');
-        const userDropdown = document.getElementById('userDropdown');
-
-        userBtn.onclick = (e) => {
-            userDropdown.classList.toggle('active');
-            e.stopPropagation();
-        };
-
-        window.onclick = () => {
-            if (userDropdown.classList.contains('active')) {
-                userDropdown.classList.remove('active');
-            }
-        };
+        const btn = document.getElementById('userBtn');
+        const menu = document.getElementById('userDropdown');
+        btn.onclick = (e) => { menu.classList.toggle('active'); e.stopPropagation(); };
+        window.onclick = () => menu.classList.remove('active');
     </script>
 </body>
 </html>
