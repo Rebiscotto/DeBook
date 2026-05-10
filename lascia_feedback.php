@@ -39,14 +39,14 @@ $dest = $st_u->get_result()->fetch_assoc();
             <input type="hidden" name="id_destinatario" value="<?php echo $id_destinatario; ?>">
             
             <div class="star-rating">
-                <input type="radio" id="star5" name="voto" value="5" required><label for="star5">★</label>
-                <input type="radio" id="star4" name="voto" value="4"><label for="star4">★</label>
-                <input type="radio" id="star3" name="voto" value="3"><label for="star3">★</label>
-                <input type="radio" id="star2" name="voto" value="2"><label for="star2">★</label>
-                <input type="radio" id="star1" name="voto" value="1"><label for="star1">★</label>
+                <input type="radio" id="star5" name="NStelle" value="5" required><label for="star5">★</label>
+                <input type="radio" id="star4" name="NStelle" value="4"><label for="star4">★</label>
+                <input type="radio" id="star3" name="NStelle" value="3"><label for="star3">★</label>
+                <input type="radio" id="star2" name="NStelle" value="2"><label for="star2">★</label>
+                <input type="radio" id="star1" name="NStelle" value="1"><label for="star1">★</label>
             </div>
 
-            <textarea name="commento" rows="4" placeholder="Scrivi un piccolo commento sulla trattativa..."></textarea>
+            <textarea name="messaggio" rows="4" placeholder="Scrivi un piccolo commento sulla trattativa..."></textarea>
             
             <button type="submit" class="btn-submit" style="width:100%;">INVIA RECENSIONE</button>
             <a href="chat.php?with=<?php echo $id_destinatario; ?>" style="display:block; margin-top:15px; color:#aaa; text-decoration:none; font-size:0.8rem;">Annulla</a>

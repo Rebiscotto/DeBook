@@ -15,7 +15,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
 // 2. Calcolo Media Feedback
 
-$query_f = "SELECT AVG(voto) as media, COUNT(*) as totale FROM feedback WHERE iddestinatario = ?";
+$query_f = "SELECT AVG(NStelle) as media, COUNT(*) as totale FROM Feedback WHERE idDestinatario = ?";
 $stmt_f = $conn->prepare($query_f);
 $stmt_f->bind_param("i", $id_profilo);
 $stmt_f->execute();
@@ -70,8 +70,8 @@ $media = round($feedback['media'], 1);
             if($res_list->num_rows > 0):
                 while($fb = $res_list->fetch_assoc()): ?>
                     <div class="fb-item">
-                        <strong><?php echo $fb['nome']; ?>:</strong> <?php echo htmlspecialchars($fb['Commento']); ?>
-                        <div style="color:#f39c12; font-size: 0.8rem;"><?php echo str_repeat("★", $fb['Voto']); ?></div>
+                        <strong><?php echo $fb['nome']; ?>:</strong> <?php echo htmlspecialchars($fb['messaggio']); ?>
+                        <div style="color:#f39c12; font-size: 0.8rem;"><?php echo str_repeat("★", $fb['NStelle']); ?></div>
                     </div>
                 <?php endwhile;
             else: echo "<p style='color:#ccc;'>Nessun commento ancora.</p>"; endif; ?>
