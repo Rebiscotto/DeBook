@@ -14,7 +14,8 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
 // 2. Calcolo Media Feedback
-$query_f = "SELECT AVG(Voto) as media, COUNT(*) as totale FROM Feedback WHERE IdDestinatario = ?";
+
+$query_f = "SELECT AVG(voto) as media, COUNT(*) as totale FROM feedback WHERE iddestinatario = ?";
 $stmt_f = $conn->prepare($query_f);
 $stmt_f->bind_param("i", $id_profilo);
 $stmt_f->execute();

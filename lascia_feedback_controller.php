@@ -1,17 +1,37 @@
 <?php
+// Attiviamo gli errori per vedere cosa succede se fallisce ancora
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
     $mittente = $_SESSION['id'];
-    $destinatario = $_POST['id_destinatario'];
+    $destinatario = intval($_POST['id_destinatario']);
     $voto = intval($_POST['voto']);
     $commento = trim($_POST['commento']);
 
-    $stmt = $conn->prepare("INSERT INTO Feedback (IdMittente, IdDestinatario, Voto, Commento) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiis", $mittente, $destinatario, $voto, $commento);
-    $stmt->execute();
+    if($destinatario > 0 && $voto > 0) {
+        // NOTA: Qui uso i nomi delle colonne TUTTI MINUSCOLI come nel tuo screenshot
+        $stmt = $conn->prepare("INSERT INTO feedback (idmittente, iddestinatario, voto, commento) VALUES (?, ?, ?, ?)");
+        
+        if ($stmt === false) {
+            die("Errore preparazione: " . $conn->error);
+        }
 
-    header("Location: profilo.php?id=" . $destinatario);
-    exit;
+        $stmt->bind_param("iiis", $mittente, $destinatario, $voto, $commento);
+        
+        if ($stmt->execute()) {
+            header("Location: profilo.php?id=" . $destinatario);
+            exit;
+        } else {
+            die("Errore esecuzione: " . $stmt->error);
+        }
+    } else {
+        die("Dati non validi.");
+    }
+} else {
+    die("Accesso negato.");
 }
+?>
