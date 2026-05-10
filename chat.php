@@ -11,9 +11,9 @@ if (!isset($_SESSION["loggedin"])) {
 $id_utente = $_SESSION["id"];
 $chat_con = isset($_GET['with']) ? intval($_GET['with']) : null;
 
-// Configurazione Crittografia (Deve essere IDENTICA a send_message.php)
+// Configurazione Crittografia
 $key = "Debook_Secret_2026_Safe";
-$iv = "1234567890123456"; // 16 caratteri
+$iv = "1234567890123456"; 
 
 // 1. Recupero dati dell'interlocutore
 $interlocutore = null;
@@ -24,7 +24,7 @@ if ($chat_con) {
     $interlocutore = $stmt->get_result()->fetch_assoc();
 }
 
-// 2. Recupero lista delle conversazioni attive per la sidebar
+// 2. Recupero lista delle conversazioni attive
 $query_lista = "SELECT DISTINCT U.IdUtente, U.nome, U.cognome 
                 FROM Utenti U 
                 JOIN Messaggi M ON (U.IdUtente = M.IdMittente OR U.IdUtente = M.IdDestinatario) 
@@ -45,19 +45,7 @@ $lista_chat = $stmt_l->get_result();
     <link rel="stylesheet" href="style.css">
     <style>
         body { background-color: var(--bg-page); margin: 0; }
-        .btn-vota { font-size: 0.7rem; background: var(--accent-beige); padding: 5px 12px; border-radius: 10px; text-decoration: none; color: black; font-weight: bold; }
-        
-        .chat-layout { 
-            display: flex; 
-            width: 95%; 
-            max-width: 1100px; 
-            height: 85vh; 
-            margin: 20px auto; 
-            background: white; 
-            border-radius: 20px; 
-            box-shadow: var(--shadow); 
-            overflow: hidden; 
-        }
+        .chat-layout { display: flex; width: 95%; max-width: 1100px; height: 85vh; margin: 20px auto; background: white; border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
 
         /* SIDEBAR */
         .chat-sidebar { width: 30%; background: #f9f9f9; border-right: 1px solid #ddd; overflow-y: auto; }
@@ -67,68 +55,45 @@ $lista_chat = $stmt_l->get_result();
 
         /* AREA MESSAGGI */
         .chat-main { width: 70%; display: flex; flex-direction: column; background: #fff; }
-        .chat-header { padding: 15px 25px; border-bottom: 1px solid #eee; font-family: Arial; font-weight: bold; display: flex; justify-content: space-between; }
+        .chat-header-top { padding: 15px 25px; border-bottom: 1px solid #eee; font-family: Arial; display: flex; justify-content: space-between; align-items: center; }
         .messages-area { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
         
-        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-family: Arial; font-size: 0.95rem; line-height: 1.4; }
+        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-family: Arial; font-size: 0.95rem; position: relative; }
         .sent { background: var(--accent-beige); align-self: flex-end; border-bottom-right-radius: 5px; }
         .received { background: #e2e2e2; align-self: flex-start; border-bottom-left-radius: 5px; }
 
-        /* INPUT BAR FISSA */
-        .chat-input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; background: white; }
-        .chat-input-bar input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 2px solid #eee; outline: none; font-size: 16px; font-family: Arial; }
+        /* Messaggio Eliminato */
+        .msg-deleted { opacity: 0.6; font-style: italic; color: #888; }
+        
+        .btn-delete { color: #ff4d4d; font-size: 0.7rem; margin-left: 8px; text-decoration: none; opacity: 0; transition: 0.3s; }
+        .msg:hover .btn-delete { opacity: 1; }
 
-        /* TASTO INVIO ROTONDO - Corretto per Mobile */
-        .btn-send-chat {
-            background-color: var(--dark-text);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0; /* Impedisce la deformazione su mobile */
-            transition: transform 0.2s;
-        }
-        .btn-send-chat:hover { transform: scale(1.1); }
+        /* INPUT BAR */
+        .chat-input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
+        .chat-input-bar input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 2px solid #eee; outline: none; }
+        .btn-send-chat { background-color: var(--dark-text); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; }
 
-        /* =======================================
-           RESPONSIVE MOBILE
-           ======================================= */
+        .btn-vota { font-size: 0.75rem; background: var(--accent-beige); padding: 8px 15px; border-radius: 50px; text-decoration: none; color: black; font-weight: bold; border: 1px solid #ddd; }
+
         @media (max-width: 768px) {
-            .chat-layout { flex-direction: column; width: 100%; height: 90vh; margin: 0; border-radius: 0; }
-            .chat-sidebar { width: 100%; height: 15%; border-right: none; border-bottom: 2px solid #ddd; display: flex; overflow-x: auto; }
-            .user-item { border-bottom: none; border-right: 1px solid #eee; min-width: 140px; padding: 10px; text-align: center; font-size: 0.8rem; }
+            .chat-layout { flex-direction: column; width: 100%; height: 90vh; margin: 0; }
+            .chat-sidebar { width: 100%; height: 15%; display: flex; overflow-x: auto; }
             .chat-main { width: 100%; height: 85%; }
-            .chat-input-bar { padding: 10px; }
         }
     </style>
 </head>
 <body>
 
     <header class="header-nav">
-        <div class="chat-header" style="display:flex; justify-content:space-between; align-items:center;">
-    <a href="profilo.php?id=<?php echo $chat_con; ?>" style="text-decoration:none; color:black;">
-        <i class="fa-solid fa-circle-user"></i> 
-        <strong><?php echo htmlspecialchars($interlocutore['nome']); ?></strong> 
-        <small style="color:#888; font-size:0.7rem;">(Vedi Profilo)</small>
-    </a>
-    
-    <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">
-        Lascia Feedback
-    </a>
-</div>
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-        <a href="index.php" style="text-decoration:none; color:black;"><i class="fa-solid fa-house"></i></a>
-        <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">Vota Venditore</a>
+        <div class="nav-right">
+            <a href="index.php" style="text-decoration:none; color:black; margin-right: 15px;"><i class="fa-solid fa-house"></i></a>
+        </div>
     </header>
 
     <div class="chat-layout">
         <div class="chat-sidebar">
-            <div class="sidebar-header">Chat</div>
+            <div class="sidebar-header">Conversazioni</div>
             <?php while($l = $lista_chat->fetch_assoc()): ?>
                 <a href="chat.php?with=<?php echo $l['IdUtente']; ?>" class="user-item <?php echo ($chat_con == $l['IdUtente']) ? 'active' : ''; ?>">
                     <i class="fa-solid fa-user-circle"></i> <?php echo htmlspecialchars($l['nome']); ?>
@@ -138,14 +103,21 @@ $lista_chat = $stmt_l->get_result();
 
         <div class="chat-main">
             <?php if ($interlocutore): ?>
-                <div class="chat-header">
-                    <span>Chat con <?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></span>
-                    <span style="font-size: 0.7rem; color: #27ae60;"><i class="fa-solid fa-lock"></i> Crittografata</span>
+                <div class="chat-header-top">
+                    <div>
+                        <a href="profilo.php?id=<?php echo $chat_con; ?>" style="text-decoration:none; color:black; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-circle-user" style="font-size: 1.5rem;"></i>
+                            <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
+                            <small style="color:#888;">(Vedi Profilo)</small>
+                        </a>
+                    </div>
+                    <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">
+                        <i class="fa-solid fa-star"></i> Vota Venditore
+                    </a>
                 </div>
 
                 <div class="messages-area" id="chatBox">
                     <?php
-                    // Recupero messaggi ordinati per data (ASC = vecchi sopra, nuovi sotto)
                     $q = "SELECT * FROM Messaggi WHERE (IdMittente = ? AND IdDestinatario = ?) OR (IdMittente = ? AND IdDestinatario = ?) ORDER BY data_invio ASC";
                     $st = $conn->prepare($q);
                     $st->bind_param("iiii", $id_utente, $chat_con, $chat_con, $id_utente);
@@ -153,11 +125,29 @@ $lista_chat = $stmt_l->get_result();
                     $res = $st->get_result();
 
                     while($m = $res->fetch_assoc()):
-                        // Decriptazione
-                        $dec = openssl_decrypt($m['testo_criptato'], 'aes-256-cbc', $key, 0, $iv);
+                        $is_mio = ($m['IdMittente'] == $id_utente);
+                        $is_eliminato = (isset($m['eliminato']) && $m['eliminato'] == 1);
+                        
+                        // Decriptazione solo se non eliminato
+                        if (!$is_eliminato) {
+                            $testo = openssl_decrypt($m['testo_criptato'], 'aes-256-cbc', $key, 0, $iv);
+                        } else {
+                            $testo = "Questo messaggio è stato eliminato";
+                        }
                     ?>
-                        <div class="msg <?php echo ($m['IdMittente'] == $id_utente) ? 'sent' : 'received'; ?>">
-                            <?php echo htmlspecialchars($dec); ?>
+                        <div class="msg <?php echo $is_mio ? 'sent' : 'received'; ?> <?php echo $is_eliminato ? 'msg-deleted' : ''; ?>">
+                            <span>
+                                <?php if($is_eliminato) echo '<i class="fa-solid fa-ban"></i> '; ?>
+                                <?php echo htmlspecialchars($testo); ?>
+                            </span>
+
+                            <?php if ($is_mio && !$is_eliminato): ?>
+                                <a href="elimina_messaggio.php?id=<?php echo $m['IdMessaggio']; ?>" 
+                                   onclick="return confirm('Vuoi eliminare questo messaggio?')" 
+                                   class="btn-delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     <?php endwhile; ?>
                 </div>
@@ -169,86 +159,41 @@ $lista_chat = $stmt_l->get_result();
                 </form>
 
             <?php else: ?>
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; font-family:Arial;">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc;">
                     <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:15px;"></i>
-                    <p>Seleziona una conversazione</p>
+                    <p>Seleziona una chat per iniziare</p>
                 </div>
             <?php endif; ?>
         </div>
     </div>
 
-    
-        <script>
+    <script>
         const chatBox = document.getElementById("chatBox");
-        const chatForm = document.querySelector(".chat-input-bar");
-        const msgInput = document.querySelector("input[name='messaggio']");
-        
-        // 1. Richiesta Permesso Notifiche al primo caricamento
-        document.addEventListener('DOMContentLoaded', function() {
-            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
-            if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-        });
+        if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
 
         <?php if($chat_con): ?>
-            let messageCount = chatBox ? chatBox.children.length : 0;
-
-            // 2. Funzione per caricare i messaggi in tempo reale
             function loadMessages() {
                 fetch('fetch_messages.php?with=<?php echo $chat_con; ?>')
                 .then(response => response.text())
                 .then(html => {
-                    // Contiamo quanti messaggi arrivano dal server
-                    let tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
-                    let newCount = tempDiv.querySelectorAll('.msg').length;
-
-                    // Se ci sono messaggi NUOVI
-                    if (newCount > messageCount) {
+                    if (chatBox.innerHTML !== html) {
                         chatBox.innerHTML = html;
-                        chatBox.scrollTop = chatBox.scrollHeight; // Scroll automatico in basso
-                        
-                        // Controllo per le NOTIFICHE: l'ultimo messaggio è di chi lo riceve?
-                        let lastMsg = tempDiv.lastElementChild;
-                        if(lastMsg && lastMsg.classList.contains('received')) {
-                            // Lancia la notifica del telefono/PC
-                            if ("Notification" in window && Notification.permission === "granted") {
-                                new Notification("Debook", {
-                                    body: "Hai ricevuto un nuovo messaggio!",
-                                    icon: "immagini/tastologo.png"
-                                });
-                            }
-                        }
-                        messageCount = newCount;
-                    } else if (chatBox.innerHTML.trim() === "") {
-                        // Se la chat era vuota al caricamento iniziale
-                        chatBox.innerHTML = html;
+                        chatBox.scrollTop = chatBox.scrollHeight;
                     }
                 });
             }
+            setInterval(loadMessages, 3000);
 
-            // Esegui il controllo ogni 2.5 secondi
-            setInterval(loadMessages, 2500);
-
-            // 3. Invio Messaggio SENZA ricaricare la pagina (AJAX)
-            if(chatForm) {
-                chatForm.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Blocca il ricaricamento della pagina
-                    
-                    let formData = new FormData(chatForm);
-                    
-                    fetch('send_message.php', {
-                        method: 'POST',
-                        body: formData
-                    }).then(() => {
-                        msgInput.value = ''; // Svuota la casella di testo
-                        loadMessages(); // Ricarica subito la chat per far apparire il tuo messaggio
-                    });
+            document.querySelector(".chat-input-bar").addEventListener('submit', function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+                fetch('send_message.php', { method: 'POST', body: formData })
+                .then(() => {
+                    this.querySelector("input[name='messaggio']").value = '';
+                    loadMessages();
                 });
-            }
+            });
         <?php endif; ?>
     </script>
-    
 </body>
 </html>

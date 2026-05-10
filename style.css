@@ -223,3 +223,37 @@ input:focus {
     h1 { font-size: 1.5rem; }
     .btn-submit { width: 100%; } /* Pulsanti a tutta larghezza su telefoni piccoli */
 }
+
+/* Stile per il messaggio quando viene rimosso */
+.msg-deleted {
+    opacity: 0.6;
+    background-color: #f0f0f0 !important; /* Grigio chiaro per i cancellati */
+    border: 1px dashed #ccc;
+}
+
+.msg-deleted span {
+    color: #888;
+    font-style: italic;
+}
+
+/* Il cestino rosso */
+.btn-delete {
+    color: #ff4d4d;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0; /* Lo nascondiamo di base */
+    transition: opacity 0.3s ease;
+}
+
+/* Facciamo apparire il cestino solo quando passiamo il mouse sopra il messaggio */
+.msg:hover .btn-delete {
+    opacity: 1;
+}
+
+/* Icona ban nel messaggio eliminato */
+.fa-ban {
+    margin-right: 5px;
+    font-size: 0.8rem;
+}
