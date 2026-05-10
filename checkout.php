@@ -140,36 +140,30 @@ if (!$libro) {
         },
 
         // 2. Cattura del pagamento dopo l'approvazione dell'utente
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                console.log("Pagamento catturato con successo.");
-
-                // Inviamo i dati al nostro server via AJAX
-                return fetch('conferma_pagamento.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id_libro: <?php echo $id_libro; ?>,
-                        orderID: data.orderID,
-                        payerEmail: details.payer.email_address
-                    })
-                })
-                .then(response => response.json())
-                .then(res => {
-                    if(res.success) {
-                        alert('OTTIMO! Pagamento effettuato con successo. Riceverai un messaggio in chat dal venditore.');
-                        window.location.href = 'profilo.php';
-                    } else {
-                        alert('Errore nel database: ' + res.error);
-                    }
-                })
-                .catch(err => {
-                    console.error("Errore Fetch:", err);
-                    alert("Il pagamento è avvenuto ma c'è stato un problema nel registrare l'ordine. Contatta l'assistenza.");
-                });
-            });
-        },
-
+     onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+        return fetch('conferma_pagamento.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_libro: <?php echo $id_libro; ?> })
+        })
+        .then(response => response.text()) // Leggiamo come testo per vedere errori PHP
+        .then(text => {
+            try {
+                const res = JSON.parse(text);
+                if(res.success) {
+                    alert('PAGAMENTO OK!');
+                    window.location.href = 'profilo.php';
+                } else {
+                    alert('Errore Server: ' + res.error);
+                }
+            } catch(e) {
+                // Se c'è un errore PHP (es. un punto e virgola mancante), lo vedrai qui
+                alert("Errore critico del server (controlla il file PHP): " + text);
+            }
+        });
+    });
+},
         // Gestione cancellazione
         onCancel: function (data) {
             alert("Hai annullato il pagamento. Puoi riprovare o scegliere Contanti.");
