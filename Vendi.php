@@ -74,8 +74,11 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
 
                 <div class="input-group full-width">
-                    <label>FOTO (Puoi caricarne più di una)</label>
-                    <input type="file" name="immagini[]" accept="image/*" multiple required>
+                    <label>FOTO DEL LIBRO (Seleziona una o più foto)</label>
+                    <input type="file" name="immagini[]" accept="image/*" multiple required id="fotoInput">
+                    <p style="font-size: 0.8rem; color: #888; margin-top: 5px; font-family: Arial;">
+                    <i class="fa-solid fa-circle-info"></i> <strong>Consiglio:</strong> La prima foto che selezioni sarà quella visualizzata nel mercatino.
+                    </p>
                 </div>
             </div>
             <button type="submit" class="btn-submit" style="width:100%; margin-top:30px;">PUBBLICA ORA</button>
