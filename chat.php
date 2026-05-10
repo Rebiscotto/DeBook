@@ -167,33 +167,77 @@ $lista_chat = $stmt_l->get_result();
         </div>
     </div>
 
-    <script>
-        const chatBox = document.getElementById("chatBox");
-        if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+   <script>
+    const chatBox = document.getElementById("chatBox");
+    const chatForm = document.querySelector(".chat-input-bar");
+    const msgInput = document.querySelector("input[name='messaggio']");
+    
+    let isHoveringMessage = false;
 
-        <?php if($chat_con): ?>
-            function loadMessages() {
-                fetch('fetch_messages.php?with=<?php echo $chat_con; ?>')
-                .then(response => response.text())
-                .then(html => {
-                    if (chatBox.innerHTML !== html) {
-                        chatBox.innerHTML = html;
+    // DELEGAZIONE DEGLI EVENTI
+    // Ascoltiamo i movimenti del mouse su tutto il chatBox
+    if(chatBox) {
+        chatBox.addEventListener('mouseover', function(e) {
+            // Se il mouse è sopra un messaggio inviato (o un suo figlio come il testo)
+            if(e.target.closest('.sent:not(.msg-deleted)')) {
+                isHoveringMessage = true;
+            }
+        });
+
+        chatBox.addEventListener('mouseout', function(e) {
+            // Se il mouse esce davvero dal messaggio
+            if(e.target.closest('.sent:not(.msg-deleted)')) {
+                isHoveringMessage = false;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    <?php if($chat_con): ?>
+        function loadMessages() {
+            // Se l'utente ha il mouse sopra un cestino, NON aggiornare l'HTML
+            if (isHoveringMessage) return; 
+
+            fetch('fetch_messages.php?with=<?php echo $chat_con; ?>')
+            .then(response => response.text())
+            .then(html => {
+                // Puliamo l'HTML ricevuto per il confronto
+                const currentHTML = chatBox.innerHTML.trim();
+                const newHTML = html.trim();
+
+                // Aggiorna solo se c'è un cambiamento REALE nei messaggi
+                if (currentHTML !== newHTML) {
+                    chatBox.innerHTML = html;
+                    
+                    // Scroll automatico solo se siamo già vicini al fondo
+                    if (chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 100) {
                         chatBox.scrollTop = chatBox.scrollHeight;
                     }
-                });
-            }
-            setInterval(loadMessages, 3000);
+                }
+            })
+            .catch(err => console.error("Errore caricamento:", err));
+        }
 
-            document.querySelector(".chat-input-bar").addEventListener('submit', function(e) {
+        // Controllo ogni 3 secondi
+        setInterval(loadMessages, 3000);
+
+        // Invio Messaggio AJAX
+        if(chatForm) {
+            chatForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                let formData = new FormData(this);
+                let formData = new FormData(chatForm);
                 fetch('send_message.php', { method: 'POST', body: formData })
                 .then(() => {
-                    this.querySelector("input[name='messaggio']").value = '';
+                    msgInput.value = '';
+                    isHoveringMessage = false; // Reset immediato per permettere l'aggiornamento
                     loadMessages();
                 });
             });
-        <?php endif; ?>
-    </script>
+        }
+    <?php endif; ?>
+</script>
 </body>
 </html>
