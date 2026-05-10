@@ -1,37 +1,39 @@
 <?php
-// Attiviamo gli errori per vedere cosa succede se fallisce ancora
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 require_once 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
-    $mittente = $_SESSION['id'];
-    $destinatario = intval($_POST['id_destinatario']);
-    $NStelle = intval($_POST['NStelle']);
-    $messaggio = trim($_POST['messaggio']);
+    
+    // Recupero i dati assicurandomi che i nomi in $_POST siano corretti
+    $IdMittente = $_SESSION['id']; 
+    $IdDestinatario = intval($_POST['IdDestinatario']); 
+    $NStelle = intval($_POST['voto']); // Il numero di stelle dal form
+    $messaggio = trim($_POST['commento']); // Il testo del feedback
+    
+    // Se non gestisci ancora le transazioni, mettiamo un valore fittizio o NULL
+    $IdTransazione = NULL; 
 
-    if($destinatario > 0 && $NStelle > 0) {
-        // NOTA: Qui uso i nomi delle colonne TUTTI MINUSCOLI come nel tuo screenshot
-        $stmt = $conn->prepare("INSERT INTO Feedback (idMittente, idDestinatario, NStelle, messaggio) VALUES (?, ?, ?, ?)");
+    if($IdDestinatario > 0 && $NStelle > 0) {
         
-        if ($stmt === false) {
-            die("Errore preparazione: " . $conn->error);
-        }
-
-        $stmt->bind_param("iiis", $Mittente, $Destinatario, $NStelle, $messaggio);
+        // Query con i tuoi nomi esatti: IdMittente, IdDestinatario, messaggio, NStelle, IdTransazione
+        $sql = "INSERT INTO Feedback (IdMittente, IdDestinatario, messaggio, NStelle, IdTransazione) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
         
-        if ($stmt->execute()) {
-            header("Location: profilo.php?id=" . $Destinatario);
-            exit;
+        if ($stmt) {
+            // "iiisi" significa: int, int, int, string, int (o NULL)
+            $stmt->bind_param("iiisi", $IdMittente, $IdDestinatario, $NStelle, $messaggio, $IdTransazione);
+            
+            if ($stmt->execute()) {
+                header("Location: profilo.php?id=" . $IdDestinatario);
+                exit;
+            } else {
+                echo "Errore esecuzione: " . $stmt->error;
+            }
         } else {
-            die("Errore esecuzione: " . $stmt->error);
+            echo "Errore database: " . $conn->error;
         }
     } else {
-        die("Dati non validi.");
+        echo "Dati mancanti o non validi.";
     }
-} else {
-    die("Accesso negato.");
 }
 ?>
