@@ -1,82 +1,136 @@
 <?php
 session_start();
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+if (!isset($_SESSION["loggedin"])) {
     header("Location: login.php");
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debook - Vendi Libro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        .form-container { max-width: 600px; margin-bottom: 50px; }
-        .radio-group { display: flex; gap: 20px; margin-top: 10px; font-family: 'Arial', sans-serif; }
-        .radio-item { display: flex; align-items: center; gap: 5px; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--bg-page);
+        }
+
+        .sell-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .sell-card {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .input-group { margin-bottom: 15px; }
+        
+        .input-group label {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #777;
+            display: block;
+            margin-bottom: 5px;
+            margin-left: 5px;
+        }
+
+        /* Stile file upload */
+        input[type="file"] {
+            background: #f8f8f8;
+            border: 2px dashed var(--accent-beige);
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
     </style>
 </head>
 <body>
+
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-        <div style="font-family: Arial;">
-            <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); margin-right: 15px;">Dashboard</a>
-            <a href="logout.php" style="color: #d32f2f; text-decoration: none;">Esci</a>
-        </div>
+        <a href="dashboard.php" style="font-family: Arial; text-decoration: none; color: var(--dark-text);">Dashboard</a>
     </header>
 
-    <div class="form-container">
-        <h2>Metti in vendita un libro</h2>
-        <p style="font-family: Arial; margin-bottom: 20px;">Inserisci i dettagli del volume per renderlo visibile agli altri studenti.</p>
-
-        <form action="vendi_controller.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="titolo">Titolo del libro</label>
-                <input type="text" id="titolo" name="titolo" required>
-            </div>
+    <div class="sell-container">
+        <div class="sell-card">
+            <h1>Metti in vendita</h1>
             
-            <div class="form-group">
-                <label for="autore">Autore</label>
-                <input type="text" id="autore" name="autore" required>
-            </div>
-
-            <div style="display: flex; gap: 15px;">
-                <div class="form-group" style="flex: 1;">
-                    <label for="materia">Materia</label>
-                    <input type="text" id="materia" name="materia" required placeholder="es. Matematica">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label for="isbn">Codice ISBN (opzionale)</label>
-                    <input type="text" id="isbn" name="isbn" maxlength="13">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Modalità di cessione</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="vendita" name="tipo_cessione" value="Vendita" checked>
-                        <label for="vendita">Vendita onerosa</label>
+            <form action="vendi_controller.php" method="POST" enctype="multipart/form-data">
+                <div class="form-grid">
+                    
+                    <div class="input-group full-width">
+                        <label>TITOLO DEL LIBRO</label>
+                        <input type="text" name="titolo" placeholder="Es. I Promessi Sposi" required>
                     </div>
-                    <div class="radio-item">
-                        <input type="radio" id="scambio" name="tipo_cessione" value="Scambio">
-                        <label for="scambio">Scambio/Donazione</label>
+
+                    <div class="input-group">
+                        <label>AUTORE</label>
+                        <input type="text" name="autore" placeholder="Es. Alessandro Manzoni" required>
                     </div>
+
+                    <div class="input-group">
+                        <label>MATERIA</label>
+                        <input type="text" name="materia" placeholder="Es. Italiano" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>ISBN (13 cifre)</label>
+                        <input type="text" name="isbn" maxlength="13" placeholder="978...">
+                    </div>
+
+                    <div class="input-group">
+                        <label>PREZZO (€)</label>
+                        <input type="number" name="prezzo" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>FOTO DEL LIBRO (Mostra lo stato d'usura)</label>
+                        <input type="file" name="immagine" accept="image/*" required>
+                    </div>
+
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="immagine">Foto del libro (JPEG/PNG)</label>
-                <input type="file" id="immagine" name="immagine" accept="image/jpeg, image/png" required>
-                <p style="font-size: 0.8rem; color: #666; font-family: Arial; margin-top: 5px;">
-                    Carica una foto che attesti l'integrità del volume.
-                </p>
-            </div>
-
-            <button type="submit" class="btn-submit">Pubblica Annuncio</button>
-        </form>
+                <button type="submit" class="btn-submit" style="width: 100%; margin-top: 20px;">PUBBLICA ANNUNCIO</button>
+            </form>
+        </div>
     </div>
+
 </body>
 </html>
