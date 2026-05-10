@@ -29,7 +29,7 @@ if (!$libro) die("Libro non trovato.");
     <meta charset="UTF-8">
     <title>Debook - Checkout</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=EUR"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=ATmdhu6fk7cVs8sfbvpMRBKNV2309B8cBbpauv9wJIIhgeR2GtAfywE6L8vU61EBOAWxqwXye4Q3opvF&currency=EUR"></script>
     
     <style>
         .checkout-container { width: 90%; max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-family: Arial; }
