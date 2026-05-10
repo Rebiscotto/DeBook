@@ -11,7 +11,7 @@ $query = "SELECT L.*, A.titolo, A.autore, A.materia, U.nome as nome_venditore
           FROM Libri L 
           JOIN AnagraficaLibri A ON L.IdAnag = A.IdAnag 
           JOIN Utenti U ON L.IdVenditore = U.IdUtente 
-          WHERE 1=1"; // Trucco per aggiungere condizioni facilmente
+          WHERE L.stato = 'disponibile'"; // Trucco per aggiungere condizioni facilmente
 
 if ($search != '') {
     $query .= " AND (A.titolo LIKE '%$search%' OR A.autore LIKE '%$search%')";

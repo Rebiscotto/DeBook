@@ -10,8 +10,7 @@ if (!isset($_SESSION["loggedin"]) || !isset($_GET['id_libro'])) {
 $id_libro = $_GET['id_libro'];
 $id_acquirente = $_SESSION["id"];
 
-// Recupero dettagli del libro e del prezzo (se presente)
-$query = "SELECT L.*, A.titolo, A.materia, U.nome as venditore 
+$query = "SELECT L.*, A.titolo, U.nome as venditore, U.IdUtente as id_venditore 
           FROM Libri L 
           JOIN AnagraficaLibri A ON L.IdAnag = A.IdAnag
           JOIN Utenti U ON L.IdVenditore = U.IdUtente
@@ -30,52 +29,96 @@ if (!$libro) die("Libro non trovato.");
     <meta charset="UTF-8">
     <title>Debook - Checkout</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=EUR"></script>
+    
     <style>
-        .checkout-container { width: 90%; max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .summary-box { background: var(--bg-page); padding: 20px; border-radius: 15px; margin-bottom: 25px; }
+        .checkout-container { width: 90%; max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-family: Arial; }
+        .summary-box { background: #f9f9f9; padding: 20px; border-radius: 15px; margin-bottom: 25px; }
         .option-group { margin-bottom: 25px; }
-        .option-group label { display: block; margin-bottom: 10px; font-weight: bold; }
-        select, input[type="text"] { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--bg-page); font-family: Arial; }
+        select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #eee; }
+        #paypal-button-container { display: none; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <header class="header-nav">
-        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-    </header>
 
-    <div class="checkout-container">
-        <h2>Conferma lo Scambio</h2>
+<div class="checkout-container">
+    <h2>Conferma lo Scambio</h2>
+    
+    <div class="summary-box">
+        <h3 style="margin: 0;"><?php echo htmlspecialchars($libro['titolo']); ?></h3>
+        <p>Venditore: <strong><?php echo htmlspecialchars($libro['venditore']); ?></strong></p>
+        <p style="font-size: 1.5rem; font-weight: bold; color: var(--dark-text);">Prezzo: <?php echo number_format($libro['prezzo'], 2); ?> €</p>
+    </div>
+
+    <form id="cashForm" action="process_checkout.php" method="POST">
+        <input type="hidden" name="id_libro" value="<?php echo $id_libro; ?>">
         
-        <div class="summary-box">
-            <p style="font-family: Arial; font-size: 0.9rem; color: #666;">Stai acquistando:</p>
-            <h3 style="margin: 5px 0;"><?php echo htmlspecialchars($libro['titolo']); ?></h3>
-            <p style="font-family: Arial;">Venditore: <strong><?php echo htmlspecialchars($libro['venditore']); ?></strong></p>
+        <div class="option-group">
+            <label>Punto di incontro</label>
+            <select name="punto_ritiro" required>
+                <option value="Atrio Principale">Atrio Principale</option>
+                <option value="Biblioteca Scolastica">Biblioteca Scolastica</option>
+            </select>
         </div>
 
-        <form action="process_checkout.php" method="POST">
-            <input type="hidden" name="id_libro" value="<?php echo $id_libro; ?>">
-
-            <div class="option-group">
-                <label for="punto_ritiro">Punto di incontro (Area Scolastica)</label>
-                <select name="punto_ritiro" id="punto_ritiro" required>
-                    <option value="">-- Seleziona un luogo --</option>
-                    <option value="Atrio Principale">Atrio Principale</option>
-                    <option value="Biblioteca Scolastica">Biblioteca Scolastica</option>
-                    <option value="Cortile Esterno">Cortile Esterno</option>
-                    <option value="Laboratorio Informatica">Laboratorio Informatica</option>
-                </select>
+        <div class="option-group">
+            <label>Metodo di Pagamento</label>
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                <label><input type="radio" name="metodo" value="Contanti" checked onclick="togglePayment('cash')"> Contanti</label>
+                <label><input type="radio" name="metodo" value="Digitale" onclick="togglePayment('paypal')"> PayPal</label>
             </div>
+        </div>
 
-            <div class="option-group">
-                <label>Metodo di Pagamento</label>
-                <div style="display: flex; gap: 20px; font-family: Arial;">
-                    <label style="font-weight: normal;"><input type="radio" name="metodo" value="Contanti" checked> Contanti (de visu)</label>
-                    <label style="font-weight: normal;"><input type="radio" name="metodo" value="Digitale"> Digitale (Stripe)</label>
-                </div>
-            </div>
+        <button type="submit" id="btnConfirmCash" class="btn-submit" style="width: 100%;">Conferma Ordine (Contanti)</button>
+    </form>
 
-            <button type="submit" class="btn-submit">Conferma Ordine</button>
-        </form>
-    </div>
+    <div id="paypal-button-container"></div>
+</div>
+
+<script>
+    // Funzione per scambiare i bottoni
+    function togglePayment(method) {
+        if(method === 'paypal') {
+            document.getElementById('btnConfirmCash').style.display = 'none';
+            document.getElementById('paypal-button-container').style.display = 'block';
+        } else {
+            document.getElementById('btnConfirmCash').style.display = 'block';
+            document.getElementById('paypal-button-container').style.display = 'none';
+        }
+    }
+
+    // Integrazione PayPal
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: { value: '<?php echo $libro['prezzo']; ?>' }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                // Pagamento approvato! Chiamiamo il backend per aggiornare il DB
+                fetch('conferma_pagamento.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_libro: <?php echo $id_libro; ?>,
+                        orderID: data.orderID,
+                        payerID: data.payerID
+                    })
+                })
+                .then(response => response.json())
+                .then(res => {
+                    if(res.success) {
+                        alert('Pagamento Riuscito! Il libro è tuo.');
+                        window.location.href = 'profilo.php';
+                    }
+                });
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+
 </body>
 </html>
