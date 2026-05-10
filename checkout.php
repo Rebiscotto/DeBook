@@ -145,7 +145,7 @@ if (!$libro) {
         return fetch('conferma_pagamento.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_libro: <?php echo $id_libro; ?> })
+            body: JSON.stringify({ "id_libro": <?php echo $id_libro; ?> })
         })
         .then(response => response.text()) // Leggiamo come testo per vedere errori PHP
         .then(text => {
