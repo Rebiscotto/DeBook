@@ -47,7 +47,7 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
                 <div class="input-group">
                     <label>AUTORE</label>
-                    <input type="text" name="autore" required>
+                    <input type="text" name="autore" required placeholder="Es. Dante Alighieri">
                 </div>
                 <div class="input-group">
                     <label>MATERIA</label>
@@ -55,33 +55,22 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
                 <div class="input-group">
                     <label>ISBN</label>
-                    <input type="text" name="isbn">
+                    <input type="text" name="isbn" required placeholder="Es. 978-3-16-148410-0">
                 </div>
                 <div class="input-group">
                     <label>PREZZO (€)</label>
-                    <input type="number" name="prezzo" step="0.01" required>
+                    <input type="number" name="prezzo" step="0.10" required placeholder="Es. 19.99">
                 </div>
 
                 <div class="input-group full-width">
-                    <label>CONDIZIONI DEL LIBRO</label>
-                    <div class="condition-list">
-                        <label class="condition-option">
-                            <input type="radio" name="condizione" value="Come Nuovo" required>
-                            <div class="cond-text"><strong>Come Nuovo</strong><span>Nessun segno, perfetto.</span></div>
-                        </label>
-                        <label class="condition-option">
-                            <input type="radio" name="condizione" value="Ottimo">
-                            <div class="cond-text"><strong>Ottimo</strong><span>Piccoli segni di usura, interno pulito.</span></div>
-                        </label>
-                        <label class="condition-option">
-                            <input type="radio" name="condizione" value="Buono">
-                            <div class="cond-text"><strong>Buono</strong><span>Sottolineature a matita, legali usura.</span></div>
-                        </label>
-                        <label class="condition-option">
-                            <input type="radio" name="condizione" value="Usurato">
-                            <div class="cond-text"><strong>Usurato</strong><span>Molte scritte, copertina rovinata.</span></div>
-                        </label>
-                    </div>
+                    <label>Condizioni del Libro</label>
+                    <select name="condizione" required>
+                        <option value="" disabled selected>Scegli lo stato del libro...</option>
+                        <option value="Come Nuovo">Come Nuovo (Nessun segno)</option>
+                        <option value="Ottimo">Ottimo (Leggeri segni di usura)</option>
+                        <option value="Buono">Buono (Sottolineature o note)</option>
+                        <option value="Usurato">Usurato (Molte scritte o copertina rovinata)</option>
+                    </select>
                 </div>
 
                 <div class="input-group full-width">
