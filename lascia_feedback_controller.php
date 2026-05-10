@@ -9,10 +9,10 @@ require_once 'db_connection.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
     $mittente = $_SESSION['id'];
     $destinatario = intval($_POST['id_destinatario']);
-    $voto = intval($_POST['voto']);
-    $commento = trim($_POST['commento']);
+    $NStelle = intval($_POST['NStelle']);
+    $messaggio = trim($_POST['messaggio']);
 
-    if($destinatario > 0 && $voto > 0) {
+    if($destinatario > 0 && $NStelle > 0) {
         // NOTA: Qui uso i nomi delle colonne TUTTI MINUSCOLI come nel tuo screenshot
         $stmt = $conn->prepare("INSERT INTO Feedback (idMittente, idDestinatario, NStelle, messaggio) VALUES (?, ?, ?, ?)");
         
