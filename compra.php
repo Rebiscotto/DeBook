@@ -1,155 +1,143 @@
 <?php
 session_start();
-$is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
-$nome_utente = $is_logged ? $_SESSION["nome"] : "";
+require_once 'db_connection.php';
 
-// Scommenta queste righe se vuoi che solo gli utenti registrati possano comprare
-/*
-if(!$is_logged) {
-    header("Location: login.php");
-    exit;
+// Controllo sessione (opzionale per la sola visualizzazione, ma consigliato)
+$is_logged = isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true;
+
+// Recupero parametri di ricerca dai filtri
+$search = $_GET['search'] ?? '';
+$materia_filtro = $_GET['materia'] ?? '';
+
+// Costruzione della query con filtri
+$query = "SELECT L.*, A.titolo, A.autore, A.materia, U.nome as venditore 
+          FROM Libri L
+          JOIN AnagraficaLibri A ON L.IdAnag = A.IdAnag
+          JOIN Utenti U ON L.IdVenditore = U.IdUtente
+          WHERE (A.titolo LIKE ? OR A.autore LIKE ?)";
+
+$params = ["%$search%", "%$search%"];
+$types = "ss";
+
+if ($materia_filtro != '') {
+    $query .= " AND A.materia = ?";
+    $params[] = $materia_filtro;
+    $types .= "s";
 }
-*/
+
+$query .= " ORDER BY L.IdLibro DESC"; // I più recenti prima
+
+$stmt = $conn->prepare($query);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Recupero elenco materie per il filtro dropdown
+$materie_res = $conn->query("SELECT DISTINCT materia FROM AnagraficaLibri");
 ?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEBOOK - Trova il tuo libro</title>
+    <title>Debook - Compra Libri</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Stili generali sincronizzati con la pagina Vendi */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e6e6e6; /* Sfondo grigio chiaro uniforme */
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        /* Contenitore bianco centrale */
-        .container {
-            background-color: #ffffff;
-            width: 70%;
-            max-width: 900px;
-            padding: 40px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Stile Logo */
-        .logo-link img {
-            height: 70px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-bottom:  20px;
-        }
+        .search-section { background: var(--accent-beige); width: 100%; padding: 30px; text-align: center; }
+        .filter-bar { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .filter-bar input, .filter-bar select { padding: 10px; border-radius: 10px; border: none; font-family: Arial; }
         
-        .logo-link img:hover {
-            transform: scale(1.05);
+        .market-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+            width: 90%; 
+            max-width: 1200px; 
+            margin: 40px auto; 
         }
 
-        h1 {
-            font-size: 36px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            text-align: center;
-            color: #000;
+        .book-card { 
+            background: white; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            transition: 0.3s; 
         }
-
-        /* Stile del form sincronizzato */
-        form {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+        .book-card:hover { transform: translateY(-5px); }
+        .book-img { width: 100%; height: 200px; object-fit: cover; background: #f0f0f0; }
+        .book-content { padding: 20px; }
+        .book-title { font-size: 1.2rem; color: var(--dark-text); margin-bottom: 5px; }
+        .book-info { font-family: Arial; font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+        .book-tag { 
+            display: inline-block; 
+            background: var(--bg-page); 
+            padding: 5px 10px; 
+            border-radius: 5px; 
+            font-size: 0.8rem; 
+            margin-right: 5px; 
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        label {
-            font-weight: bold;
-            font-size: 18px;
-            color: #000;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            border-color: #000;
-        }
-
-        /* Bottone di invio nero come in Vendi */
-        button {
-            background-color: #000;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 900;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #333;
-        }
-
-        .nota {
-            font-size: 12px;
-            color: #666;
-            margin-top: -5px;
-            line-height: 1.4;
+        .btn-view { 
+            display: block; 
+            background: var(--accent-beige); 
+            text-align: center; 
+            padding: 12px; 
+            text-decoration: none; 
+            color: var(--dark-text); 
+            border-radius: 10px; 
+            font-weight: bold; 
         }
     </style>
 </head>
 <body>
+    <header class="header-nav">
+        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
+        <div style="font-family: Arial;">
+            <?php if($is_logged): ?>
+                <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); margin-right: 15px;">Dashboard</a>
+            <?php else: ?>
+                <a href="login.php" style="text-decoration: none; color: var(--dark-text); margin-right: 15px;">Accedi</a>
+            <?php endif; ?>
+        </div>
+    </header>
 
-    <div class="container">
-        <a href="index.php" class="logo-link">
-            <img src="immagini/tastologo.png" alt="Debook Logo">
-        </a>
-
-        <h1>Trova il tuo libro</h1>
-
-        <form action="#" method="GET">
-            
-            <div class="form-group">
-                <label for="materia">Quale materia ti serve?</label>
-                <input type="text" id="materia" name="materia" placeholder="Es. Fisica, Filosofia, Latino..." required>
-            </div>
-
-            <div class="form-group">
-                <label for="classe">Classe e Sezione</label>
-                <input type="text" id="classe" name="classe" placeholder="Es. 3A, 4B Informatica, 5C..." required>
-                <span class="nota">Ci aiuta a trovare l'edizione esatta adottata dai tuoi professori.</span>
-            </div>
-
-            <button type="submit">Cerca Libri Disponibili</button>
-            
+    <section class="search-section">
+        <h1>Trova i tuoi libri di testo</h1>
+        <form class="filter-bar" method="GET" action="compra.php">
+            <input type="text" name="search" placeholder="Cerca titolo o autore..." value="<?php echo htmlspecialchars($search); ?>" style="width: 300px;">
+            <select name="materia">
+                <option value="">Tutte le materie</option>
+                <?php while($m = $materie_res->fetch_assoc()): ?>
+                    <option value="<?php echo $m['materia']; ?>" <?php if($materia_filtro == $m['materia']) echo 'selected'; ?>>
+                        <?php echo htmlspecialchars($m['materia']); ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+            <button type="submit" class="btn-submit" style="width: auto; padding: 10px 25px; margin-top: 0;">Filtra</button>
         </form>
+    </section>
+
+    <div class="market-container">
+        <?php if ($result->num_rows > 0): ?>
+            <?php while($row = $result->fetch_assoc()): ?>
+                <div class="book-card">
+                    <img src="<?php echo htmlspecialchars($row['immagine']); ?>" alt="Copertina" class="book-img">
+                    <div class="book-content">
+                        <div class="book-tag"><?php echo htmlspecialchars($row['materia']); ?></div>
+                        <h3 class="book-title"><?php echo htmlspecialchars($row['titolo']); ?></h3>
+                        <p class="book-info">di <?php echo htmlspecialchars($row['autore']); ?></p>
+                        <p class="book-info" style="font-size: 0.8rem;">
+                            <i class="fa-solid fa-user"></i> Venditore: <?php echo htmlspecialchars($row['venditore']); ?>
+                        </p>
+                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Vedi Dettagli</a>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p style="grid-column: 1/-1; text-align: center; font-family: Arial; margin-top: 50px;">
+                Nessun libro trovato con i filtri selezionati.
+            </p>
+        <?php endif; ?>
     </div>
- 
 </body>
 </html>

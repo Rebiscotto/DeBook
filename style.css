@@ -1,0 +1,225 @@
+/* =========================================
+   DEBOOK - CSS GLOBALE (Responsive)
+   ========================================= */
+
+:root {
+    --bg-page: #e2e2e2;
+    --accent-beige: #e9d5c3;
+    --white: #ffffff;
+    --dark-text: #2c2e34;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --border-radius: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--dark-text);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+h1, h2, h3 {
+    font-family: 'Arial Black', sans-serif;
+    margin-bottom: 15px;
+}
+
+/* --- HEADER & NAV --- */
+.header-nav {
+    background: var(--white);
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-link img {
+    height: 40px;
+}
+
+/* --- CONTAINER GENERALE --- */
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+}
+
+/* --- PULSANTI --- */
+.btn-submit {
+    background-color: var(--dark-text);
+    color: var(--white);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Arial Black', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s, background 0.3s;
+    text-align: center;
+}
+
+.btn-submit:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+}
+
+/* --- CARD DEI LIBRI (Mercatino e Dashboard) --- */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.book-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: 0.3s;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* --- CHAT SYSTEM --- */
+.chat-container {
+    display: flex;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    height: 75vh;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.chat-sidebar {
+    width: 30%;
+    background: #f9f9f9;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.chat-main {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.msg-bubble {
+    max-width: 75%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+}
+
+.msg-sent {
+    background: var(--accent-beige);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.msg-received {
+    background: #eee;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+/* --- FORM & INPUT --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+select, 
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent-beige);
+}
+
+/* =========================================
+   MEDIA QUERIES (Mobile & Tablet)
+   ========================================= */
+
+@media (max-width: 768px) {
+    .header-nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .container {
+        width: 95%;
+    }
+
+    /* La chat diventa verticale su mobile */
+    .chat-container {
+        flex-direction: column;
+        height: 85vh;
+    }
+
+    .chat-sidebar {
+        width: 100%;
+        height: 25%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chat-main {
+        width: 100%;
+        height: 75%;
+    }
+
+    /* Grid dei libri più compatta */
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+
+    .book-card img {
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 1.5rem; }
+    .btn-submit { width: 100%; } /* Pulsanti a tutta larghezza su telefoni piccoli */
+}

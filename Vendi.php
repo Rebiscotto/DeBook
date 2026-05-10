@@ -1,8 +1,7 @@
-
-        <?php
+<?php
 session_start();
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("Location: login.php");
     exit;
 }
 ?>
@@ -11,155 +10,73 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEBOOK - Vendi il tuo libro</title>
+    <title>Debook - Vendi Libro</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Stili generali per riprendere il layout della tua homepage */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e6e6e6; /* Sfondo grigio chiaro */
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        /* Contenitore bianco centrale */
-        .container {
-            background-color: #ffffff;
-            width: 70%;
-            max-width: 900px;
-            padding: 40px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Header semplice con logo */
-        .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 50px;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        /* Stile del form */
-        form {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        label {
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus, select:focus {
-            border-color: #000;
-        }
-
-        /* Bottone di invio */
-        button {
-            background-color: #000;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 900;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #333;
-        }
-
-        .nota {
-            font-size: 12px;
-            color: #666;
-            margin-top: -5px;
-        }
+        .form-container { max-width: 600px; margin-bottom: 50px; }
+        .radio-group { display: flex; gap: 20px; margin-top: 10px; font-family: 'Arial', sans-serif; }
+        .radio-item { display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body>
+    <header class="header-nav">
+        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
+        <div style="font-family: Arial;">
+            <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); margin-right: 15px;">Dashboard</a>
+            <a href="logout.php" style="color: #d32f2f; text-decoration: none;">Esci</a>
+        </div>
+    </header>
 
-    <div class="container">
-        <a href="index.php" class="logo-link">
-            <img src="immagini/tastologo.png" alt="Debook Logo">
-        </a>
+    <div class="form-container">
+        <h2>Metti in vendita un libro</h2>
+        <p style="font-family: Arial; margin-bottom: 20px;">Inserisci i dettagli del volume per renderlo visibile agli altri studenti.</p>
 
-        <h1>Inserisci i dati di vendita</h1>
-
-        <form action="#" method="POST">
+        <form action="vendi_controller.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="titolo">Titolo del libro</label>
+                <input type="text" id="titolo" name="titolo" required>
+            </div>
             
             <div class="form-group">
-                <label for="materia">Materia del Libro</label>
-                <input type="text" id="materia" name="materia" placeholder="Es. Matematica, Diritto Privato, Storia..." required>
+                <label for="autore">Autore</label>
+                <input type="text" id="autore" name="autore" required>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="materia">Materia</label>
+                    <input type="text" id="materia" name="materia" required placeholder="es. Matematica">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="isbn">Codice ISBN (opzionale)</label>
+                    <input type="text" id="isbn" name="isbn" maxlength="13">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="condizioni">Condizioni del Libro</label>
-                <select id="condizioni" name="condizioni" required>
-                    <option value="" disabled selected>Seleziona lo stato d'usura...</option>
-                    <option value="nuovo">Come Nuovo (Nessun segno, mai aperto)</option>
-                    <option value="ottimo">Ottimo (Pochissimi segni, niente scritte)</option>
-                    <option value="buono">Buono (Usato, qualche sottolineatura a matita)</option>
-                    <option value="accettabile">Accettabile (Evidenti segni d'uso, evidenziato)</option>
-                </select>
+                <label>Modalità di cessione</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="vendita" name="tipo_cessione" value="Vendita" checked>
+                        <label for="vendita">Vendita onerosa</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="scambio" name="tipo_cessione" value="Scambio">
+                        <label for="scambio">Scambio/Donazione</label>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="isbn">Codice ISBN</label>
-                <input type="text" id="isbn" name="isbn" placeholder="978-88-1234-567-8" 
-                       pattern="[A-Z]{2}[0-9]{2}[a-zA-Z0-9]{1,30}" 
-                       title="Inserisci un codice ISBN valido " required>
-                <span class="nota">L'ISBN è il codice unico del libro, si trova sul retro del libro o all'interno della copertina</span>
+                <label for="immagine">Foto del libro (JPEG/PNG)</label>
+                <input type="file" id="immagine" name="immagine" accept="image/jpeg, image/png" required>
+                <p style="font-size: 0.8rem; color: #666; font-family: Arial; margin-top: 5px;">
+                    Carica una foto che attesti l'integrità del volume.
+                </p>
             </div>
 
-            <button type="submit">Metti in Vendita</button>
-            
+            <button type="submit" class="btn-submit">Pubblica Annuncio</button>
         </form>
     </div>
- 
 </body>
 </html>
-
