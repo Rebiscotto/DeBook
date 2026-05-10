@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
 
     if($destinatario > 0 && $voto > 0) {
         // NOTA: Qui uso i nomi delle colonne TUTTI MINUSCOLI come nel tuo screenshot
-        $stmt = $conn->prepare("INSERT INTO feedback (idmittente, iddestinatario, voto, commento) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO Feedback (idmittente, iddestinatario, voto, commento) VALUES (?, ?, ?, ?)");
         
         if ($stmt === false) {
             die("Errore preparazione: " . $conn->error);
