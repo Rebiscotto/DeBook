@@ -139,28 +139,43 @@ if (!$libro) {
             });
         },
 
-        // 2. Cattura del pagamento dopo l'approvazione dell'utente
-     onApprove: function(data, actions) {
+       onApprove: function(data, actions) {
     return actions.order.capture().then(function(details) {
+        // 1. Primo Alert: Conferma che PayPal ha finito
+        alert("Pagamento autorizzato da PayPal! Sto aggiornando il database di Debook...");
+
+        // Usiamo FormData per massima compatibilità con Altervista
+        const formData = new FormData();
+        formData.append('id_libro', "<?php echo $id_libro; ?>");
+
         return fetch('conferma_pagamento.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "id_libro": <?php echo $id_libro; ?> })
+            body: formData
         })
-        .then(response => response.text()) // Leggiamo come testo per vedere errori PHP
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Il server ha risposto con errore ' + response.status);
+            }
+            return response.text(); // Leggiamo come testo per intercettare errori PHP
+        })
         .then(text => {
+            console.log("Risposta del server:", text);
             try {
                 const res = JSON.parse(text);
                 if(res.success) {
-                    alert('PAGAMENTO OK!');
+                    alert('ECCELLENTE! Libro acquistato correttamente.');
                     window.location.href = 'profilo.php';
                 } else {
-                    alert('Errore Server: ' + res.error);
+                    alert('ERRORE DAL DATABASE: ' + res.error);
                 }
             } catch(e) {
-                // Se c'è un errore PHP (es. un punto e virgola mancante), lo vedrai qui
-                alert("Errore critico del server (controlla il file PHP): " + text);
+                // Se arrivi qui, il file conferma_pagamento.php ha stampato un errore PHP invece di un JSON
+                alert("ERRORE TECNICO (Il server ha risposto in modo strano): " + text);
             }
+        })
+        .catch(err => {
+            alert("ERRORE DI RETE: " + err.message);
+            console.error("Dettagli errore:", err);
         });
     });
 },
