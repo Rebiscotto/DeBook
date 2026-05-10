@@ -2,46 +2,45 @@
 session_start();
 require_once 'db_connection.php';
 
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("Location: login.php");
-    exit;
-}
+if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
 
 $id_utente = $_SESSION["id"];
-$chat_con = isset($_GET['with']) && is_numeric($_GET['with']) ? $_GET['with'] : null;
+$chat_con = isset($_GET['with']) ? intval($_GET['with']) : null;
+$encryption_key = "DeBook_Secret_Key_2026"; 
 
-// Chiave segreta per la crittografia (in produzione dovrebbe stare in un file .env)
-$encryption_key = "DeBook_Secret_Key_2026";
+$errore_db = "";
+$interlocutore = null;
+$lista_chat = null;
 
-// Se è selezionata una chat specifica
-if ($chat_con) {
-    // Recupero info dell'interlocutore
-    $stmt_user = $conn->prepare("SELECT nome, cognome FROM Utenti WHERE IdUtente = ?");
-    $stmt_user->bind_param("i", $chat_con);
-    $stmt_user->execute();
-    $interlocutore = $stmt_user->get_result()->fetch_assoc();
+try {
+    // 1. RECUPERO INTERLOCUTORE
+    if ($chat_con) {
+        $stmt = $conn->prepare("SELECT nome, cognome FROM Utenti WHERE IdUtente = ?");
+        if (!$stmt) throw new Exception($conn->error);
+        $stmt->bind_param("i", $chat_con);
+        $stmt->execute();
+        $interlocutore = $stmt->get_result()->fetch_assoc();
+    }
 
-    if (!$interlocutore) die("Utente non trovato.");
+    // 2. RECUPERO LISTA CHAT
+    // Verifichiamo prima se la tabella esiste
+    $check = $conn->query("SHOW TABLES LIKE 'Messaggi'");
+    if ($check && $check->num_rows > 0) {
+        $q_l = "SELECT DISTINCT U.IdUtente, U.nome, U.cognome 
+                FROM Utenti U 
+                JOIN Messaggi M ON (U.IdUtente = M.IdMittente OR U.IdUtente = M.IdDestinatario) 
+                WHERE (M.IdMittente = ? OR M.IdDestinatario = ?) AND U.IdUtente != ?";
+        $st_l = $conn->prepare($q_l);
+        if (!$st_l) throw new Exception($conn->error);
+        $st_l->bind_param("iii", $id_utente, $id_utente, $id_utente);
+        $st_l->execute();
+        $lista_chat = $st_l->get_result();
+    } else {
+        throw new Exception("La tabella 'Messaggi' NON esiste nel database.");
+    }
 
-    // Recupero i messaggi tra i due utenti
-    $query_msg = "SELECT * FROM Messaggi 
-                  WHERE (IdMittente = ? AND IdDestinatario = ?) 
-                     OR (IdMittente = ? AND IdDestinatario = ?) 
-                  ORDER BY data_invio ASC";
-    $stmt_msg = $conn->prepare($query_msg);
-    $stmt_msg->bind_param("iiii", $id_utente, $chat_con, $chat_con, $id_utente);
-    $stmt_msg->execute();
-    $messaggi = $stmt_msg->get_result();
-} else {
-    // Se non c'è una chat specifica, recupero la lista degli utenti con cui ho scambiato messaggi
-    $query_lista = "SELECT DISTINCT U.IdUtente, U.nome, U.cognome 
-                    FROM Utenti U 
-                    JOIN Messaggi M ON U.IdUtente = M.IdMittente OR U.IdUtente = M.IdDestinatario 
-                    WHERE (M.IdMittente = ? OR M.IdDestinatario = ?) AND U.IdUtente != ?";
-    $stmt_lista = $conn->prepare($query_lista);
-    $stmt_lista->bind_param("iii", $id_utente, $id_utente, $id_utente);
-    $stmt_lista->execute();
-    $lista_chat = $stmt_lista->get_result();
+} catch (Exception $e) {
+    $errore_db = $e->getMessage();
 }
 ?>
 
@@ -49,95 +48,100 @@ if ($chat_con) {
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Debook - Messaggi</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debook - Chat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        .chat-container { display: flex; width: 90%; max-width: 1000px; height: 75vh; margin: 30px auto; background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; }
-        .chat-sidebar { width: 30%; background: var(--bg-page); border-right: 2px solid #ddd; overflow-y: auto; }
+        body { background-color: var(--bg-page); }
+        .chat-layout { display: flex; width: 95%; max-width: 1100px; height: 80vh; margin: 20px auto; background: white; border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
+        .chat-sidebar { width: 30%; background: #f9f9f9; border-right: 1px solid #ddd; overflow-y: auto; }
         .chat-main { width: 70%; display: flex; flex-direction: column; }
-        
-        .chat-list-item { display: block; padding: 20px; text-decoration: none; color: var(--dark-text); border-bottom: 1px solid #ddd; transition: 0.2s; font-family: Arial; }
-        .chat-list-item:hover, .chat-list-item.active { background: var(--accent-beige); }
-        
-        .chat-header { padding: 20px; background: white; border-bottom: 2px solid var(--bg-page); }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #fafafa; }
-        
-        .msg-bubble { max-width: 70%; padding: 12px 18px; border-radius: 20px; font-family: Arial; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
-        .msg-sent { background: var(--accent-beige); align-self: flex-end; border-bottom-right-radius: 5px; }
-        .msg-received { background: #e2e2e2; align-self: flex-start; border-bottom-left-radius: 5px; }
-        .msg-time { font-size: 0.7rem; color: #777; margin-top: 5px; text-align: right; }
-
-        .chat-input-area { padding: 20px; background: white; border-top: 2px solid var(--bg-page); display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 15px; border-radius: 50px; border: 2px solid var(--bg-page); outline: none; font-family: Arial; }
-        .btn-send { background: var(--dark-text); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-        .btn-send:hover { background: #444; }
+        .chat-header { padding: 20px; border-bottom: 1px solid #eee; font-family: Arial; font-weight: bold; }
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
+        .chat-input-bar { padding: 20px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-bar input { flex: 1; padding: 12px; border-radius: 50px; border: 2px solid #ddd; outline: none; }
+        .user-item { display: block; padding: 15px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; font-family: Arial; }
+        .user-item:hover, .user-item.active { background: var(--accent-beige); }
+        .msg { max-width: 70%; padding: 12px; border-radius: 15px; font-family: Arial; font-size: 0.9rem; }
+        .sent { background: var(--accent-beige); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .received { background: #e2e2e2; align-self: flex-start; border-bottom-left-radius: 2px; }
     </style>
 </head>
 <body>
+
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-        <a href="dashboard.php" style="font-family: Arial; text-decoration: none; color: var(--dark-text);">Dashboard</a>
+        <a href="index.php" style="text-decoration:none; color:black; font-family:Arial;"><i class="fa-solid fa-house"></i> Home</a>
     </header>
 
-    <div class="chat-container">
+    <div class="chat-layout">
         <div class="chat-sidebar">
-            <h3 style="padding: 20px; border-bottom: 1px solid #ddd;">Le tue Chat</h3>
-            <?php if (!$chat_con && $lista_chat->num_rows == 0): ?>
-                <p style="padding: 20px; font-family: Arial; font-size: 0.9rem; color: #666;">Nessuna chat attiva.</p>
-            <?php else: ?>
-                <?php 
-                // Se c'è una lista, mostrala (se siamo in una chat diretta, per semplicità qui ricarichiamo la lista)
-                $stmt_lista->execute();
-                $lista_chat_aggiornata = $stmt_lista->get_result();
-                while($utente_chat = $lista_chat_aggiornata->fetch_assoc()): 
-                ?>
-                    <a href="chat.php?with=<?php echo $utente_chat['IdUtente']; ?>" class="chat-list-item <?php echo ($chat_con == $utente_chat['IdUtente']) ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-user-circle"></i> <?php echo htmlspecialchars($utente_chat['nome'] . " " . $utente_chat['cognome']); ?>
-                    </a>
-                <?php endwhile; ?>
-            <?php endif; ?>
+            <div style="padding:15px; background:#eee; font-weight:bold; font-family:Arial;">Le tue Chat</div>
+            <?php if($lista_chat): while($l = $lista_chat->fetch_assoc()): ?>
+                <a href="chat.php?with=<?php echo $l['IdUtente']; ?>" class="user-item <?php echo ($chat_con == $l['IdUtente']) ? 'active' : ''; ?>">
+                    <i class="fa-solid fa-user-circle"></i> <?php echo htmlspecialchars($l['nome']." ".$l['cognome']); ?>
+                </a>
+            <?php endwhile; endif; ?>
         </div>
 
         <div class="chat-main">
-            <?php if ($chat_con): ?>
+            
+            <?php if ($errore_db != ""): ?>
+                <div style="margin: 30px; padding: 20px; background: #ffebee; color: #c62828; border-radius: 10px; border: 1px solid #ffcdd2; font-family: Arial;">
+                    <h3 style="margin-top: 0;"><i class="fa-solid fa-triangle-exclamation"></i> Errore Database</h3>
+                    <p>Il server ha restituito questo errore:</p>
+                    <code style="display:block; background: white; padding: 10px; margin-top: 10px; border-radius: 5px;">
+                        <?php echo htmlspecialchars($errore_db); ?>
+                    </code>
+                </div>
+
+            <?php elseif ($chat_con && $interlocutore): ?>
+                
                 <div class="chat-header">
-                    <h3>Conversazione con <?php echo htmlspecialchars($interlocutore['nome']); ?></h3>
-                    <p style="font-family: Arial; font-size: 0.8rem; color: #27ae60;"><i class="fa-solid fa-lock"></i> Crittografia End-to-End attiva</p>
+                    Chat con <?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?>
                 </div>
 
-                <div class="chat-messages" id="chatBox">
-                    <?php while($msg = $messaggi->fetch_assoc()): ?>
-                        <?php 
-                            // Decriptazione del messaggio (RF-08)
-                            $testo_decriptato = openssl_decrypt($msg['testo_criptato'], 'aes-256-cbc', $encryption_key, 0, str_repeat("0", 16));
-                            $is_mine = ($msg['IdMittente'] == $id_utente);
+                <div class="messages-area" id="chatBox">
+                    <?php
+                    try {
+                        $q_m = "SELECT * FROM Messaggi WHERE (IdMittente = ? AND IdDestinatario = ?) OR (IdMittente = ? AND IdDestinatario = ?) ORDER BY data_invio ASC";
+                        $st_m = $conn->prepare($q_m);
+                        if (!$st_m) throw new Exception($conn->error);
+                        $st_m->bind_param("iiii", $id_utente, $chat_con, $chat_con, $id_utente);
+                        $st_m->execute();
+                        $res_m = $st_m->get_result();
+
+                        if($res_m->num_rows == 0) {
+                            echo "<p style='text-align:center; color:#999; margin-top:20px; font-family:Arial;'>Invia un messaggio per iniziare.</p>";
+                        }
+
+                        while($m = $res_m->fetch_assoc()):
+                            $text = openssl_decrypt($m['testo_criptato'], 'aes-256-cbc', $encryption_key, 0, str_repeat("0", 16));
                         ?>
-                        <div class="msg-bubble <?php echo $is_mine ? 'msg-sent' : 'msg-received'; ?>">
-                            <?php echo htmlspecialchars($testo_decriptato); ?>
-                            <div class="msg-time"><?php echo date('H:i d/m', strtotime($msg['data_invio'])); ?></div>
-                        </div>
-                    <?php endwhile; ?>
+                            <div class="msg <?php echo ($m['IdMittente'] == $id_utente) ? 'sent' : 'received'; ?>">
+                                <?php echo htmlspecialchars($text); ?>
+                            </div>
+                        <?php endwhile; 
+                    } catch (Exception $e) {
+                        echo "<p style='color:red;'>Errore caricamento messaggi: " . $e->getMessage() . "</p>";
+                    }
+                    ?>
                 </div>
 
-                <form class="chat-input-area" action="send_message.php" method="POST">
+                <form class="chat-input-bar" action="send_message.php" method="POST">
                     <input type="hidden" name="id_destinatario" value="<?php echo $chat_con; ?>">
-                    <input type="text" name="messaggio" placeholder="Scrivi un messaggio..." required autocomplete="off">
-                    <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+                    <input type="text" name="messaggio" placeholder="Scrivi qui..." required autocomplete="off">
+                    <button type="submit" class="btn-submit" style="padding:10px 20px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
 
-                <script>
-                    // Scroll automatico verso il basso per leggere gli ultimi messaggi
-                    const chatBox = document.getElementById("chatBox");
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                </script>
             <?php else: ?>
-                <div style="display: flex; flex: 1; align-items: center; justify-content: center; flex-direction: column; color: #999;">
-                    <i class="fa-solid fa-comments" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                    <p style="font-family: Arial;">Seleziona una chat dalla barra laterale per iniziare.</p>
+                <div style="flex:1; display:flex; align-items:center; justify-content:center; color:#ccc; font-family:Arial;">
+                    Seleziona una chat o controlla l'URL.
                 </div>
             <?php endif; ?>
         </div>
     </div>
+    <script>var cb = document.getElementById("chatBox"); if(cb) cb.scrollTop = cb.scrollHeight;</script>
 </body>
 </html>

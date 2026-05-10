@@ -10,9 +10,7 @@
   // Verifichiamo se ci sono errori
   if ($conn->connect_error) {
       die("Errore di connessione al database: " . $conn->connect_error);
-  } else{
-      echo "Connessione al database avvenuta con successo!"; //da eliminare. Per DEBUG
-  }
+  } 
 
   // Impostiamo la codifica caratteri corretta
   $conn->set_charset("utf8");
