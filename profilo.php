@@ -74,8 +74,8 @@ $media = round($res_f['media'], 1);
                     <span class="date-text">
                         <i class="fa-regular fa-calendar"></i> 
                         <?php 
-                        if (!empty($fb['data']) && $fb['data'] != "0000-00-00 00:00:00") {
-                            echo date('d/m/Y H:i', strtotime($fb['data'])); 
+                        if (!empty($fb['data']) && $fb['data'] != "0000-00-00 ") {
+                            echo date('d/m/Y ', strtotime($fb['data'])); 
                         } else {
                             echo "Data non disponibile";
                         }
