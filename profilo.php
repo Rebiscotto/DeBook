@@ -2,105 +2,78 @@
 session_start();
 require_once 'db_connection.php';
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: index.php");
-    exit;
-}
+if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
 
-$id_profilo = $_GET['id'];
+// Se nell'URL c'è un ID, vediamo il profilo di qualcun altro, altrimenti il nostro
+$id_profilo = isset($_GET['id']) ? intval($_GET['id']) : $_SESSION['id'];
 
-// Recupero dati utente
-$stmt_utente = $conn->prepare("SELECT nome, cognome FROM Utenti WHERE IdUtente = ?");
-$stmt_utente->bind_param("i", $id_profilo);
-$stmt_utente->execute();
-$utente = $stmt_utente->get_result()->fetch_assoc();
+// 1. Recupero dati utente
+$stmt = $conn->prepare("SELECT nome, cognome, email FROM Utenti WHERE IdUtente = ?");
+$stmt->bind_param("i", $id_profilo);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
 
-if (!$utente) die("Utente non trovato.");
-
-// Recupero la media delle stelle
-$stmt_media = $conn->prepare("SELECT AVG(NStelle) as media, COUNT(*) as totale FROM Feedback WHERE IdDestinatario = ?");
-$stmt_media->bind_param("i", $id_profilo);
-$stmt_media->execute();
-$statistiche = $stmt_media->get_result()->fetch_assoc();
-$media = round($statistiche['media'] ?? 0, 1);
-$totale_recensioni = $statistiche['totale'];
-
-// Recupero l'elenco dei feedback con il nome del mittente
-$stmt_feed = $conn->prepare("
-    SELECT F.messaggio, F.NStelle, F.data, U.nome, U.cognome 
-    FROM Feedback F 
-    JOIN Utenti U ON F.IdMittente = U.IdUtente 
-    WHERE F.IdDestinatario = ? 
-    ORDER BY F.IdFeedback DESC
-");
-$stmt_feed->bind_param("i", $id_profilo);
-$stmt_feed->execute();
-$feedback_list = $stmt_feed->get_result();
+// 2. Calcolo Media Feedback
+$query_f = "SELECT AVG(Voto) as media, COUNT(*) as totale FROM Feedback WHERE IdDestinatario = ?";
+$stmt_f = $conn->prepare($query_f);
+$stmt_f->bind_param("i", $id_profilo);
+$stmt_f->execute();
+$feedback = $stmt_f->get_result()->fetch_assoc();
+$media = round($feedback['media'], 1);
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Profilo di <?php echo htmlspecialchars($utente['nome']); ?> - Debook</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Profilo - <?php echo $user['nome']; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        .profile-container { width: 90%; max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .profile-header { text-align: center; border-bottom: 2px solid var(--bg-page); padding-bottom: 20px; margin-bottom: 30px; }
-        .rating-badge { background: var(--accent-beige); display: inline-block; padding: 10px 20px; border-radius: 50px; font-size: 1.2rem; margin-top: 10px; }
-        .rating-badge i { color: #f39c12; }
-        
-        .feedback-card { background: var(--bg-page); padding: 20px; border-radius: 15px; margin-bottom: 15px; }
-        .feedback-header { display: flex; justify-content: space-between; font-family: Arial; font-size: 0.9rem; color: #666; margin-bottom: 10px; }
-        .stars-display i { color: #ccc; }
-        .stars-display i.active { color: #f39c12; }
-        .feedback-text { font-family: Arial; line-height: 1.5; color: var(--dark-text); }
+        .profile-card { background: white; max-width: 600px; margin: 50px auto; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; }
+        .avatar { width: 100px; height: 100px; background: var(--accent-beige); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; }
+        .stars { color: #f39c12; font-size: 1.5rem; margin: 10px 0; }
+        .feedback-list { text-align: left; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .fb-item { background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <header class="header-nav">
-        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
+        <a href="index.php"><img src="immagini/tastologo.png" alt="Logo" style="height:40px;"></a>
+        <a href="index.php" style="text-decoration:none; color:black; font-family:Arial;">Home</a>
     </header>
 
-    <div class="profile-container">
-        <?php if(isset($_GET['msg'])) echo "<p style='color: green; text-align:center; font-family: Arial;'>".htmlspecialchars($_GET['msg'])."</p>"; ?>
-
-        <div class="profile-header">
-            <h1><?php echo htmlspecialchars($utente['nome'] . " " . $utente['cognome']); ?></h1>
-            <div class="rating-badge">
-                <i class="fa-solid fa-star"></i> 
-                <strong><?php echo $media; ?> / 5</strong> 
-                <span style="font-family: Arial; font-size: 0.9rem; font-weight: normal;">(<?php echo $totale_recensioni; ?> recensioni)</span>
-            </div>
-            <?php if(isset($_SESSION['loggedin']) && $_SESSION['id'] != $id_profilo): ?>
-                <br>
-                <a href="lascia_feedback.php?id_utente=<?php echo $id_profilo; ?>" class="btn-submit" style="display: inline-block; width: auto; padding: 10px 20px; margin-top: 20px; text-decoration: none; font-size: 1rem;">Lascia un Feedback</a>
-            <?php endif; ?>
+    <div class="profile-card">
+        <div class="avatar"><?php echo strtoupper(substr($user['nome'], 0, 1)); ?></div>
+        <h1 style="font-family:'Arial Black';"><?php echo $user['nome'] . " " . $user['cognome']; ?></h1>
+        
+        <div class="stars">
+            <?php 
+            for($i=1; $i<=5; $i++) {
+                echo ($i <= $media) ? "★" : "☆";
+            }
+            ?>
+            <span style="color:black; font-size: 1rem; font-family: Arial;">(<?php echo $media; ?>)</span>
         </div>
+        <p style="color:#777;"><?php echo $feedback['totale']; ?> recensioni ricevute</p>
 
-        <h3>Recensioni ricevute</h3>
-        <div style="margin-top: 20px;">
-            <?php if ($feedback_list->num_rows > 0): ?>
-                <?php while($f = $feedback_list->fetch_assoc()): ?>
-                    <div class="feedback-card">
-                        <div class="feedback-header">
-                            <span>Da: <strong><?php echo htmlspecialchars($f['nome']); ?></strong></span>
-                            <span><?php echo date('d/m/Y', strtotime($f['data'])); ?></span>
-                        </div>
-                        <div class="stars-display" style="margin-bottom: 10px;">
-                            <?php 
-                                for($i=1; $i<=5; $i++) {
-                                    echo $i <= $f['NStelle'] ? '<i class="fa-solid fa-star active"></i>' : '<i class="fa-solid fa-star"></i>';
-                                }
-                            ?>
-                        </div>
-                        <p class="feedback-text"><?php echo nl2br(htmlspecialchars($f['messaggio'])); ?></p>
+        <div class="feedback-list">
+            <h3 style="font-size: 1rem; margin-bottom: 15px;">Ultime Recensioni:</h3>
+            <?php
+            $q_list = "SELECT F.*, U.nome FROM Feedback F JOIN Utenti U ON F.IdMittente = U.IdUtente WHERE IdDestinatario = ? ORDER BY DataFeedback DESC LIMIT 5";
+            $st_list = $conn->prepare($q_list);
+            $st_list->bind_param("i", $id_profilo);
+            $st_list->execute();
+            $res_list = $st_list->get_result();
+            
+            if($res_list->num_rows > 0):
+                while($fb = $res_list->fetch_assoc()): ?>
+                    <div class="fb-item">
+                        <strong><?php echo $fb['nome']; ?>:</strong> <?php echo htmlspecialchars($fb['Commento']); ?>
+                        <div style="color:#f39c12; font-size: 0.8rem;"><?php echo str_repeat("★", $fb['Voto']); ?></div>
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p style="font-family: Arial; color: #777; text-align: center;">Nessun feedback ancora ricevuto.</p>
-            <?php endif; ?>
+                <?php endwhile;
+            else: echo "<p style='color:#ccc;'>Nessun commento ancora.</p>"; endif; ?>
         </div>
     </div>
 </body>

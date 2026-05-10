@@ -2,33 +2,55 @@
 session_start();
 require_once 'db_connection.php';
 
-if (!isset($_SESSION["loggedin"]) || $_SERVER["REQUEST_METHOD"] != "POST") {
-    die("Accesso negato.");
-}
+if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
 
-$id_mittente = $_SESSION["id"];
-$id_destinatario = $_POST['id_destinatario'];
-$stelle = intval($_POST['stelle']);
-$messaggio = trim($_POST['messaggio']);
+$id_destinatario = isset($_GET['to']) ? intval($_GET['to']) : null;
+if (!$id_destinatario) { header("Location: index.php"); exit; }
 
-// Sicurezza: controllo che i valori siano validi
-if ($stelle < 1 || $stelle > 5) {
-    die("Valutazione non valida.");
-}
-if ($id_mittente == $id_destinatario) {
-    die("Non puoi autovalutarti!");
-}
-
-// Inserimento nel database (lasciamo IdTransazione a NULL se non implementato, o lo aggiungiamo se passato via POST)
-$stmt = $conn->prepare("INSERT INTO Feedback (messaggio, NStelle, data, IdMittente, IdDestinatario) VALUES (?, ?, CURDATE(), ?, ?)");
-$stmt->bind_param("siii", $messaggio, $stelle, $id_mittente, $id_destinatario);
-
-if ($stmt->execute()) {
-    header("Location: profilo.php?id=" . $id_destinatario . "&msg=Feedback inviato con successo!");
-} else {
-    echo "Errore durante il salvataggio del feedback: " . $conn->error;
-}
-
-$stmt->close();
-$conn->close();
+// Recuperiamo il nome di chi stiamo votando
+$st_u = $conn->prepare("SELECT nome FROM Utenti WHERE IdUtente = ?");
+$st_u->bind_param("i", $id_destinatario);
+$st_u->execute();
+$dest = $st_u->get_result()->fetch_assoc();
 ?>
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debook - Lascia Feedback</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .feedback-box { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; }
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; margin: 20px 0; }
+        .star-rating input { display: none; }
+        .star-rating label { font-size: 3rem; color: #ddd; cursor: pointer; transition: 0.2s; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f39c12; }
+        textarea { width: 100%; border: 2px solid #eee; border-radius: 15px; padding: 15px; outline: none; font-family: Arial; resize: none; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="feedback-box">
+        <h2 style="font-family:'Arial Black';">VALUTA <?php echo strtoupper($dest['nome']); ?></h2>
+        <p style="color:#777;">Com'è andata la tua esperienza?</p>
+
+        <form action="lascia_feedback_controller.php" method="POST">
+            <input type="hidden" name="id_destinatario" value="<?php echo $id_destinatario; ?>">
+            
+            <div class="star-rating">
+                <input type="radio" id="star5" name="voto" value="5" required><label for="star5">★</label>
+                <input type="radio" id="star4" name="voto" value="4"><label for="star4">★</label>
+                <input type="radio" id="star3" name="voto" value="3"><label for="star3">★</label>
+                <input type="radio" id="star2" name="voto" value="2"><label for="star2">★</label>
+                <input type="radio" id="star1" name="voto" value="1"><label for="star1">★</label>
+            </div>
+
+            <textarea name="commento" rows="4" placeholder="Scrivi un piccolo commento sulla trattativa..."></textarea>
+            
+            <button type="submit" class="btn-submit" style="width:100%;">INVIA RECENSIONE</button>
+            <a href="chat.php?with=<?php echo $id_destinatario; ?>" style="display:block; margin-top:15px; color:#aaa; text-decoration:none; font-size:0.8rem;">Annulla</a>
+        </form>
+    </div>
+</body>
+</html>

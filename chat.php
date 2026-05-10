@@ -45,6 +45,7 @@ $lista_chat = $stmt_l->get_result();
     <link rel="stylesheet" href="style.css">
     <style>
         body { background-color: var(--bg-page); margin: 0; }
+        .btn-vota { font-size: 0.7rem; background: var(--accent-beige); padding: 5px 12px; border-radius: 10px; text-decoration: none; color: black; font-weight: bold; }
         
         .chat-layout { 
             display: flex; 
@@ -111,6 +112,7 @@ $lista_chat = $stmt_l->get_result();
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
         <a href="index.php" style="text-decoration:none; color:black;"><i class="fa-solid fa-house"></i></a>
+        <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota">Vota Venditore</a>
     </header>
 
     <div class="chat-layout">
