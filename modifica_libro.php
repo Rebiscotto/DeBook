@@ -53,7 +53,7 @@ if (!$libro) { die("Accesso negato o libro non trovato."); }
             </div>
 
             <div class="input-group">
-                <label>AUTORE (Scriverli uno di seguito all'altro con spazi)</label>
+                <label>AUTORE (Scriverli uno di seguito all'altro con spazio tra nome e cognome e virgola tra uno e l'altro)</label>
                 <input type="text" name="autore" value="<?php echo htmlspecialchars($libro['autore']); ?>" required>
             </div>
 

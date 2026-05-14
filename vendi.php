@@ -73,7 +73,7 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                     <input type="text" name="titolo" required placeholder="Es. Divina Commedia">
                 </div>
                 <div class="input-group">
-                    <label>AUTORE (Scriverli uno di seguito all'altro con spazi)</label>
+                    <label>AUTORE (Scriverli uno di seguito all'altro con spazio tra nome e cognome e virgola tra uno e l'altro)</label>
                     <input type="text" name="autore" required placeholder="Es. Dante Alighieri">
                 </div>
                 <div class="input-group">
