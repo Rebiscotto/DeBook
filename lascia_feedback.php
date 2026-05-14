@@ -177,4 +177,4 @@ if (!$dest) { header("Location: chat.php"); exit; }
     </div>
 
 </body>
-</html>rrrrr
+</html>
