@@ -73,11 +73,11 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                     <input type="text" name="titolo" required placeholder="Es. Divina Commedia">
                 </div>
                 <div class="input-group">
-                    <label>AUTORE</label>
+                    <label>AUTORE (Scriverli uno di seguito all'altro con spazi)</label>
                     <input type="text" name="autore" required placeholder="Es. Dante Alighieri">
                 </div>
                 <div class="input-group">
-                    <label>MATERIA</label>
+                    <label>MATERIA (Scrivere correttamente con la lettera maiuscola)</label>
                     <input type="text" name="materia" required placeholder="Es. Letteratura Italiana">
                 </div>
                 <div class="input-group">
@@ -94,8 +94,9 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                     <select name="condizione" required>
                         <option value="" disabled selected>Scegli lo stato del libro...</option>
                         <option value="Come Nuovo">Come Nuovo (Nessun segno)</option>
-                        <option value="Ottimo">Ottimo (Leggeri segni di usura)</option>
-                        <option value="Buono">Buono (Sottolineature o note)</option>
+                        <option value="Ottimo">Ottimo (quasi nessun segno)</option>
+                        <option value="Buono">Buono (Sottolineature o note con leggeri segni di usura)</option>
+                        <option value="Discreto">Discreto (Alcuni segni di usura)</option>
                         <option value="Usurato">Usurato (Molte scritte o copertina rovinata)</option>
                     </select>
                 </div>
