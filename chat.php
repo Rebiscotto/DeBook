@@ -9,7 +9,6 @@ if (!isset($_SESSION["loggedin"])) {
 
 $id_utente = $_SESSION["id"];
 $chat_con = isset($_GET['with']) ? intval($_GET['with']) : null;
-$id_libro_contesto = isset($_GET['id_libro']) ? intval($_GET['id_libro']) : null;
 
 if ($chat_con) {
     $sql_update = "UPDATE Messaggi SET letto = 1 WHERE IdDestinatario = ? AND IdMittente = ? AND letto = 0";
@@ -45,7 +44,7 @@ $lista_chat = $stmt_l->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        body { background-color: var(--bg-page); margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: var(--bg-page); margin: 0; font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* Layout principale */
         .chat-container { 
@@ -68,7 +67,7 @@ $lista_chat = $stmt_l->get_result();
             flex-direction: column; 
             background: #fff;
         }
-        .sidebar-header { padding: 20px; font-size: 1.4rem; font-weight: bold; border-bottom: 1px solid #eee; }
+        .sidebar-header { padding: 20px; font-size: 1.4rem; font-weight: bold; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
         .conversations-list { overflow-y: auto; flex: 1; }
         
         .user-item { 
@@ -85,6 +84,7 @@ $lista_chat = $stmt_l->get_result();
             display: flex; 
             flex-direction: column; 
             background: #fff; 
+            height: 100%;
         }
         .chat-header { 
             padding: 15px 20px; 
@@ -92,44 +92,46 @@ $lista_chat = $stmt_l->get_result();
             align-items: center; 
             border-bottom: 1px solid #eee; 
             background: #fff;
+            min-height: 60px;
         }
         .btn-back-chat { 
-            display: none; /* Nascosto su PC */
+            display: none; 
             margin-right: 15px; font-size: 1.2rem; color: #333; cursor: pointer; 
         }
 
         .messages-area { flex: 1; padding: 20px; overflow-y: auto; background: #fdfbf9; display: flex; flex-direction: column; gap: 10px; }
         
-        /* Nuvolette messaggi */
-        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
+        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
         .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; cursor: pointer; }
         .sent { background: #e2d9c8; align-self: flex-end; border-bottom-right-radius: 2px; }
         .received { background: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 2px; }
 
         .chat-footer { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
         .chat-footer input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
-        .btn-send { background: #333; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        .btn-send { background: #333; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
 
-        /* --- LOGICA MOBILE (STILE WHATSAPP) --- */
+        /* --- LOGICA MOBILE --- */
         @media (max-width: 768px) {
-            header.header-nav { display: none; } /* Nasconde logo per spazio */
+            header.header-nav { display: none; }
             .chat-container { width: 100%; height: 100vh; margin: 0; border-radius: 0; }
             
-            /* Se NON c'è una chat selezionata, mostra la lista */
             <?php if (!$chat_con): ?>
+                /* Schermata LISTA CHAT su mobile */
                 .chat-sidebar { width: 100%; border: none; }
                 .chat-main { display: none; }
+                .sidebar-header { background: #fff; }
+                .sidebar-header img { height: 30px; }
             <?php else: ?>
-                /* Se C'È una chat selezionata, nascondi la lista e mostra solo la chat */
+                /* Schermata MESSAGGI su mobile */
                 .chat-sidebar { display: none; }
-                .chat-main { width: 100%; }
-                .btn-back-chat { display: block; } /* Mostra tasto indietro */
+                .chat-main { width: 100%; height: 100%; }
+                .btn-back-chat { display: block; }
+                .chat-footer { padding-bottom: 25px; } /* Spazio per gesture bar smartphone */
             <?php endif; ?>
             
             .msg { max-width: 85%; }
         }
 
-        /* Lightbox */
         .lightbox-overlay { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
         .lightbox-overlay img { max-width: 90%; max-height: 85%; border-radius: 10px; }
     </style>
@@ -146,7 +148,12 @@ $lista_chat = $stmt_l->get_result();
 
     <div class="chat-container">
         <div class="chat-sidebar">
-            <div class="sidebar-header">Chat</div>
+            <div class="sidebar-header">
+                <a href="index.php" class="mobile-logo" style="display:inline-block;">
+                    <img src="immagini/tastologo.png" alt="Debook" style="height:25px;">
+                </a>
+                <span>Chat</span>
+            </div>
             <div class="conversations-list">
                 <?php if($lista_chat->num_rows > 0): ?>
                     <?php while($l = $lista_chat->fetch_assoc()): ?>
@@ -158,7 +165,7 @@ $lista_chat = $stmt_l->get_result();
                         </a>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p style="padding:20px; color:#999;">Nessuna conversazione.</p>
+                    <p style="padding:20px; color:#999; text-align:center;">Nessuna conversazione attiva.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -169,22 +176,27 @@ $lista_chat = $stmt_l->get_result();
                     <div class="btn-back-chat" onclick="window.location.href='chat.php'">
                         <i class="fa-solid fa-arrow-left"></i>
                     </div>
-                    <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
+                    <div style="display:flex; flex-direction:column;">
+                        <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
+                    </div>
                 </div>
 
                 <div class="messages-area" id="chatBox"></div>
 
                 <form class="chat-footer" id="msgForm" enctype="multipart/form-data">
                     <input type="hidden" name="id_destinatario" value="<?php echo $chat_con; ?>">
-                    <label for="foto_chat" style="cursor:pointer; color:#666;"><i class="fa-solid fa-paperclip"></i></label>
+                    <label for="foto_chat" style="cursor:pointer; color:#666; padding: 5px;">
+                        <i class="fa-solid fa-paperclip" style="font-size: 1.2rem;"></i>
+                    </label>
                     <input type="file" id="foto_chat" name="foto_chat" accept="image/*" style="display:none;">
-                    <input type="text" name="messaggio" placeholder="Scrivi..." autocomplete="off">
+                    <input type="text" name="messaggio" placeholder="Scrivi un messaggio..." autocomplete="off">
                     <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             <?php else: ?>
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc;">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; text-align:center; padding: 20px;">
                     <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:15px;"></i>
-                    <p>Seleziona un contatto per chattare</p>
+                    <p>Seleziona una conversazione per iniziare a chattare</p>
+                    <a href="index.php" style="margin-top: 20px; color: #333; text-decoration: none; font-weight: bold;">Torna alla Home</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -221,10 +233,16 @@ $lista_chat = $stmt_l->get_result();
                 e.preventDefault();
                 let formData = new FormData(msgForm);
                 fetch('send_message.php', { method: 'POST', body: formData })
-                .then(() => { msgForm.reset(); loadMessages(); });
+                .then(() => { 
+                    msgForm.reset(); 
+                    loadMessages(); 
+                });
             });
+            
             document.getElementById("foto_chat").addEventListener('change', () => {
-                msgForm.dispatchEvent(new Event('submit'));
+                if(document.getElementById("foto_chat").files.length > 0) {
+                    msgForm.dispatchEvent(new Event('submit'));
+                }
             });
         }
     </script>
