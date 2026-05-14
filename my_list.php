@@ -141,10 +141,16 @@ $result = $stmt->get_result();
                     </div>
 
                     <div class="actions">
-                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
-                        <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-mod">Modifica</a>
-                        <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo annuncio?');">Elimina</a>
-                    </div>
+    <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
+    <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-mod">Modifica</a>
+    
+    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
+       class="btn-delete" 
+       style="background: black !important; color: white !important; padding: 5px 10px !important; border-radius: 5px !important;"
+       onclick="return confirm('Sei sicuro?');">
+       ELIMINA ORA
+    </a>
+</div>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
