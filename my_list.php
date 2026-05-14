@@ -100,7 +100,7 @@ $result = $stmt->get_result();
 
         .btn-view { background: #f0f7ff; color: #0288d1; border: 1px solid #0288d1; }
         .btn-edit { background: #fffdf0; color: #f39c12; border: 1px solid #f39c12; }
-        .btn-delete { background: #fff5f5; color: #ff0000; border: 1px solid #ff0000; }
+        .btn-cancella { background: #fff5f5; color: #ff0000; border: 1px solid #ff0000; }
 
         .btn-action:hover { opacity: 0.7; transform: translateY(-2px); }
 
@@ -168,7 +168,7 @@ $result = $stmt->get_result();
                         </a>
                         <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
                            onclick="return confirm('Sei sicuro?');"
-                           class="btn-action btn-delete">
+                           class="btn-action btn-cancella">
                             <i class="fa-solid fa-trash"></i> Elimina
                         </a>
                     </div>
