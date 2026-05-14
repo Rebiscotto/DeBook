@@ -20,7 +20,19 @@ $email_utente = $_SESSION["email"] ?? "";
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        body { background-color: var(--bg-page); overflow-x: hidden; }
+        body { background-color: var(--bg-page); overflow-x: hidden; margin: 0; padding: 0; }
+
+        /* HEADER FIX */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 3000;
+        }
 
         .center-content {
             width: 100%;
@@ -31,6 +43,7 @@ $email_utente = $_SESSION["email"] ?? "";
             align-items: center;
             padding: 40px 20px;
             text-align: center;
+            box-sizing: border-box;
         }
 
         /* Banner Titolo */
@@ -41,6 +54,7 @@ $email_utente = $_SESSION["email"] ?? "";
             margin-bottom: 40px;
             width: 100%;
             box-shadow: var(--shadow);
+            box-sizing: border-box;
         }
         .banner-inner {
             background-color: var(--accent-beige);
@@ -54,7 +68,7 @@ $email_utente = $_SESSION["email"] ?? "";
             margin: 0;
         }
 
-        /* SEZIONE OPERATIVA: VENDI - IMMAGINE - COMPRA */
+        /* SEZIONE OPERATIVA */
         .action-row {
             display: flex;
             align-items: center;
@@ -95,7 +109,51 @@ $email_utente = $_SESSION["email"] ?? "";
             mix-blend-mode: multiply;
         }
 
-        /* SEZIONE DESCRIZIONE (stile Card) */
+        /* Dropdown - CORRETTO PER MOBILE */
+        .user-dropdown {
+            position: absolute; 
+            top: 60px; 
+            right: 0; /* Allineato all'icona */
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: var(--shadow); 
+            width: 260px; 
+            display: none; 
+            flex-direction: column; 
+            z-index: 2000;
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+        
+        .user-dropdown.active { display: flex; }
+
+        @media (max-width: 768px) {
+            .action-row { flex-direction: column; }
+            .btn-main { width: 100%; max-width: none; order: 2; }
+            .main-img-container { order: 1; margin-bottom: 20px; }
+            
+            /* Sposta il menu leggermente a sinistra su mobile per evitare il taglio */
+            .user-dropdown {
+                right: 5px; 
+                width: 220px;
+            }
+        }
+
+        .dropdown-links a { 
+            padding: 15px; 
+            text-decoration: none; 
+            color: var(--dark-text); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-family: Arial, sans-serif; 
+            border-bottom: 1px solid #eee; 
+            font-size: 0.95rem;
+        }
+        .dropdown-links a:hover { background-color: var(--accent-beige); }
+        .dropdown-links a:last-child { border-bottom: none; }
+
+        /* SEZIONE DESCRIZIONE */
         .info-section {
             background: var(--white);
             padding: 40px;
@@ -104,6 +162,7 @@ $email_utente = $_SESSION["email"] ?? "";
             text-align: left;
             width: 100%;
             margin-bottom: 40px;
+            box-sizing: border-box;
         }
         .info-section h2 {
             border-bottom: 3px solid var(--accent-beige);
@@ -111,39 +170,23 @@ $email_utente = $_SESSION["email"] ?? "";
             margin-bottom: 20px;
             text-align: center;
         }
-
         .value-list { list-style: none; padding: 0; }
         .value-list li { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px; font-family: Arial; }
 
-        /* Dropdown */
-        .user-dropdown {
-            position: absolute; top: 70px; right: 0; background: white; border-radius: 15px; 
-            box-shadow: var(--shadow); width: 260px; display: none; flex-direction: column; z-index: 2000;
-        }
-        .user-dropdown.active { display: flex; }
-        .dropdown-links a { padding: 15px; text-decoration: none; color: var(--dark-text); display: flex; align-items: center; gap: 12px; font-family: Arial; border-bottom: 1px solid #eee; }
-        .dropdown-links a:hover { background-color: var(--accent-beige); }
-
-        @media (max-width: 768px) {
-            .action-row { flex-direction: column; }
-            .btn-main { width: 100%; max-width: none; order: 2; }
-            .main-img-container { order: 1; margin-bottom: 20px; }
-        }
     </style>
 </head>
 <body>
 
     <header class="header-nav">
-        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
+        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo" style="height: 40px;"></a>
         <div style="position: relative;">
-            <i class="fa-solid fa-circle-user" style="font-size: 2.5rem; cursor: pointer;" id="userBtn"></i>
+            <i class="fa-solid fa-circle-user" style="font-size: 2.5rem; cursor: pointer; color: var(--dark-text);" id="userBtn"></i>
             <div class="user-dropdown" id="userDropdown">
-                <div style="padding: 15px; background: #f8f8f8; border-bottom: 1px solid #eee; font-family: Arial;">
+                <div style="padding: 15px; background: #f8f8f8; border-bottom: 1px solid #eee; font-family: Arial; font-size: 0.9rem;">
                     <strong><?php echo htmlspecialchars($nome_utente . " " . $cognome_utente); ?></strong>
                 </div>
                 <div class="dropdown-links">
                     <a href="profilo.php"><i class="fa-solid fa-user-gear"></i> Il mio Profilo</a>
-                    
                     <a href="dashboard.php"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
                     <a href="my_list.php"><i class="fa-solid fa-book"></i> I miei Libri</a>
                     <a href="chat.php"><i class="fa-solid fa-comments"></i> Messaggi</a>
@@ -192,17 +235,24 @@ $email_utente = $_SESSION["email"] ?? "";
             </ul>
         </div>
 
-        <a href="dashboard.php" class="btn-submit" style="text-decoration: none;">VAI ALLA TUA DASHBOARD</a>
+        <a href="dashboard.php" class="btn-submit" style="text-decoration: none; display: inline-block;">VAI ALLA TUA DASHBOARD</a>
     </div>
 
     <script>
         const btn = document.getElementById('userBtn');
         const menu = document.getElementById('userDropdown');
+        
         btn.onclick = (e) => { 
             menu.classList.toggle('active'); 
             e.stopPropagation(); 
         };
-        window.onclick = () => menu.classList.remove('active');
+
+        // Chiude il menu se clicchi fuori
+        window.onclick = (e) => {
+            if (!menu.contains(e.target) && e.target !== btn) {
+                menu.classList.remove('active');
+            }
+        };
     </script>
 </body>
 </html>
