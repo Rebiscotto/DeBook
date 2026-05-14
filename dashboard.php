@@ -10,8 +10,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 $id_utente = $_SESSION["id"];
 
-// Recupero statistiche: Quanti libri ha in vendita l'utente?
-$sql_libri = "SELECT COUNT(*) as totale FROM Libri WHERE IdVenditore = ?";
+// MODIFICA: Conta solo i libri con stato 'disponibile'
+// In questo modo i libri venduti spariscono automaticamente dal conteggio
+$sql_libri = "SELECT COUNT(*) as totale FROM Libri WHERE IdVenditore = ? AND stato = 'disponibile'";
 $stmt = $conn->prepare($sql_libri);
 $stmt->bind_param("i", $id_utente);
 $stmt->execute();
@@ -37,12 +38,14 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
         }
 
         .header-nav {
-            width: 100%; /* Occupa tutta la larghezza */
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 40px;
+            padding: 15px 40px;
             box-sizing: border-box;
+            background: white;
+            box-shadow: var(--shadow);
         }
 
         .dashboard-grid {
@@ -51,11 +54,11 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
             gap: 25px;
             width: 90%;
             max-width: 1000px;
-            margin: 40px auto; /* Centra orizzontalmente la griglia */
+            margin: 40px auto;
         }
 
         .card {
-            background: var(--white);
+            background: white;
             padding: 40px 30px;
             border-radius: 25px;
             text-align: center;
@@ -101,6 +104,8 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
             font-size: 1.1rem;
             opacity: 0.8;
         }
+
+        .logo-link img { height: 40px; }
     </style>
 </head>
 <body>
@@ -120,8 +125,8 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
         <div class="card">
             <i class="fa-solid fa-book"></i>
             <h3>I miei Libri</h3>
-            <p>Hai <strong><?php echo $conta_libri; ?></strong> libri in vendita</p>
-            <a href="my_list.php" class="btn-submit" style="display:inline-block; margin-top:15px; font-size:1rem; text-decoration:none;">Gestisci</a>
+            <p>Hai <strong><?php echo $conta_libri; ?></strong> annunci attivi</p>
+            <a href="my_list.php" class="btn-submit" style="display:inline-block; margin-top:15px; font-size:0.9rem; text-decoration:none; width: auto; padding: 10px 20px; border-radius: 50px;">Gestisci</a>
         </div>
 
         <a href="vendi.php" class="card">
