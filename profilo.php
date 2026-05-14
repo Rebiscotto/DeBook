@@ -18,7 +18,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
 if (!$user) { die("Utente non trovato."); }
 
-// 3. Media e Totale Feedback (Colonne: NStelle)
+// 3. Media e Totale Feedback
 $query_f = "SELECT IFNULL(AVG(NStelle), 0) as media, COUNT(*) as totale FROM Feedback WHERE IdDestinatario = ?";
 $stmt_f = $conn->prepare($query_f);
 $stmt_f->bind_param("i", $id_profilo);
@@ -41,9 +41,27 @@ $totale_recensioni = $res_f['totale'];
         .profile-container { max-width: 700px; margin: 40px auto; padding: 20px; font-family: Arial, sans-serif; }
         .profile-card { background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; position: relative; }
         
-        /* Tasto Torna Indietro */
-        .btn-back { position: absolute; top: 20px; left: 20px; background: #eee; border: none; padding: 8px 15px; border-radius: 50px; cursor: pointer; color: #555; transition: 0.3s; }
-        .btn-back:hover { background: #ddd; color: #000; }
+        /* Navigazione Superiore */
+        .profile-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px;
+        }
+
+        .btn-nav { 
+            background: #f8f9fa; 
+            border: 1px solid #eee; 
+            padding: 10px 18px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            color: #555; 
+            text-decoration: none; 
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: 0.3s; 
+        }
+        .btn-nav:hover { background: #eee; color: #000; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .avatar-circle { width: 90px; height: 90px; background: var(--accent-beige); color: var(--dark-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; font-family: 'Arial Black'; }
         
@@ -63,9 +81,15 @@ $totale_recensioni = $res_f['totale'];
 
     <div class="profile-container">
         <div class="profile-card">
-            <button onclick="history.back()" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Indietro
-            </button>
+            
+            <div class="profile-nav">
+                <a href="javascript:history.back()" class="btn-nav">
+                    <i class="fa-solid fa-arrow-left"></i> Indietro
+                </a>
+                <a href="dashboard.php" class="btn-nav">
+                    <i class="fa-solid fa-house-user"></i> Dashboard
+                </a>
+            </div>
 
             <div class="avatar-circle"><?php echo strtoupper(substr($user['nome'], 0, 1)); ?></div>
             <h1 style="font-family:'Arial Black'; margin:0;"><?php echo htmlspecialchars($user['nome'] . " " . $user['cognome']); ?></h1>
@@ -92,7 +116,6 @@ $totale_recensioni = $res_f['totale'];
                 <h2 style="font-family:'Arial Black'; font-size: 1.1rem; border-bottom: 2px solid var(--accent-beige); padding-bottom: 10px; margin-bottom: 20px;">DICONO DI <?php echo strtoupper($user['nome']); ?></h2>
 
                 <?php
-                // Query messaggi (Colonne: messaggio, NStelle, data)
                 $q_msg = "SELECT f.messaggio, f.NStelle, f.data, u.nome 
                           FROM Feedback f 
                           JOIN Utenti u ON f.IdMittente = u.IdUtente 
