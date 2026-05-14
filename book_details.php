@@ -44,10 +44,9 @@ $imgs = explode(",", $libro['immagine']);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #eee;
         }
         .slider-wrapper { display: flex; transition: transform 0.4s ease-in-out; }
-        .slide { min-width: 100%; display: flex; align-items: center; justify-content: center; background: white; }
+        .slide { min-width: 100%; display: flex; align-items: center; justify-content: center; background: white; cursor: zoom-in; }
         .slide img { width: 100%; height: 450px; object-fit: contain; }
 
-        /* Frecce */
         .nav-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(255,255,255,0.8); border: none; width: 40px; height: 40px;
@@ -58,15 +57,40 @@ $imgs = explode(",", $libro['immagine']);
         .prev { left: 10px; }
         .next { right: 10px; }
 
-        /* Puntini (Dots) */
         .dots-container { text-align: center; margin-top: 15px; }
-        .dot { 
-            display: inline-block; width: 10px; height: 10px; background: #ccc; 
-            border-radius: 50%; margin: 0 5px; cursor: pointer; transition: 0.3s;
-        }
+        .dot { display: inline-block; width: 10px; height: 10px; background: #ccc; border-radius: 50%; margin: 0 5px; cursor: pointer; transition: 0.3s; }
         .dot.active { background: #27ae60; transform: scale(1.2); }
-        /* -------------------- */
-        
+
+        /* --- STILE FULLSCREEN LIGHTBOX --- */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-lightbox:hover { color: #bbb; }
+
+        /* --- INFO SECTION --- */
         .info-section { flex: 1.2; }
         .btn-back { border: none; background: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; text-decoration: none; color: #7f8c8d; font-weight: bold; transition: 0.3s; font-size: 1rem; }
         .btn-back:hover { color: #333; }
@@ -91,17 +115,23 @@ $imgs = explode(",", $libro['immagine']);
     </style>
 </head>
 <body>
+
+    <div id="fullScreenLightbox" class="lightbox" onclick="closeFullscreen()">
+        <span class="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="fullScreenImg">
+    </div>
+
     <div class="container-detail">
         <div class="image-section">
             <div class="slider-container">
                 <?php if(count($imgs) > 1): ?>
-                    <button class="nav-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="nav-btn prev" onclick="event.stopPropagation(); moveSlide(-1);"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-btn next" onclick="event.stopPropagation(); moveSlide(1);"><i class="fa-solid fa-chevron-right"></i></button>
                 <?php endif; ?>
 
                 <div class="slider-wrapper" id="sliderWrapper">
                     <?php foreach($imgs as $img): ?>
-                        <div class="slide">
+                        <div class="slide" onclick="openFullscreen('<?php echo htmlspecialchars(trim($img)); ?>')">
                             <img src="<?php echo htmlspecialchars(trim($img)); ?>" alt="Foto libro">
                         </div>
                     <?php endforeach; ?>
@@ -166,6 +196,7 @@ $imgs = explode(",", $libro['immagine']);
     </div>
 
     <script>
+        // --- LOGICA SLIDER ---
         let currentIndex = 0;
         const wrapper = document.getElementById('sliderWrapper');
         const slides = document.querySelectorAll('.slide');
@@ -174,7 +205,6 @@ $imgs = explode(",", $libro['immagine']);
 
         function updateSlider() {
             wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
-            // Aggiorna dots
             dots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === currentIndex);
             });
@@ -190,6 +220,21 @@ $imgs = explode(",", $libro['immagine']);
         function currentSlide(index) {
             currentIndex = index;
             updateSlider();
+        }
+
+        // --- LOGICA FULLSCREEN ---
+        function openFullscreen(imgSrc) {
+            const lightbox = document.getElementById('fullScreenLightbox');
+            const fullImg = document.getElementById('fullScreenImg');
+            fullImg.src = imgSrc;
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Blocca lo scroll del sito sotto
+        }
+
+        function closeFullscreen() {
+            const lightbox = document.getElementById('fullScreenLightbox');
+            lightbox.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Ripristina lo scroll
         }
 
         // Supporto swipe per mobile
