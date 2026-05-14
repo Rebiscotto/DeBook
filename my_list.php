@@ -115,11 +115,13 @@ $result = $stmt->get_result();
                         <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
                     </div>
                     <div class="actions">
-                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
-                        <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo annuncio?');">
-                            <i class="fa-solid fa-trash-can"></i> Elimina
-                        </a>
-                    </div>
+    <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
+    <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" style="color: #f39c12; font-family: Arial; font-size: 0.95rem; margin-right: 10px; text-decoration: none; font-weight: bold;">Modifica</a>
+    
+    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete" onclick="return confirm('Sei sicuro?');">
+        <i class="fa-solid fa-trash-can"></i> Elimina
+    </a>
+</div>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
