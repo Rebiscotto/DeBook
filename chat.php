@@ -44,29 +44,30 @@ $lista_chat = $stmt_l->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
+        :root {
+            --chat-header-h: 60px;
+            --chat-footer-h: 75px;
+        }
+
         body { 
-            background-color: var(--bg-page); 
+            background-color: #fff; 
             margin: 0; 
             padding: 0;
             font-family: 'Segoe UI', Arial, sans-serif; 
             height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
+            overflow: hidden; /* Blocca lo scroll del body */
         }
         
         /* Layout principale */
         .chat-container { 
             display: flex; 
-            width: 95%; 
-            max-width: 1200px; 
-            height: 85vh; 
-            margin: auto; 
+            width: 100%; 
+            height: 100vh; 
             background: white; 
-            border-radius: 15px; 
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1); 
             overflow: hidden;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
 
         /* Sidebar */
@@ -78,95 +79,102 @@ $lista_chat = $stmt_l->get_result();
             background: #fff;
         }
         .sidebar-header { 
-            padding: 20px; 
+            height: var(--chat-header-h);
+            padding: 0 20px; 
             border-bottom: 1px solid #eee; 
             display: flex; 
             align-items: center; 
-            justify-content: space-between; 
+            justify-content: space-between;
+            flex-shrink: 0;
         }
         .conversations-list { overflow-y: auto; flex: 1; }
         
         .user-item { 
             display: flex; align-items: center; padding: 15px 20px; 
-            text-decoration: none; color: #333; border-bottom: 1px solid #f9f9f9; transition: 0.2s;
+            text-decoration: none; color: #333; border-bottom: 1px solid #f9f9f9;
         }
-        .user-item:hover { background: #f5f5f5; }
         .user-item.active { background: #f0ebe3; font-weight: bold; }
         .user-item i { font-size: 2rem; margin-right: 15px; color: #bbb; }
 
-        /* Area Chat Centrale */
+        /* Area Chat */
         .chat-main { 
             width: 65%; 
             display: flex; 
             flex-direction: column; 
             background: #fff; 
             height: 100%;
+            position: relative;
         }
+
         .chat-header { 
-            padding: 15px 20px; 
+            height: var(--chat-header-h);
+            padding: 0 20px; 
             display: flex; 
             align-items: center; 
             border-bottom: 1px solid #eee; 
             background: #fff;
-        }
-        .btn-back-chat { 
-            display: none; 
-            margin-right: 15px; font-size: 1.2rem; color: #333; cursor: pointer; 
+            flex-shrink: 0;
         }
 
         .messages-area { 
             flex: 1; 
-            padding: 20px; 
+            padding: 15px; 
             overflow-y: auto; 
             background: #fdfbf9; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 10px;
+            /* Padding inferiore per non far finire i messaggi sotto il footer */
+            padding-bottom: 90px; 
         }
         
-        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
-        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; cursor: pointer; }
+        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; }
         .sent { background: #e2d9c8; align-self: flex-end; border-bottom-right-radius: 2px; }
         .received { background: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 2px; }
 
+        /* Footer Fissato */
         .chat-footer { 
-            padding: 15px; 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background: #fff; 
             border-top: 1px solid #eee; 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
+            padding: 10px 15px;
+            gap: 10px;
+            box-sizing: border-box;
+            z-index: 10;
+            /* Gestione spazio sicuro per mobile */
+            padding-bottom: calc(10px + env(safe-area-inset-bottom, 10px));
         }
-        .chat-footer input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; font-size: 16px; }
-        .btn-send { background: #333; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+        .chat-footer input { 
+            flex: 1; 
+            padding: 12px 15px; 
+            border-radius: 25px; 
+            border: 1px solid #ddd; 
+            outline: none; 
+            font-size: 16px; /* Importante per evitare zoom su iOS */
+        }
+        .btn-send { background: #333; color: #fff; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; }
 
-        /* --- LOGICA MOBILE --- */
+        /* --- MOBILE --- */
         @media (max-width: 768px) {
-            header.header-nav { display: none; }
-            .chat-container { 
-                width: 100%; 
-                height: 100vh; 
-                height: -webkit-fill-available;
-                margin: 0; 
-                border-radius: 0; 
-            }
-            
+            header.header-nav { display: none !important; }
+            .chat-container { height: 100vh; width: 100vw; }
+
             <?php if (!$chat_con): ?>
                 .chat-sidebar { width: 100%; border: none; }
                 .chat-main { display: none; }
             <?php else: ?>
                 .chat-sidebar { display: none; }
                 .chat-main { width: 100%; }
-                .btn-back-chat { display: block; }
-                /* Padding extra per evitare il taglio su iOS/Android */
-                .chat-footer { padding-bottom: calc(15px + env(safe-area-inset-bottom)); } 
+                .btn-back-chat { display: block; margin-right: 15px; font-size: 1.2rem; }
             <?php endif; ?>
-            
-            .msg { max-width: 85%; }
         }
 
         .lightbox-overlay { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
-        .lightbox-overlay img { max-width: 90%; max-height: 85%; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -192,13 +200,11 @@ $lista_chat = $stmt_l->get_result();
                     <?php while($l = $lista_chat->fetch_assoc()): ?>
                         <a href="chat.php?with=<?php echo $l['IdUtente']; ?>" class="user-item <?php echo ($chat_con == $l['IdUtente']) ? 'active' : ''; ?>">
                             <i class="fa-solid fa-circle-user"></i>
-                            <div>
-                                <strong><?php echo htmlspecialchars($l['nome']); ?></strong>
-                            </div>
+                            <div><strong><?php echo htmlspecialchars($l['nome']); ?></strong></div>
                         </a>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p style="padding:40px 20px; color:#999; text-align:center;">Nessuna conversazione.<br><small>Contatta un venditore per iniziare!</small></p>
+                    <p style="padding:40px 20px; color:#999; text-align:center;">Nessuna conversazione attiva.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -226,7 +232,7 @@ $lista_chat = $stmt_l->get_result();
             <?php else: ?>
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; text-align:center; padding: 20px;">
                     <i class="fa-solid fa-comments" style="font-size:5rem; margin-bottom:15px; color:#eee;"></i>
-                    <p style="color:#999;">Seleziona una conversazione per iniziare</p>
+                    <p style="color:#999;">Seleziona una chat per iniziare</p>
                     <a href="index.php" style="margin-top: 15px; color: #666; text-decoration: none; border: 1px solid #ddd; padding: 10px 20px; border-radius: 20px;">Torna alla Home</a>
                 </div>
             <?php endif; ?>
