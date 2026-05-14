@@ -12,6 +12,16 @@ $id_utente = $_SESSION["id"];
 $chat_con = isset($_GET['with']) ? intval($_GET['with']) : null;
 $id_libro_contesto = isset($_GET['id_libro']) ? intval($_GET['id_libro']) : null;
 
+// --- INIZIO VERSIONE PRECISA NOTIFICHE ---
+if ($chat_con) {
+    // Segna come letti SOLO i messaggi inviati dall'utente con cui sto parlando ora
+    $sql_update = "UPDATE Messaggi SET letto = 1 WHERE IdDestinatario = ? AND IdMittente = ? AND letto = 0";
+    $stmt_update = $conn->prepare($sql_update);
+    $stmt_update->bind_param("ii", $id_utente, $chat_con);
+    $stmt_update->execute();
+}
+// --- FINE VERSIONE PRECISA ---
+
 // Configurazione Crittografia
 $key = "Debook_Secret_2026_Safe";
 $iv = "1234567890123456"; 
@@ -63,7 +73,6 @@ $lista_chat = $stmt_l->get_result();
         .chat-main { width: 70%; display: flex; flex-direction: column; background: #fff; position: relative; }
         .chat-header-top { padding: 15px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 10; }
         
-        /* Barra Contestuale Libro */
         .context-bar { background: #f1f1f1; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; font-size: 0.85rem; }
         .btn-buy-now { background: #27ae60; color: white; padding: 5px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.2s; }
         .btn-buy-now:hover { background: #219150; }
@@ -170,6 +179,7 @@ $lista_chat = $stmt_l->get_result();
 
         if(<?php echo $chat_con ? 'true' : 'false'; ?>) {
             loadMessages();
+            // Aggiornamento messaggi ogni 3 secondi
             setInterval(loadMessages, 3000);
         }
 

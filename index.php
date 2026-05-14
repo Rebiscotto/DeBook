@@ -283,4 +283,32 @@ $non_letti = $res_msg->fetch_assoc()['non_letti'] ?? 0;
         };
     </script>
 </body>
+<script>
+    // Funzione che controlla i messaggi ogni 5 secondi
+    function controllaNuoviMessaggi() {
+        fetch('api_notifiche.php')
+            .then(response => response.json())
+            .then(data => {
+                const dot = document.querySelector('.notification-dot');
+                
+                if (data.non_letti > 0) {
+                    // Se il pallino non esiste, lo creiamo o lo mostriamo
+                    if (!dot) {
+                        // Ricarica la testata o crea il div se preferisci
+                        // La via più semplice è ricaricare se il numero cambia
+                        location.reload(); 
+                    } else {
+                        dot.innerText = data.non_letti;
+                        dot.style.display = 'flex';
+                    }
+                } else if (dot) {
+                    dot.style.display = 'none';
+                }
+            })
+            .catch(err => console.log("Errore notifiche:", err));
+    }
+
+    // Avvia il controllo ogni 5000 millisecondi (5 secondi)
+    setInterval(controllaNuoviMessaggi, 5000);
+</script>
 </html>
