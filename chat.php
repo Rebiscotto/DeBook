@@ -89,7 +89,13 @@ $lista_chat = $stmt_l->get_result();
         .user-item.active { background: #f0ebe3; font-weight: bold; }
         .user-item i { font-size: 1.8rem; margin-right: 12px; color: #ccc; }
 
-        .chat-main { width: 70%; display: flex; flex-direction: column; background: #fdfbf9; height: 100%; }
+        /* Struttura Main */
+        .chat-main { width: 70%; display: flex; flex-direction: column; height: 100%; transition: background 0.3s; }
+        
+        /* --- SFONDI DIFFERENZIATI --- */
+        .waiting-room { background: #fdfdfd; } /* Grigio quasi bianco per l'attesa */
+        .active-chat { background: #fdfbf9; }  /* Beige Debook per la chat vera */
+
         .chat-header { height: var(--header-h); padding: 0 15px; display: flex; align-items: center; border-bottom: 1px solid #eee; background: #fff; flex-shrink: 0; }
 
         .messages-area { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
@@ -147,7 +153,7 @@ $lista_chat = $stmt_l->get_result();
             </div>
         </div>
 
-        <div class="chat-main">
+        <div class="chat-main <?php echo $interlocutore ? 'active-chat' : 'waiting-room'; ?>">
             <?php if ($interlocutore): ?>
                 <div class="chat-header">
                     <div class="btn-back-chat" onclick="window.location.href='chat.php'">
