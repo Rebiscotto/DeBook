@@ -89,19 +89,27 @@ $lista_chat = $stmt_l->get_result();
         .user-item.active { background: #f0ebe3; font-weight: bold; }
         .user-item i { font-size: 1.8rem; margin-right: 12px; color: #ccc; }
 
-        /* Struttura Main */
-        .chat-main { width: 70%; display: flex; flex-direction: column; height: 100%; transition: background 0.3s; }
+        /* Main structure */
+        .chat-main { width: 70%; display: flex; flex-direction: column; height: 100%; transition: background 0.4s ease; }
         
-        /* --- SFONDI DIFFERENZIATI --- */
-        .waiting-room { background: #fdfdfd; } /* Grigio quasi bianco per l'attesa */
-        .active-chat { background: #fdfbf9; }  /* Beige Debook per la chat vera */
+        /* --- COLORI DIFFERENZIATI --- */
+        .waiting-room { background: #f2f4f5; } /* Grigio freddo/azzurrato per l'attesa */
+        .active-chat { background: #fdf6ec; }  /* Beige/Avorio caldo per la conversazione */
 
         .chat-header { height: var(--header-h); padding: 0 15px; display: flex; align-items: center; border-bottom: 1px solid #eee; background: #fff; flex-shrink: 0; }
 
         .messages-area { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
-        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
-        .sent { background: #e2d9c8; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .received { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        
+        .msg { 
+            max-width: 75%; 
+            padding: 10px 15px; 
+            border-radius: 15px; 
+            font-size: 0.95rem; 
+            line-height: 1.4; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+        }
+        .sent { background: #e2d9c8; align-self: flex-end; border-bottom-right-radius: 2px; border: 1px solid #d4c8b3; }
+        .received { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #f0f0f0; }
 
         .chat-footer { background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; padding: 10px; gap: 10px; flex-shrink: 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
         .chat-footer input { flex: 1; padding: 10px 15px; border-radius: 25px; border: 1px solid #ddd; outline: none; font-size: 16px; }
@@ -175,10 +183,13 @@ $lista_chat = $stmt_l->get_result();
                 </form>
 
             <?php else: ?>
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; text-align:center; padding: 20px;">
-                    <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:15px; color:#f0f0f0;"></i>
-                    <p style="color:#999;">Seleziona una chat per iniziare</p>
-                    <a href="index.php" style="margin-top: 15px; color: #333; text-decoration: none; border: 1px solid #ddd; padding: 10px 20px; border-radius: 25px; font-size: 0.9rem;">Torna alla Home</a>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#8899a6; text-align:center; padding: 20px;">
+                    <i class="fa-solid fa-comments" style="font-size:4.5rem; margin-bottom:15px; color:#d1d9e0;"></i>
+                    <h2 style="color:#5c6d7e; margin:0;">Inizia una conversazione</h2>
+                    <p style="color:#7a8a99; max-width: 300px; margin-top: 10px;">Seleziona un utente dalla lista a sinistra per visualizzare i messaggi.</p>
+                    <a href="index.php" style="margin-top: 25px; color: #333; text-decoration: none; border: 2px solid #d1d9e0; padding: 10px 25px; border-radius: 25px; font-size: 0.9rem; font-weight: bold; transition: 0.3s;">
+                        <i class="fa-solid fa-house"></i> Torna alla Home
+                    </a>
                 </div>
             <?php endif; ?>
         </div>
