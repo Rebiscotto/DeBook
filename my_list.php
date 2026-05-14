@@ -56,21 +56,21 @@ $result = $stmt->get_result();
 
         .actions { display: flex; gap: 15px; align-items: center; }
         
-        .btn-view { color: #0288d1; font-family: Arial; font-size: 0.95rem; text-decoration: none; font-weight: bold; }
+        .btn-view { 
+        color: #0288d1;
+         font-family: Arial;
+          font-size: 0.95rem; 
+          text-decoration: none;
+          font-weight: bold; }
         .btn-view:hover { text-decoration: underline; }
 
-        .btn-delete { 
-            background: #ffeded; 
-            color: #d32f2f; 
-            padding: 10px 18px; 
-            border-radius: 12px; 
-            text-decoration: none; 
-            font-size: 0.9rem;
-            border: 1px solid #ffcdd2;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .btn-delete:hover { background: #d32f2f; color: white; }
+         .btn-delete { 
+        color: #ff0000;
+         font-family: Arial;
+          font-size: 0.95rem; 
+          text-decoration: none;
+          font-weight: bold; }
+        .btn-delete:hover { text-decoration: underline; }
 
         .header-nav {
             display: flex;
@@ -118,8 +118,7 @@ $result = $stmt->get_result();
     <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
     <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" style="color: #f39c12; font-family: Arial; font-size: 0.95rem; margin-right: 10px; text-decoration: none; font-weight: bold;">Modifica</a>
     
-    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete"style="color: #ff0000; font-family: Arial; font-size: 0.95rem; margin-right: 10px; text-decoration: none; font-weight: bold;" onclick="return confirm('Sei sicuro?');">
-        <i class="fa-solid fa-trash-can"></i> Elimina
+    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete"></i> Elimina
     </a>
 </div>
                 </div>
