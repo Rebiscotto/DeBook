@@ -53,7 +53,7 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
                 <div class="input-group">
                     <label>MATERIA</label>
-                    <input type="text" name="materia" required>
+                    <input type="text" name="materia" required placeholder="Es. Letteratura Italiana">
                 </div>
                 <div class="input-group">
                     <label>ISBN</label>
@@ -96,7 +96,7 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
 
                 <div class="input-group full-width">
-                    <label>FOTO DEL LIBRO</label>
+                    <label>FOTO DEL LIBRO (si consiglia di inserire prima la copertina per motivi di visualizzazione)</label>
                     <input type="file" name="immagini[]" accept="image/*" multiple required>
                 </div>
             </div>
