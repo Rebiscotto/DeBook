@@ -7,8 +7,7 @@ if (!isset($_SESSION["loggedin"]) || !isset($_GET['id'])) { header("Location: lo
 $id_libro = intval($_GET['id']);
 $id_utente = $_SESSION["id"];
 
-// Verifichiamo che il libro appartenga effettivamente all'utente loggato
-$query = "SELECT L.*, A.titolo, A.autore, A.materia, A.codISBN 
+$query = "SELECT L.*, A.titolo, A.autore, A.materia, A.codISBN, A.IdAnag 
           FROM Libri L 
           JOIN AnagraficaLibri A ON L.IdAnag = A.IdAnag 
           WHERE L.IdLibro = ? AND L.IdVenditore = ?";
@@ -24,29 +23,55 @@ if (!$libro) { die("Accesso negato o libro non trovato."); }
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica Annuncio - Debook</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .edit-card { background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); width: 95%; max-width: 700px; margin: 40px auto; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { font-weight: bold; display: block; margin-bottom: 8px; color: #666; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; }
-        .current-img { width: 100px; border-radius: 10px; margin-top: 10px; }
+        body { background-color: var(--bg-page); font-family: Arial, sans-serif; }
+        .edit-card { background: white; padding: 30px; border-radius: 25px; box-shadow: var(--shadow); width: 95%; max-width: 700px; margin: 20px auto; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; font-size: 0.9rem; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 1rem; }
+        .current-img { width: 80px; height: 110px; object-fit: cover; border-radius: 10px; margin: 10px 0; border: 1px solid #ddd; }
+        .section-title { border-bottom: 2px solid #f4f7f6; padding-bottom: 5px; margin-bottom: 15px; color: var(--dark-text); font-family: 'Arial Black'; font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <div class="edit-card">
-        <h1>Modifica Annuncio</h1>
+        <h1 style="text-align:center;">Modifica Libro</h1>
+        
         <form action="modifica_controller.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id_libro" value="<?php echo $libro['IdLibro']; ?>">
+            <input type="hidden" name="id_anag" value="<?php echo $libro['IdAnag']; ?>">
+
+            <div class="section-title">Informazioni Generali</div>
             
             <div class="input-group">
-                <label>TITOLO (Sola lettura)</label>
-                <input type="text" value="<?php echo htmlspecialchars($libro['titolo']); ?>" disabled>
+                <label>TITOLO DEL LIBRO</label>
+                <input type="text" name="titolo" value="<?php echo htmlspecialchars($libro['titolo']); ?>" required>
             </div>
 
             <div class="input-group">
-                <label>PREZZO (€)</label>
+                <label>AUTORE</label>
+                <input type="text" name="autore" value="<?php echo htmlspecialchars($libro['autore']); ?>" required>
+            </div>
+
+            <div class="row" style="display:flex; gap:15px;">
+                <div class="input-group" style="flex:1;">
+                    <label>MATERIA</label>
+                    <input type="text" name="materia" value="<?php echo htmlspecialchars($libro['materia']); ?>" required>
+                </div>
+                <div class="input-group" style="flex:1;">
+                    <label>CODICE ISBN</label>
+                    <input type="text" name="isbn" value="<?php echo htmlspecialchars($libro['codISBN']); ?>">
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top:20px;">Dettagli Vendita</div>
+
+            <div class="input-group">
+                <label>PREZZO DI VENDITA (€)</label>
                 <input type="number" name="prezzo" step="0.01" value="<?php echo $libro['prezzo']; ?>" required>
             </div>
 
@@ -69,14 +94,14 @@ if (!$libro) { die("Accesso negato o libro non trovato."); }
             </div>
 
             <div class="input-group">
-                <label>FOTO ATTUALE</label>
+                <label>FOTO ATTUALE</label><br>
                 <img src="<?php echo explode(',', $libro['immagine'])[0]; ?>" class="current-img"><br>
-                <label style="margin-top:10px;">Carica nuove foto per sostituirle (Opzionale)</label>
+                <label>Sostituisci foto (lascia vuoto per mantenere le attuali)</label>
                 <input type="file" name="immagini[]" multiple accept="image/*">
             </div>
 
-            <button type="submit" class="btn-submit" style="width:100%;">SALVA MODIFICHE</button>
-            <a href="my_list.php" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Annulla</a>
+            <button type="submit" class="btn-submit" style="width:100%; margin-top:20px; padding:15px;">AGGIORNA ANNUNCIO</button>
+            <a href="my_list.php" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Annulla e torna indietro</a>
         </form>
     </div>
 </body>
