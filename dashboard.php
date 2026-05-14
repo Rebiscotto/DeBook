@@ -27,47 +27,87 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-page);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-nav {
+            width: 100%; /* Occupa tutta la larghezza */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            box-sizing: border-box;
+        }
+
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            gap: 25px;
             width: 90%;
             max-width: 1000px;
-            margin-top: 30px;
+            margin: 40px auto; /* Centra orizzontalmente la griglia */
         }
+
         .card {
             background: var(--white);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 40px 30px;
+            border-radius: 25px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
             text-decoration: none;
             color: var(--dark-text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
+
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
         }
+
         .card i {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--accent-beige);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+
         .user-info {
             background: var(--accent-beige);
             width: 100%;
-            padding: 20px;
+            padding: 40px 20px;
             text-align: center;
             font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .user-info h2 {
+            margin: 0;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-info p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-        <div style="font-family: Arial;">
-            Benvenuto, <strong><?php echo htmlspecialchars($_SESSION["nome"]); ?></strong> | 
-            <a href="logout.php" style="color: #d32f2f; text-decoration: none;">Esci</a>
+        <div style="font-family: Arial; font-size: 1.1rem;">
+            Benvenuto, <strong><?php echo htmlspecialchars($_SESSION["nome"]); ?></strong>
         </div>
     </header>
 
@@ -85,7 +125,7 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
         </div>
 
         <a href="vendi.php" class="card">
-            <i class="fa-solid fa-plus-circle"></i>
+            <i class="fa-solid fa-circle-plus"></i>
             <h3>Vendi un Libro</h3>
             <p>Carica un nuovo annuncio ora</p>
         </a>
