@@ -12,21 +12,19 @@ $id_utente = $_SESSION["id"];
 $chat_con = isset($_GET['with']) ? intval($_GET['with']) : null;
 $id_libro_contesto = isset($_GET['id_libro']) ? intval($_GET['id_libro']) : null;
 
-// --- INIZIO VERSIONE PRECISA NOTIFICHE ---
+// --- NOTIFICHE ---
 if ($chat_con) {
-    // Segna come letti SOLO i messaggi inviati dall'utente con cui sto parlando ora
     $sql_update = "UPDATE Messaggi SET letto = 1 WHERE IdDestinatario = ? AND IdMittente = ? AND letto = 0";
     $stmt_update = $conn->prepare($sql_update);
     $stmt_update->bind_param("ii", $id_utente, $chat_con);
     $stmt_update->execute();
 }
-// --- FINE VERSIONE PRECISA ---
 
 // Configurazione Crittografia
 $key = "Debook_Secret_2026_Safe";
 $iv = "1234567890123456"; 
 
-// 2. Recupero dati interlocutore e libro contestuale
+// 2. Recupero interlocutore e contesto
 $interlocutore = null;
 $libro_info = null;
 
@@ -42,7 +40,7 @@ if ($chat_con) {
     }
 }
 
-// 3. Recupero lista conversazioni attive
+// 3. Lista conversazioni
 $query_lista = "SELECT DISTINCT U.IdUtente, U.nome, U.cognome 
                 FROM Utenti U 
                 JOIN Messaggi M ON (U.IdUtente = M.IdMittente OR U.IdUtente = M.IdDestinatario) 
@@ -73,32 +71,56 @@ $lista_chat = $stmt_l->get_result();
         .chat-main { width: 70%; display: flex; flex-direction: column; background: #fff; position: relative; }
         .chat-header-top { padding: 15px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; z-index: 10; }
         
-        .context-bar { background: #f1f1f1; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; font-size: 0.85rem; }
-        .btn-buy-now { background: #27ae60; color: white; padding: 5px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.2s; }
-        .btn-buy-now:hover { background: #219150; }
-
         .messages-area { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 8px; }
-        .msg { max-width: 70%; padding: 10px 15px; border-radius: 18px; font-size: 0.95rem; position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .msg { max-width: 70%; padding: 10px 15px; border-radius: 18px; font-size: 0.95rem; position: relative; }
         .sent { background: var(--accent-beige); align-self: flex-end; border-bottom-right-radius: 4px; }
         .received { background: #e2e2e2; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg img { max-width: 200px; border-radius: 10px; display: block; margin-bottom: 5px; }
-
-        .btn-delete { color: #ff4d4d; font-size: 0.75rem; text-decoration: none; display: none; }
-        .msg.sent:hover .btn-delete { display: inline-block; }
-        .msg-deleted { opacity: 0.6; font-style: italic; color: #888; background: #f0f0f0 !important; }
+        
+        /* --- STILE LIGHTBOX --- */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-overlay img {
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 10px;
+            cursor: default;
+        }
+        .lb-actions {
+            position: absolute;
+            top: 20px; right: 20px;
+            display: flex; gap: 20px;
+        }
+        .lb-btn {
+            color: white; font-size: 30px; text-decoration: none; cursor: pointer;
+            background: rgba(255,255,255,0.1); width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+        }
+        .lb-btn:hover { background: rgba(255,255,255,0.3); }
 
         .chat-input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
         .chat-input-bar input[type="text"] { flex: 1; padding: 12px 20px; border-radius: 30px; border: 2px solid #eee; outline: none; }
         .btn-send-chat { background: var(--dark-text); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
-        
-        @media (max-width: 768px) {
-            .chat-layout { flex-direction: column; width: 100%; height: 90vh; margin: 0; }
-            .chat-sidebar { width: 100%; height: 15%; display: flex; }
-            .chat-main { width: 100%; height: 85%; }
-        }
     </style>
 </head>
 <body>
+
+    <div id="chatLightbox" class="lightbox-overlay" onclick="closeImage()">
+        <div class="lb-actions">
+            <a id="downloadBtn" href="" download class="lb-btn" onclick="event.stopPropagation();">
+                <i class="fa-solid fa-download"></i>
+            </a>
+            <div class="lb-btn" onclick="closeImage()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <img id="lightboxImg" src="" onclick="event.stopPropagation();">
+    </div>
 
     <header class="header-nav" style="padding: 10px 5%;">
         <a href="index.php"><img src="immagini/tastologo.png" alt="Logo" style="height:35px;"></a>
@@ -118,41 +140,20 @@ $lista_chat = $stmt_l->get_result();
         <div class="chat-main">
             <?php if ($interlocutore): ?>
                 <div class="chat-header-top">
-                    <a href="profilo.php?id=<?php echo $chat_con; ?>" style="text-decoration:none; color:black; display:flex; align-items:center; gap:8px;">
-                        <i class="fa-solid fa-circle-user" style="font-size:1.4rem;"></i>
-                        <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
-                    </a>
-                    <a href="lascia_feedback.php?to=<?php echo $chat_con; ?>" class="btn-vota"><i class="fa-solid fa-star"></i> Vota</a>
+                    <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
                 </div>
-
-                <?php if ($libro_info): ?>
-                <div class="context-bar">
-                    <span>Interesse per: <strong><?php echo htmlspecialchars($libro_info['titolo']); ?></strong></span>
-                    <a href="checkout.php?id_libro=<?php echo $id_libro_contesto; ?>" class="btn-buy-now">
-                        <i class="fa-solid fa-cart-shopping"></i> COMPRA ORA
-                    </a>
-                </div>
-                <?php endif; ?>
 
                 <div class="messages-area" id="chatBox"></div>
 
                 <form class="chat-input-bar" id="msgForm" enctype="multipart/form-data">
                     <input type="hidden" name="id_destinatario" value="<?php echo $chat_con; ?>">
-                    
                     <label for="foto_chat" style="cursor:pointer; color:#888; font-size:1.2rem;">
                         <i class="fa-solid fa-paperclip"></i>
                     </label>
                     <input type="file" id="foto_chat" name="foto_chat" accept="image/*" style="display:none;">
-                    
                     <input type="text" name="messaggio" placeholder="Scrivi..." autocomplete="off">
                     <button type="submit" class="btn-send-chat"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
-
-            <?php else: ?>
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc;">
-                    <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:10px;"></i>
-                    <p>Seleziona una chat</p>
-                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -162,18 +163,30 @@ $lista_chat = $stmt_l->get_result();
         const msgForm = document.getElementById("msgForm");
         const fileInput = document.getElementById("foto_chat");
 
+        // FUNZIONI LIGHTBOX
+        function openImage(src) {
+            const lb = document.getElementById('chatLightbox');
+            const img = document.getElementById('lightboxImg');
+            const dlBtn = document.getElementById('downloadBtn');
+            img.src = src;
+            dlBtn.href = src;
+            lb.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImage() {
+            document.getElementById('chatLightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         function loadMessages() {
             if(!chatBox) return;
             fetch('fetch_messages.php?with=<?php echo $chat_con; ?>')
             .then(response => response.text())
             .then(html => {
-                const cleanCurrent = chatBox.innerHTML.trim();
-                const cleanNew = html.trim();
-                if (cleanCurrent !== cleanNew) {
-                    const isAtBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 50;
-                    chatBox.innerHTML = html;
-                    if (isAtBottom) chatBox.scrollTop = chatBox.scrollHeight;
-                }
+                const isAtBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 50;
+                chatBox.innerHTML = html;
+                if (isAtBottom) chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
 
@@ -182,7 +195,6 @@ $lista_chat = $stmt_l->get_result();
             setInterval(loadMessages, 3000);
         }
 
-        // Funzione per inviare il form (sia testo che file)
         function inviaMessaggio() {
             let formData = new FormData(msgForm);
             fetch('send_message.php', { method: 'POST', body: formData })
@@ -192,22 +204,23 @@ $lista_chat = $stmt_l->get_result();
             });
         }
 
-        // Invio tramite tasto o Enter
         if(msgForm) {
-            msgForm.addEventListener('submit', function(e) {
+            msgForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 inviaMessaggio();
             });
         }
 
-        // INVIO IMMEDIATO QUANDO SI SELEZIONA UNA FOTO
         if(fileInput) {
             fileInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    inviaMessaggio();
-                }
+                if (this.files && this.files[0]) inviaMessaggio();
             });
         }
+
+        // Chiudi con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeImage();
+        });
     </script>
 </body>
 </html>

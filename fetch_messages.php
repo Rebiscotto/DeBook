@@ -47,9 +47,10 @@ while($m = $res->fetch_assoc()) {
         $percorso_foto = str_replace("FILE_IMAGE:", "", $testo);
         
         echo '<span>';
+        // MODIFICA: onclick ora chiama openImage per il lightbox nativo
         echo '<img src="' . htmlspecialchars($percorso_foto) . '" 
-                   style="max-width: 250px; border-radius: 15px; cursor: pointer; display: block; margin-bottom: 5px;" 
-                   onclick="window.open(this.src)">';
+                   style="max-width: 250px; border-radius: 15px; cursor: zoom-in; display: block; margin-bottom: 5px;" 
+                   onclick="openImage(this.src)">';
         echo '</span>';
     } else {
         // --- LOGICA PER IL TESTO NORMALE ---
@@ -61,9 +62,8 @@ while($m = $res->fetch_assoc()) {
 
     // Tasto elimina (solo se mio e non già eliminato)
     if ($is_mio && !$is_eliminato) {
-        // Se è una foto, puoi cambiare l'icona o tenerla uguale
         echo '<a href="elimina_messaggio.php?id=' . $m['IdMessaggio'] . '" 
-                 onclick="return confirm(\'Vuoi eliminare questo messaggio?\')" 
+                 onclick="event.stopPropagation(); return confirm(\'Vuoi eliminare questo messaggio?\')" 
                  class="btn-delete" style="margin-left: 10px;">
                  <i class="fa-solid fa-trash" style="font-size: 0.8rem;"></i>
               </a>';
