@@ -160,9 +160,11 @@ $imgs = explode(",", $libro['immagine']);
         </div>
 
         <div class="info-section">
-            <button onclick="history.back()" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Indietro
-            </button>
+            
+    <a href="compra.php" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Indietro
+    </a>
+
             <h1 style="margin: 0; color: #2c3e50;"><?php echo htmlspecialchars($libro['titolo']); ?></h1>
             <p style="font-size: 1.2rem; color: #7f8c8d; margin-top: 5px;">di <?php echo htmlspecialchars($libro['autore']); ?></p>
             <div class="price"><?php echo number_format($libro['prezzo'], 2); ?> €</div>
