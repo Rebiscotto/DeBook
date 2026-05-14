@@ -2,7 +2,7 @@
 session_start();
 require_once 'db_connection.php';
 
-// Protezione della pagina: accesso solo per utenti loggati
+// Protezione della pagina
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: login.php");
     exit;
@@ -32,11 +32,12 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: var(--bg-page); margin: 0; padding: 0; }
-        .container { width: 95%; max-width: 1000px; margin: 40px auto; }
+        body { background-color: var(--bg-page); margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        .container { width: 95%; max-width: 900px; margin: 40px auto; }
         
         .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
+        /* CARD LIBRO */
         .book-item {
             background: white;
             padding: 20px;
@@ -44,67 +45,105 @@ $result = $stmt->get_result();
             display: flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             transition: 0.3s;
-            overflow: hidden; /* Evita fuoriuscite strane */
         }
         
         .book-item img { 
-            width: 70px; 
-            height: 100px; 
+            width: 80px; 
+            height: 110px; 
             object-fit: cover; 
-            border-radius: 12px; 
-            flex-shrink: 0; /* Impedisce alla foto di rimpicciolirsi */
+            border-radius: 15px; 
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .book-details { 
-            flex: 1; 
-            min-width: 0; /* Permette al contenitore di ridursi senza rompere il layout */
-        }
-        
+        .book-details { flex: 1; min-width: 0; }
         .book-details h3 { 
             color: var(--dark-text); 
             margin: 0 0 5px 0; 
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* Mette i "..." se il titolo è troppo lungo */
+            text-overflow: ellipsis;
         }
-        
-        .book-details p { font-family: Arial; font-size: 0.85rem; color: #666; margin: 0; }
+        .book-details p { font-size: 0.9rem; color: #666; margin: 0; }
 
-        /* SEZIONE AZIONI - LA PARTE CRITICA */
+        /* AZIONI (Tasti) */
         .actions { 
             display: flex; 
-            gap: 15px; 
+            gap: 12px; 
             align-items: center; 
-            flex-shrink: 0; /* IMPEDISCE AI TASTI DI SPARIRE */
-            margin-left: auto; /* Spinge i tasti a destra */
-            padding-left: 10px;
+            flex-shrink: 0;
         }
         
-       
+        .btn-action {
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 50px;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .btn-view { background: #f0f7ff; color: #0288d1; border: 1px solid #0288d1; }
+        .btn-edit { background: #fffdf0; color: #f39c12; border: 1px solid #f39c12; }
+        .btn-delete { background: #fff5f5; color: #ff0000; border: 1px solid #ff0000; }
+
+        .btn-action:hover { opacity: 0.7; transform: translateY(-2px); }
+
+        /* HEADER NAV */
         .header-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px;
+            padding: 15px 5%;
             background: white;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* FIX PER MOBILE: Se lo schermo è piccolo, i tasti vanno sotto il testo */
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
-            .book-item { flex-wrap: wrap; }
-            .actions { width: 100%; margin-left: 0; padding-top: 15px; border-top: 1px solid #eee; justify-content: space-around; }
+            .book-item { 
+                flex-direction: column; 
+                text-align: center; 
+                padding: 25px;
+            }
+            
+            .book-item img {
+                width: 120px;
+                height: 160px;
+                margin-bottom: 10px;
+            }
+
+            .actions { 
+                width: 100%; 
+                flex-direction: column; 
+                gap: 10px;
+                margin-top: 15px;
+                padding-top: 15px;
+                border-top: 1px solid #eee;
+            }
+
+            .btn-action {
+                width: 100%;
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .book-details h3 {
+                white-space: normal; /* Permette al titolo di andare a capo su mobile se lungo */
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header-nav">
-        <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo" style="height: 40px;"></a>
-        <div style="font-family: Arial;">
+        <a href="index.php"><img src="immagini/tastologo.png" alt="Debook Logo" style="height: 35px;"></a>
+        <div>
             <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); font-weight: bold;">
                 <i class="fa-solid fa-gauge-high"></i> Dashboard
             </a>
@@ -114,19 +153,23 @@ $result = $stmt->get_result();
     <div class="container">
         <div class="list-header">
             <h1>I miei annunci</h1>
-            <a href="vendi.php" class="btn-submit" style="width: auto; padding: 10px 20px; font-size: 1rem; text-decoration: none; border-radius: 50px;">
+            <a href="vendi.php" class="btn-submit" style="width: auto; padding: 10px 20px; text-decoration: none; border-radius: 50px;">
                 <i class="fa-solid fa-plus"></i> Nuovo
             </a>
         </div>
 
-        <?php if(isset($_GET['msg'])) echo "<p style='color: #27ae60; font-family: Arial; font-weight: bold; margin-bottom: 20px; background: #e8f5e9; padding: 10px; border-radius: 10px;'>".htmlspecialchars($_GET['msg'])."</p>"; ?>
+        <?php if(isset($_GET['msg'])): ?>
+            <p style='color: #27ae60; background: #e8f5e9; padding: 15px; border-radius: 15px; font-weight: bold; margin-bottom: 25px;'>
+                <i class="fa-solid fa-check-circle"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
+            </p>
+        <?php endif; ?>
 
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="book-item">
                     <?php 
                         $immagini = explode(',', $row['immagine']);
-                        $prima_img = $immagini[0];
+                        $prima_img = !empty($immagini[0]) ? $immagini[0] : 'immagini/placeholder.jpg';
                     ?>
                     <img src="<?php echo htmlspecialchars($prima_img); ?>" alt="Copertina">
                     
@@ -135,32 +178,28 @@ $result = $stmt->get_result();
                         <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
                     </div>
 
-                    <div class="gestione-annunci-box" style="display: flex !important; gap: 15px !important; align-items: center !important; flex-shrink: 0 !important; margin-left: auto !important;">
-    
-    <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" 
-       style="color: #0288d1 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
-       Visualizza
-    </a>
-    
-    <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" 
-       style="color: #f39c12 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
-       Modifica
-    </a>
-    
-    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
-       onclick="return confirm('Sei sicuro?');"
-       style="color: #ff0000 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
-       Elimina
-    </a>
-    
-</div>
+                    <div class="actions">
+                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-action btn-view">
+                            <i class="fa-solid fa-eye"></i> Visualizza
+                        </a>
+                        
+                        <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-action btn-edit">
+                            <i class="fa-solid fa-pen"></i> Modifica
+                        </a>
+                        
+                        <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
+                           onclick="return confirm('Sei sicuro di voler eliminare questo annuncio?');"
+                           class="btn-action btn-delete">
+                            <i class="fa-solid fa-trash"></i> Elimina
+                        </a>
+                    </div>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
             <div style="text-align: center; padding: 60px; background: white; border-radius: 30px; box-shadow: var(--shadow);">
                 <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #eee; margin-bottom: 20px;"></i>
-                <p style="font-family: Arial; color: #777; font-size: 1.1rem;">Nessun annuncio attivo.</p>
-                <a href="vendi.php" style="color: var(--dark-text); font-weight: bold; text-decoration: none;">Vendi il tuo primo libro</a>
+                <p style="color: #777; font-size: 1.1rem; margin-bottom: 20px;">Non hai ancora caricato nessun libro.</p>
+                <a href="vendi.php" class="btn-submit" style="text-decoration:none; padding: 12px 25px; border-radius: 50px; display:inline-block;">Vendi il tuo primo libro</a>
             </div>
         <?php endif; ?>
     </div>
