@@ -84,12 +84,7 @@ $result = $stmt->get_result();
             padding-left: 10px;
         }
         
-        .btn-view { color: #0288d1; font-family: Arial; font-size: 0.9rem; text-decoration: none; font-weight: bold; }
-        .btn-mod { color: #f39c12; font-family: Arial; font-size: 0.9rem; text-decoration: none; font-weight: bold; }
-        .btn-delete { color: #ff0000; font-family: Arial; font-size: 0.9rem; text-decoration: none; font-weight: bold; cursor: pointer; }
-
-        .btn-view:hover, .btn-mod:hover, .btn-delete:hover { text-decoration: underline; }
-
+       
         .header-nav {
             display: flex;
             justify-content: space-between;
@@ -140,16 +135,24 @@ $result = $stmt->get_result();
                         <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
                     </div>
 
-                    <div class="actions">
-    <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
-    <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-mod">Modifica</a>
+                    <div class="gestione-annunci-box" style="display: flex !important; gap: 15px !important; align-items: center !important; flex-shrink: 0 !important; margin-left: auto !important;">
+    
+    <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" 
+       style="color: #0288d1 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
+       Visualizza
+    </a>
+    
+    <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" 
+       style="color: #f39c12 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
+       Modifica
+    </a>
     
     <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
-       class="btn-delete" 
-       style="background: black !important; color: white !important; padding: 5px 10px !important; border-radius: 5px !important;"
-       onclick="return confirm('Sei sicuro?');">
-       ELIMINA ORA
+       onclick="return confirm('Sei sicuro?');"
+       style="color: #ff0000 !important; font-size: 14px !important; font-weight: bold !important; text-decoration: underline !important; font-family: Arial !important; display: inline !important; opacity: 1 !important; visibility: visible !important;">
+       Elimina
     </a>
+    
 </div>
                 </div>
             <?php endwhile; ?>
