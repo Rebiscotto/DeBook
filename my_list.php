@@ -49,7 +49,7 @@ $result = $stmt->get_result();
         .book-details h3 { color: var(--dark-text); margin-bottom: 5px; }
         .book-details p { font-family: Arial; font-size: 0.9rem; color: #666; }
 
-        .actions { display: flex; gap: 10px; }
+        .actions { display: flex; gap: 10px; align-items: center; }
         .btn-delete { 
             background: #ffeded; 
             color: #d32f2f; 
@@ -60,14 +60,22 @@ $result = $stmt->get_result();
             border: 1px solid #ffcdd2;
         }
         .btn-delete:hover { background: #ffe0e0; }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+        }
     </style>
 </head>
 <body>
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
         <div style="font-family: Arial;">
-            <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); margin-right: 15px;">Dashboard</a>
-            <a href="logout.php" style="color: #d32f2f; text-decoration: none;">Esci</a>
+            <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); font-weight: bold;">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </a>
         </div>
     </header>
 
@@ -84,13 +92,17 @@ $result = $stmt->get_result();
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="book-item">
-                    <img src="<?php echo htmlspecialchars($row['immagine']); ?>" alt="Copertina">
+                    <?php 
+                        $immagini = explode(',', $row['immagine']);
+                        $prima_img = $immagini[0];
+                    ?>
+                    <img src="<?php echo htmlspecialchars($prima_img); ?>" alt="Copertina">
                     <div class="book-details">
                         <h3><?php echo htmlspecialchars($row['titolo']); ?></h3>
                         <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
                     </div>
                     <div class="actions">
-                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" style="color: #0288d1; font-family: Arial; font-size: 0.9rem; margin-right: 10px; text-decoration: none;">Visualizza</a>
+                        <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" style="color: #0288d1; font-family: Arial; font-size: 0.9rem; margin-right: 10px; text-decoration: none; font-weight: bold;">Visualizza</a>
                         <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo annuncio?');">
                             <i class="fa-solid fa-trash"></i> Elimina
                         </a>
