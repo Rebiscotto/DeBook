@@ -2,7 +2,6 @@
 session_start();
 require_once 'db_connection.php';
 
-// Controllo sicurezza: se l'utente non è loggato, torna al login
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: login.php");
     exit;
@@ -10,8 +9,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 $id_utente = $_SESSION["id"];
 
-// MODIFICA: Conta solo i libri con stato 'disponibile'
-// In questo modo i libri venduti spariscono automaticamente dal conteggio
 $sql_libri = "SELECT COUNT(*) as totale FROM Libri WHERE IdVenditore = ? AND stato = 'disponibile'";
 $stmt = $conn->prepare($sql_libri);
 $stmt->bind_param("i", $id_utente);
@@ -24,6 +21,7 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Debook - Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -50,7 +48,8 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            /* Layout Desktop */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             width: 90%;
             max-width: 1000px;
@@ -78,7 +77,7 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
         }
 
         .card i {
-            font-size: 3rem;
+            font-size: 3.5rem; /* Icone leggermente più grandi */
             color: var(--accent-beige);
             margin-bottom: 20px;
         }
@@ -99,10 +98,36 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
             letter-spacing: 1px;
         }
 
-        .user-info p {
-            margin-top: 10px;
-            font-size: 1.1rem;
-            opacity: 0.8;
+        /* --- STILI MOBILE --- */
+        @media (max-width: 768px) {
+            .header-nav {
+                padding: 15px 20px;
+            }
+            
+            .user-info h2 {
+                font-size: 1.8rem;
+            }
+
+            .dashboard-grid {
+                /* Una sola colonna per avere elementi grandi */
+                grid-template-columns: 1fr; 
+                width: 92%;
+                margin: 20px auto;
+                gap: 20px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            .card i {
+                font-size: 3rem;
+            }
+
+            .card h3 {
+                font-size: 1.4rem;
+                margin: 10px 0;
+            }
         }
 
         .logo-link img { height: 40px; }
@@ -112,7 +137,7 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
         <div style="font-family: Arial; font-size: 1.1rem;">
-            Benvenuto, <strong><?php echo htmlspecialchars($_SESSION["nome"]); ?></strong>
+            <strong><?php echo htmlspecialchars($_SESSION["nome"]); ?></strong>
         </div>
     </header>
 
@@ -126,13 +151,13 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
             <i class="fa-solid fa-book"></i>
             <h3>I miei Libri</h3>
             <p>Hai <strong><?php echo $conta_libri; ?></strong> annunci attivi</p>
-            <a href="my_list.php" class="btn-submit" style="display:inline-block; margin-top:15px; font-size:0.9rem; text-decoration:none; width: auto; padding: 10px 20px; border-radius: 50px;">Gestisci</a>
+            <a href="my_list.php" class="btn-submit" style="display:inline-block; margin-top:15px; font-size:1rem; text-decoration:none; width: auto; padding: 12px 30px; border-radius: 50px; background: var(--dark-text); color: white;">Gestisci</a>
         </div>
 
         <a href="vendi.php" class="card">
             <i class="fa-solid fa-circle-plus"></i>
             <h3>Vendi un Libro</h3>
-            <p>Carica un nuovo annuncio ora</p>
+            <p>Carica un nuovo annuncio</p>
         </a>
 
         <a href="chat.php" class="card">
@@ -144,7 +169,7 @@ $conta_libri = $res_libri->fetch_assoc()['totale'];
         <a href="miei_ordini.php" class="card">
             <i class="fa-solid fa-cart-shopping"></i>
             <h3>I miei Acquisti</h3>
-            <p>Visualizza lo storico ordini</p>
+            <p>Storico degli ordini</p>
         </a>
     </div>
 </body>
