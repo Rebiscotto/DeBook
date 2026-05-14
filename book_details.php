@@ -67,7 +67,9 @@ if(!$libro) { die("Libro non trovato."); }
         </div>
 
         <div class="info-section">
-            <a href="compra.php" class="back-link"><i class="fa-solid fa-arrow-left"></i> Torna al Mercatino</a>
+            <button onclick="history.back()" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Indietro
+            </button>
             
             <h1 style="margin: 0; color: #2c3e50;"><?php echo htmlspecialchars($libro['titolo']); ?></h1>
             <p style="font-size: 1.2rem; color: #7f8c8d; margin-top: 5px;">di <?php echo htmlspecialchars($libro['autore']); ?></p>
