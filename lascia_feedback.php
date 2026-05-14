@@ -4,37 +4,48 @@ require_once 'db_connection.php';
 
 if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
 
-$id_destinatario = isset($_GET['to']) ? intval($_GET['to']) : null;
-if (!$id_destinatario) { header("Location: index.php"); exit; }
+// AGGIORNATO: Ora legge 'id_venditore' come inviato dalla chat
+$id_destinatario = isset($_GET['id_venditore']) ? intval($_GET['id_venditore']) : null;
 
-// Recuperiamo il nome del venditore per mostrarlo nel titolo
-$st_u = $conn->prepare("SELECT nome FROM Utenti WHERE IdUtente = ?");
+if (!$id_destinatario) { 
+    // Se non c'è l'ID, torna alla chat invece che alla index per non disorientare l'utente
+    header("Location: chat.php"); 
+    exit; 
+}
+
+// Recuperiamo il nome del venditore
+$st_u = $conn->prepare("SELECT nome, cognome FROM Utenti WHERE IdUtente = ?");
 $st_u->bind_param("i", $id_destinatario);
 $st_u->execute();
 $dest = $st_u->get_result()->fetch_assoc();
+
+if (!$dest) { header("Location: chat.php"); exit; }
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Debook - Lascia Feedback</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body { background-color: #f4f7f6; margin: 0; padding: 0; }
+        
         .feedback-box { 
             max-width: 500px; 
-            margin: 60px auto; 
+            width: 90%;
+            margin: 40px auto; 
             background: white; 
-            padding: 40px; 
+            padding: 40px 20px; 
             border-radius: 30px; 
             box-shadow: var(--shadow); 
             text-align: center; 
-            position: relative; /* Necessario per il tasto indietro assoluto */
+            position: relative;
+            box-sizing: border-box;
         }
 
-        /* Stile per il tasto Indietro */
         .btn-back-feedback {
             position: absolute;
             top: 20px;
@@ -54,14 +65,9 @@ $dest = $st_u->get_result()->fetch_assoc();
             font-family: Arial, sans-serif;
         }
 
-        .btn-back-feedback:hover {
-            background: #e2e2e2;
-            color: #000;
-        }
-
-        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; margin: 25px 0; }
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; margin: 25px 0; }
         .star-rating input { display: none; }
-        .star-rating label { font-size: 3rem; color: #ddd; cursor: pointer; transition: 0.2s; }
+        .star-rating label { font-size: 2.8rem; color: #ddd; cursor: pointer; transition: 0.2s; }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f39c12; }
         
         textarea { 
@@ -71,17 +77,27 @@ $dest = $st_u->get_result()->fetch_assoc();
             padding: 15px; 
             outline: none; 
             font-family: Arial; 
+            font-size: 16px; /* Evita lo zoom su iPhone */
             resize: none; 
             margin-bottom: 20px; 
-            box-sizing: border-box; /* Evita che la textarea esca dai bordi */
+            box-sizing: border-box; 
         }
 
         .btn-submit {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50px;
+            width: 100%;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
+            font-size: 1rem;
         }
-        .btn-submit:hover {
-            transform: scale(1.02);
+
+        @media (max-width: 480px) {
+            .feedback-box { margin: 20px auto; padding: 50px 20px 30px; }
+            .star-rating label { font-size: 2.2rem; }
         }
     </style>
 </head>
@@ -89,10 +105,13 @@ $dest = $st_u->get_result()->fetch_assoc();
 
     <div class="feedback-box">
         <button onclick="history.back()" class="btn-back-feedback">
-            <i class="fa-solid fa-arrow-left"></i> Indietro
+            <i class="fa-solid fa-arrow-left"></i>
         </button>
 
-        <h2 style="font-family:'Arial Black'; margin-top: 15px;">VALUTA <?php echo strtoupper($dest['nome']); ?></h2>
+        <h2 style="font-family:'Arial Black'; margin-top: 20px; text-transform: uppercase;">
+            Valuta <?php echo htmlspecialchars($dest['nome']); ?>
+        </h2>
+        <p style="color: #888; font-size: 0.9rem;">La tua opinione aiuta la community di Debook.</p>
         
         <form action="lascia_feedback_controller.php" method="POST">
             <input type="hidden" name="IdDestinatario" value="<?php echo $id_destinatario; ?>">
@@ -105,9 +124,9 @@ $dest = $st_u->get_result()->fetch_assoc();
                 <input type="radio" id="star1" name="voto" value="1"><label for="star1">★</label>
             </div>
 
-            <textarea name="commento" rows="4" placeholder="Com'è andata la trattativa?" required></textarea>
+            <textarea name="commento" rows="4" placeholder="Com'è andata la trattativa? Il venditore è stato affidabile?" required></textarea>
             
-            <button type="submit" class="btn-submit" style="width:100%; font-weight: bold;">INVIA FEEDBACK</button>
+            <button type="submit" class="btn-submit">INVIA FEEDBACK</button>
         </form>
     </div>
 

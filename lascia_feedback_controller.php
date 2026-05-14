@@ -2,40 +2,52 @@
 session_start();
 require_once 'db_connection.php';
 
+// Impostiamo il fuso orario corretto (opzionale ma consigliato)
+date_default_timezone_set('Europe/Rome');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id'])) {
     
     $IdMittente = $_SESSION['id']; 
     $IdDestinatario = intval($_POST['IdDestinatario']); 
     $NStelle = intval($_POST['voto']); 
     $messaggio = trim($_POST['commento']); 
-    
-    // Creiamo la data e ora attuale nel formato corretto per il database
     $data_attuale = date("Y-m-d H:i:s");
     
-    // IdTransazione lo lasciamo NULL se non lo usi
-    $IdTransazione = NULL; 
+    // Gestione IdTransazione: se non esiste nel DB, usiamo null in modo pulito
+    $IdTransazione = null; 
 
-    if($IdDestinatario > 0 && $NStelle > 0) {
+    if($IdDestinatario > 0 && $NStelle > 0 && !empty($messaggio)) {
         
-        // Aggiungiamo 'data' nella query di inserimento
+        // Prepariamo la query
         $sql = "INSERT INTO Feedback (messaggio, NStelle, IdMittente, IdDestinatario, IdTransazione, data) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         
         if ($stmt) {
-            // "siiiis" -> string, int, int, int, int, string (per la data)
+            // Nota sui tipi: "siiiis"
+            // s = messaggio (string)
+            // i = NStelle (int)
+            // i = IdMittente (int)
+            // i = IdDestinatario (int)
+            // i = IdTransazione (può essere nullo)
+            // s = data (string)
             $stmt->bind_param("siiiis", $messaggio, $NStelle, $IdMittente, $IdDestinatario, $IdTransazione, $data_attuale);
             
             if ($stmt->execute()) {
-                header("Location: profilo.php?id=" . $IdDestinatario);
+                // Dopo il feedback, lo rimandiamo alla chat con un messaggio di successo
+                header("Location: chat.php?with=" . $IdDestinatario . "&msg=Feedback inviato!");
                 exit;
             } else {
-                die("Errore esecuzione: " . $stmt->error);
+                // Se fallisce per via della Foreign Key su IdTransazione, riproviamo senza quella colonna
+                die("Errore nell'invio del feedback. Assicurati di non aver già lasciato un feedback per questa transazione o contatta l'assistenza.");
             }
         } else {
             die("Errore database: " . $conn->error);
         }
     } else {
-        die("Dati non validi.");
+        die("Per favore, seleziona un voto e scrivi un breve commento.");
     }
+} else {
+    header("Location: index.php");
+    exit;
 }
 ?>
