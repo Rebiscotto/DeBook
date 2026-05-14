@@ -53,13 +53,13 @@ if (!$libro) { die("Accesso negato o libro non trovato."); }
             </div>
 
             <div class="input-group">
-                <label>AUTORE</label>
+                <label>AUTORE (Scriverli uno di seguito all'altro con spazi)</label>
                 <input type="text" name="autore" value="<?php echo htmlspecialchars($libro['autore']); ?>" required>
             </div>
 
             <div class="row" style="display:flex; gap:15px;">
                 <div class="input-group" style="flex:1;">
-                    <label>MATERIA</label>
+                    <label>MATERIA (Scrivere correttamente con la lettera maiuscola)</label>
                     <input type="text" name="materia" value="<?php echo htmlspecialchars($libro['materia']); ?>" required>
                 </div>
                 <div class="input-group" style="flex:1;">
@@ -81,6 +81,7 @@ if (!$libro) { die("Accesso negato o libro non trovato."); }
                     <option value="Come Nuovo" <?php if($libro['condizione'] == "Come Nuovo") echo "selected"; ?>>Come Nuovo</option>
                     <option value="Ottimo" <?php if($libro['condizione'] == "Ottimo") echo "selected"; ?>>Ottimo</option>
                     <option value="Buono" <?php if($libro['condizione'] == "Buono") echo "selected"; ?>>Buono</option>
+                    <option value="Discreto" <?php if($libro['condizione'] == "Discreto") echo "selected"; ?>>Discreto</option>
                     <option value="Usurato" <?php if($libro['condizione'] == "Usurato") echo "selected"; ?>>Usurato</option>
                 </select>
             </div>
