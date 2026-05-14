@@ -134,8 +134,7 @@ $lista_chat = $stmt_l->get_result();
                 </div>
                 <?php endif; ?>
 
-                <div class="messages-area" id="chatBox">
-                   </div>
+                <div class="messages-area" id="chatBox"></div>
 
                 <form class="chat-input-bar" id="msgForm" enctype="multipart/form-data">
                     <input type="hidden" name="id_destinatario" value="<?php echo $chat_con; ?>">
@@ -161,6 +160,7 @@ $lista_chat = $stmt_l->get_result();
     <script>
         const chatBox = document.getElementById("chatBox");
         const msgForm = document.getElementById("msgForm");
+        const fileInput = document.getElementById("foto_chat");
 
         function loadMessages() {
             if(!chatBox) return;
@@ -179,19 +179,33 @@ $lista_chat = $stmt_l->get_result();
 
         if(<?php echo $chat_con ? 'true' : 'false'; ?>) {
             loadMessages();
-            // Aggiornamento messaggi ogni 3 secondi
             setInterval(loadMessages, 3000);
         }
 
+        // Funzione per inviare il form (sia testo che file)
+        function inviaMessaggio() {
+            let formData = new FormData(msgForm);
+            fetch('send_message.php', { method: 'POST', body: formData })
+            .then(() => {
+                msgForm.reset();
+                loadMessages();
+            });
+        }
+
+        // Invio tramite tasto o Enter
         if(msgForm) {
             msgForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                let formData = new FormData(this);
-                fetch('send_message.php', { method: 'POST', body: formData })
-                .then(() => {
-                    this.reset();
-                    loadMessages();
-                });
+                inviaMessaggio();
+            });
+        }
+
+        // INVIO IMMEDIATO QUANDO SI SELEZIONA UNA FOTO
+        if(fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    inviaMessaggio();
+                }
             });
         }
     </script>

@@ -10,11 +10,11 @@ if (!isset($_SESSION["loggedin"]) || !isset($_GET['with'])) {
 $id_utente = $_SESSION["id"];
 $chat_con = intval($_GET['with']);
 
-// 2. Configurazione Crittografia (Deve essere identica a chat.php e send_message.php)
+// 2. Configurazione Crittografia (Identica a chat.php e send_message.php)
 $key = "Debook_Secret_2026_Safe";
 $iv = "1234567890123456"; 
 
-// 3. Query per recuperare i messaggi tra i due utenti
+// 3. Query per recuperare i messaggi
 $q = "SELECT * FROM Messaggi 
       WHERE (IdMittente = ? AND IdDestinatario = ?) 
       OR (IdMittente = ? AND IdDestinatario = ?) 
@@ -25,41 +25,50 @@ $st->bind_param("iiii", $id_utente, $chat_con, $chat_con, $id_utente);
 $st->execute();
 $res = $st->get_result();
 
-// 4. Generazione dell'HTML (Deve rispecchiare esattamente la struttura di chat.php)
+// 4. Generazione dell'HTML
 while($m = $res->fetch_assoc()) {
     $is_mio = ($m['IdMittente'] == $id_utente);
     $is_eliminato = (isset($m['eliminato']) && $m['eliminato'] == 1);
     
-    // Decriptazione: se il messaggio è eliminato non serve decriptare il vecchio testo
     if (!$is_eliminato) {
         $testo = openssl_decrypt($m['testo_criptato'], 'aes-256-cbc', $key, 0, $iv);
     } else {
         $testo = "Questo messaggio è stato eliminato";
     }
 
-    // Costruzione della classe CSS
     $classe_msg = "msg " . ($is_mio ? "sent" : "received");
-    if ($is_eliminato) {
-        $classe_msg .= " msg-deleted";
-    }
+    if ($is_eliminato) $classe_msg .= " msg-deleted";
 
-    // Output HTML
     echo '<div class="' . $classe_msg . '">';
-    echo '<span>';
-    if ($is_eliminato) {
-        echo '<i class="fa-solid fa-ban"></i> ';
+    
+    // --- LOGICA PER LE IMMAGINI ---
+    if (!$is_eliminato && strpos($testo, "FILE_IMAGE:") === 0) {
+        // Estraiamo il percorso della foto togliendo il prefisso
+        $percorso_foto = str_replace("FILE_IMAGE:", "", $testo);
+        
+        echo '<span>';
+        echo '<img src="' . htmlspecialchars($percorso_foto) . '" 
+                   style="max-width: 250px; border-radius: 15px; cursor: pointer; display: block; margin-bottom: 5px;" 
+                   onclick="window.open(this.src)">';
+        echo '</span>';
+    } else {
+        // --- LOGICA PER IL TESTO NORMALE ---
+        echo '<span>';
+        if ($is_eliminato) echo '<i class="fa-solid fa-ban"></i> ';
+        echo htmlspecialchars($testo);
+        echo '</span>';
     }
-    echo htmlspecialchars($testo);
-    echo '</span>';
 
-    // Aggiungiamo il tasto elimina solo se il messaggio è mio e non è già stato eliminato
+    // Tasto elimina (solo se mio e non già eliminato)
     if ($is_mio && !$is_eliminato) {
+        // Se è una foto, puoi cambiare l'icona o tenerla uguale
         echo '<a href="elimina_messaggio.php?id=' . $m['IdMessaggio'] . '" 
                  onclick="return confirm(\'Vuoi eliminare questo messaggio?\')" 
-                 class="btn-delete">
-                 <i class="fa-solid fa-trash"></i>
+                 class="btn-delete" style="margin-left: 10px;">
+                 <i class="fa-solid fa-trash" style="font-size: 0.8rem;"></i>
               </a>';
     }
+    
     echo '</div>';
 }
 ?>
