@@ -30,15 +30,43 @@ if (!$libro) {
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Checkout - Debook</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.paypal.com/sdk/js?client-id=ATmdhu6fk7cVs8sfbvpMRBKNV2309B8cBbpauv9wJIIhgeR2GtAfywE6L8vU61EBOAWxqwXye4Q3opvF&currency=EUR"></script>
     <style>
-        body { background-color: #f4f7f6; font-family: Arial, sans-serif; }
-        .checkout-box { max-width: 500px; margin: 50px auto; padding: 40px; background: white; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; }
-        .price { font-size: 2.5rem; color: #27ae60; font-weight: bold; margin: 20px 0; font-family: 'Arial Black', sans-serif; }
-        #paypal-button-container { margin-top: 20px; }
+        body { 
+            background-color: #f4f7f6; 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        .checkout-box { 
+            max-width: 500px; 
+            width: 90%; /* Occupa quasi tutto lo schermo su mobile */
+            margin: 40px auto; 
+            padding: 30px; 
+            background: white; 
+            border-radius: 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            text-align: center;
+            box-sizing: border-box; /* Impedisce al padding di rompere la larghezza */
+        }
+
+        .price { 
+            font-size: 2.2rem; 
+            color: #27ae60; 
+            font-weight: bold; 
+            margin: 20px 0; 
+            font-family: 'Arial Black', sans-serif; 
+        }
+
+        #paypal-button-container { 
+            margin-top: 20px; 
+            width: 100%;
+        }
         
         .btn-back {
             display: inline-block;
@@ -46,17 +74,29 @@ if (!$libro) {
             text-decoration: none;
             color: #7f8c8d;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: 0.3s;
+            padding: 10px;
         }
         .btn-back:hover { color: #333; }
+
+        /* AGGIUSTAMENTI PER MOBILE */
+        @media (max-width: 480px) {
+            .checkout-box {
+                margin: 20px auto;
+                padding: 20px;
+            }
+            h2 { font-size: 1.4rem; }
+            h3 { font-size: 1.1rem; }
+            .price { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
     <div class="checkout-box">
         <h2>Riepilogo Ordine</h2>
         <p style="color: #666; margin-bottom: 5px;">Stai acquistando:</p>
-        <h3 style="margin-top: 0;"><?php echo htmlspecialchars($libro['titolo']); ?></h3>
+        <h3 style="margin-top: 0; line-height: 1.2;"><?php echo htmlspecialchars($libro['titolo']); ?></h3>
         <p>Venditore: <strong><?php echo htmlspecialchars($libro['venditore']); ?></strong></p>
         
         <div class="price"><?php echo number_format($libro['prezzo'], 2); ?> €</div>
@@ -70,6 +110,13 @@ if (!$libro) {
 
     <script>
         paypal.Buttons({
+            // Rende il bottone responsive automaticamente
+            style: {
+                layout: 'vertical',
+                color:  'gold',
+                shape:  'pill',
+                label:  'paypal'
+            },
             createOrder: function(data, actions) {
                 return actions.order.create({
                     purchase_units: [{
@@ -81,9 +128,6 @@ if (!$libro) {
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    // Primo feedback visivo dopo la chiusura del popup PayPal
-                    console.log("Pagamento autorizzato, invio dati al server...");
-
                     const formData = new FormData();
                     formData.append('id_libro', '<?php echo $id_libro; ?>');
 
@@ -94,9 +138,7 @@ if (!$libro) {
                     .then(response => response.json())
                     .then(res => {
                         if(res.success) {
-                            // Messaggio di successo richiesto
                             alert('PAGAMENTO EFFETTUATO! Il libro è tuo. Verrai reindirizzato al mercatino.');
-                            // Reindirizzamento al mercatino richiesto
                             window.location.href = 'compra.php';
                         } else {
                             alert('Errore Server: ' + res.error);
@@ -108,7 +150,7 @@ if (!$libro) {
                 });
             },
             onError: function(err) {
-                alert("Errore tecnico PayPal. Verifica di usare un account Sandbox e di non essere il venditore del libro.");
+                alert("Errore tecnico PayPal. Verifica di usare un account Sandbox.");
                 console.error(err);
             }
         }).render('#paypal-button-container');
