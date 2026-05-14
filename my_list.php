@@ -118,7 +118,7 @@ $result = $stmt->get_result();
     <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-view">Visualizza</a>
     <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" style="color: #f39c12; font-family: Arial; font-size: 0.95rem; margin-right: 10px; text-decoration: none; font-weight: bold;">Modifica</a>
     
-    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete" onclick="return confirm('Sei sicuro?');">
+    <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-delete"style="color: #ff0000; font-family: Arial; font-size: 0.95rem; margin-right: 10px; text-decoration: none; font-weight: bold;" onclick="return confirm('Sei sicuro?');">
         <i class="fa-solid fa-trash-can"></i> Elimina
     </a>
 </div>
