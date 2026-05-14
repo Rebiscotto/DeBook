@@ -69,7 +69,6 @@ $lista_chat = $stmt_l->get_result();
             flex-shrink: 0;
         }
 
-        /* Stile Tasto Dashboard */
         .btn-dash {
             text-decoration: none;
             color: #333;
@@ -155,10 +154,6 @@ $lista_chat = $stmt_l->get_result();
                         <i class="fa-solid fa-arrow-left"></i>
                     </div>
                     <strong style="flex: 1;"><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
-                    
-                    <a href="dashboard.php" class="btn-dash">
-                        <i class="fa-solid fa-house-user"></i> <span class="hide-mobile">Dashboard</span>
-                    </a>
                 </div>
 
                 <div class="messages-area" id="chatBox"></div>
@@ -172,6 +167,7 @@ $lista_chat = $stmt_l->get_result();
                     <input type="text" name="messaggio" placeholder="Scrivi..." autocomplete="off">
                     <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
+
             <?php else: ?>
                 <div class="sidebar-header">
                      <a href="index.php"><img src="immagini/tastologo.png" alt="Debook" style="height:25px;"></a>
