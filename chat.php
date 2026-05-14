@@ -169,14 +169,10 @@ $lista_chat = $stmt_l->get_result();
                 </form>
 
             <?php else: ?>
-                <div class="sidebar-header">
-                     <a href="index.php"><img src="immagini/tastologo.png" alt="Debook" style="height:25px;"></a>
-                     <span style="flex: 1;"></span>
-                     <a href="dashboard.php" class="btn-dash"><i class="fa-solid fa-house-user"></i> Dashboard</a>
-                </div>
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; text-align:center; padding: 20px;">
                     <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:15px; color:#f0f0f0;"></i>
                     <p style="color:#999;">Seleziona una chat per iniziare</p>
+                    <a href="index.php" style="margin-top: 15px; color: #333; text-decoration: none; border: 1px solid #ddd; padding: 10px 20px; border-radius: 25px; font-size: 0.9rem;">Torna alla Home</a>
                 </div>
             <?php endif; ?>
         </div>
