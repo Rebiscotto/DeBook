@@ -73,37 +73,38 @@ $imgs = explode(",", $libro['immagine']);
             justify-content: center;
         }
         .lightbox-content {
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 85%;
+            max-height: 85%;
             object-fit: contain;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            border-radius: 10px;
+            border-radius: 5px;
         }
         .close-lightbox {
             position: absolute;
             top: 20px; right: 30px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+            color: white; font-size: 40px; font-weight: bold;
+            cursor: pointer; z-index: 10001;
         }
-        .close-lightbox:hover { color: #bbb; }
+        
+        /* Frecce Lightbox */
+        .lb-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: white; font-size: 3rem; cursor: pointer; padding: 20px;
+            z-index: 10001; opacity: 0.7; transition: 0.3s;
+        }
+        .lb-nav:hover { opacity: 1; scale: 1.1; }
+        .lb-prev { left: 20px; }
+        .lb-next { right: 20px; }
 
         /* --- INFO SECTION --- */
         .info-section { flex: 1.2; }
         .btn-back { border: none; background: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; text-decoration: none; color: #7f8c8d; font-weight: bold; transition: 0.3s; font-size: 1rem; }
         .btn-back:hover { color: #333; }
-        
         .price { font-size: 2.8rem; font-family: 'Arial Black'; color: #2ecc71; margin: 15px 0; }
-        
         .specs { width: 100%; margin: 20px 0; border-collapse: collapse; }
         .specs td { padding: 12px; border-bottom: 1px solid #eee; }
         .label { font-weight: bold; color: #95a5a6; width: 35%; }
-
         .btn-buy { display: block; background: #27ae60; color: white; padding: 18px; text-align: center; border-radius: 50px; text-decoration: none; font-weight: bold; margin-bottom: 12px; font-size: 1.1rem; transition: 0.3s; }
         .btn-buy:hover { background: #219150; transform: translateY(-2px); }
-        
         .btn-chat { display: block; background: #34495e; color: white; padding: 18px; text-align: center; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
         .btn-chat:hover { background: #2c3e50; transform: translateY(-2px); }
         
@@ -111,6 +112,7 @@ $imgs = explode(",", $libro['immagine']);
             .container-detail { flex-direction: column; margin: 10px; padding: 20px; } 
             .image-section { max-width: 100%; }
             .slide img { height: 350px; }
+            .lb-nav { font-size: 2rem; padding: 10px; }
         }
     </style>
 </head>
@@ -118,7 +120,17 @@ $imgs = explode(",", $libro['immagine']);
 
     <div id="fullScreenLightbox" class="lightbox" onclick="closeFullscreen()">
         <span class="close-lightbox">&times;</span>
-        <img class="lightbox-content" id="fullScreenImg">
+        
+        <?php if(count($imgs) > 1): ?>
+            <div class="lb-nav lb-prev" onclick="event.stopPropagation(); changeFullscreenImage(-1);">
+                <i class="fa-solid fa-chevron-left"></i>
+            </div>
+            <div class="lb-nav lb-next" onclick="event.stopPropagation(); changeFullscreenImage(1);">
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+        <?php endif; ?>
+
+        <img class="lightbox-content" id="fullScreenImg" onclick="event.stopPropagation();">
     </div>
 
     <div class="container-detail">
@@ -130,8 +142,8 @@ $imgs = explode(",", $libro['immagine']);
                 <?php endif; ?>
 
                 <div class="slider-wrapper" id="sliderWrapper">
-                    <?php foreach($imgs as $img): ?>
-                        <div class="slide" onclick="openFullscreen('<?php echo htmlspecialchars(trim($img)); ?>')">
+                    <?php foreach($imgs as $index => $img): ?>
+                        <div class="slide" onclick="openFullscreen(<?php echo $index; ?>)">
                             <img src="<?php echo htmlspecialchars(trim($img)); ?>" alt="Foto libro">
                         </div>
                     <?php endforeach; ?>
@@ -151,12 +163,9 @@ $imgs = explode(",", $libro['immagine']);
             <button onclick="history.back()" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i> Indietro
             </button>
-            
             <h1 style="margin: 0; color: #2c3e50;"><?php echo htmlspecialchars($libro['titolo']); ?></h1>
             <p style="font-size: 1.2rem; color: #7f8c8d; margin-top: 5px;">di <?php echo htmlspecialchars($libro['autore']); ?></p>
-            
             <div class="price"><?php echo number_format($libro['prezzo'], 2); ?> €</div>
-
             <table class="specs">
                 <tr><td class="label">Materia</td><td><?php echo htmlspecialchars($libro['materia']); ?></td></tr>
                 <tr><td class="label">ISBN</td><td><?php echo htmlspecialchars($libro['codISBN'] ?? 'N/D'); ?></td></tr>
@@ -173,7 +182,6 @@ $imgs = explode(",", $libro['immagine']);
                     </td>
                 </tr>
             </table>
-
             <div class="actions" style="margin-top: 30px;">
                 <?php if(isset($_SESSION['id'])): ?>
                     <?php if($_SESSION['id'] != $libro['IdUtente']): ?>
@@ -196,13 +204,16 @@ $imgs = explode(",", $libro['immagine']);
     </div>
 
     <script>
-        // --- LOGICA SLIDER ---
+        // --- DATI IMMAGINI ---
+        const imagesArray = <?php echo json_encode(array_map('trim', $imgs)); ?>;
         let currentIndex = 0;
+        
         const wrapper = document.getElementById('sliderWrapper');
-        const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
-        const totalSlides = slides.length;
+        const fullImg = document.getElementById('fullScreenImg');
+        const lightbox = document.getElementById('fullScreenLightbox');
 
+        // --- FUNZIONI SLIDER PRINCIPALE ---
         function updateSlider() {
             wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
             dots.forEach((dot, index) => {
@@ -212,8 +223,8 @@ $imgs = explode(",", $libro['immagine']);
 
         function moveSlide(direction) {
             currentIndex += direction;
-            if (currentIndex >= totalSlides) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = totalSlides - 1;
+            if (currentIndex >= imagesArray.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = imagesArray.length - 1;
             updateSlider();
         }
 
@@ -222,22 +233,38 @@ $imgs = explode(",", $libro['immagine']);
             updateSlider();
         }
 
-        // --- LOGICA FULLSCREEN ---
-        function openFullscreen(imgSrc) {
-            const lightbox = document.getElementById('fullScreenLightbox');
-            const fullImg = document.getElementById('fullScreenImg');
-            fullImg.src = imgSrc;
+        // --- FUNZIONI FULLSCREEN ---
+        function openFullscreen(index) {
+            currentIndex = index; // Sincronizza l'indice
+            fullImg.src = imagesArray[currentIndex];
             lightbox.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Blocca lo scroll del sito sotto
+            document.body.style.overflow = 'hidden';
+        }
+
+        function changeFullscreenImage(direction) {
+            currentIndex += direction;
+            if (currentIndex >= imagesArray.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = imagesArray.length - 1;
+            
+            fullImg.src = imagesArray[currentIndex];
+            updateSlider(); // Sincronizza anche lo slider sotto
         }
 
         function closeFullscreen() {
-            const lightbox = document.getElementById('fullScreenLightbox');
             lightbox.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Ripristina lo scroll
+            document.body.style.overflow = 'auto';
         }
 
-        // Supporto swipe per mobile
+        // Supporto tastiera (Frecce e ESC)
+        document.addEventListener('keydown', e => {
+            if (lightbox.style.display === 'flex') {
+                if (e.key === "ArrowRight") changeFullscreenImage(1);
+                if (e.key === "ArrowLeft") changeFullscreenImage(-1);
+                if (e.key === "Escape") closeFullscreen();
+            }
+        });
+
+        // Swipe per mobile (Slider principale)
         let touchStartX = 0;
         wrapper.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
         wrapper.addEventListener('touchend', e => {
