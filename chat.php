@@ -44,7 +44,16 @@ $lista_chat = $stmt_l->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        body { background-color: var(--bg-page); margin: 0; font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { 
+            background-color: var(--bg-page); 
+            margin: 0; 
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+        }
         
         /* Layout principale */
         .chat-container { 
@@ -57,6 +66,7 @@ $lista_chat = $stmt_l->get_result();
             border-radius: 15px; 
             box-shadow: 0 5px 25px rgba(0,0,0,0.1); 
             overflow: hidden;
+            position: relative;
         }
 
         /* Sidebar */
@@ -67,7 +77,13 @@ $lista_chat = $stmt_l->get_result();
             flex-direction: column; 
             background: #fff;
         }
-        .sidebar-header { padding: 20px; font-size: 1.4rem; font-weight: bold; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        .sidebar-header { 
+            padding: 20px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
         .conversations-list { overflow-y: auto; flex: 1; }
         
         .user-item { 
@@ -75,8 +91,8 @@ $lista_chat = $stmt_l->get_result();
             text-decoration: none; color: #333; border-bottom: 1px solid #f9f9f9; transition: 0.2s;
         }
         .user-item:hover { background: #f5f5f5; }
-        .user-item.active { background: #f0ebe3; }
-        .user-item i { font-size: 2.2rem; margin-right: 15px; color: #ccc; }
+        .user-item.active { background: #f0ebe3; font-weight: bold; }
+        .user-item i { font-size: 2rem; margin-right: 15px; color: #bbb; }
 
         /* Area Chat Centrale */
         .chat-main { 
@@ -92,41 +108,58 @@ $lista_chat = $stmt_l->get_result();
             align-items: center; 
             border-bottom: 1px solid #eee; 
             background: #fff;
-            min-height: 60px;
         }
         .btn-back-chat { 
             display: none; 
             margin-right: 15px; font-size: 1.2rem; color: #333; cursor: pointer; 
         }
 
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; background: #fdfbf9; display: flex; flex-direction: column; gap: 10px; }
+        .messages-area { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            background: #fdfbf9; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
         
         .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
         .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; cursor: pointer; }
         .sent { background: #e2d9c8; align-self: flex-end; border-bottom-right-radius: 2px; }
         .received { background: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 2px; }
 
-        .chat-footer { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
-        .chat-footer input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
+        .chat-footer { 
+            padding: 15px; 
+            background: #fff; 
+            border-top: 1px solid #eee; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .chat-footer input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; font-size: 16px; }
         .btn-send { background: #333; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
 
         /* --- LOGICA MOBILE --- */
         @media (max-width: 768px) {
             header.header-nav { display: none; }
-            .chat-container { width: 100%; height: 100vh; margin: 0; border-radius: 0; }
+            .chat-container { 
+                width: 100%; 
+                height: 100vh; 
+                height: -webkit-fill-available;
+                margin: 0; 
+                border-radius: 0; 
+            }
             
             <?php if (!$chat_con): ?>
-                /* Schermata LISTA CHAT su mobile */
                 .chat-sidebar { width: 100%; border: none; }
                 .chat-main { display: none; }
-                .sidebar-header { background: #fff; }
-                .sidebar-header img { height: 30px; }
             <?php else: ?>
-                /* Schermata MESSAGGI su mobile */
                 .chat-sidebar { display: none; }
-                .chat-main { width: 100%; height: 100%; }
+                .chat-main { width: 100%; }
                 .btn-back-chat { display: block; }
-                .chat-footer { padding-bottom: 25px; } /* Spazio per gesture bar smartphone */
+                /* Padding extra per evitare il taglio su iOS/Android */
+                .chat-footer { padding-bottom: calc(15px + env(safe-area-inset-bottom)); } 
             <?php endif; ?>
             
             .msg { max-width: 85%; }
@@ -149,10 +182,10 @@ $lista_chat = $stmt_l->get_result();
     <div class="chat-container">
         <div class="chat-sidebar">
             <div class="sidebar-header">
-                <a href="index.php" class="mobile-logo" style="display:inline-block;">
+                <a href="index.php">
                     <img src="immagini/tastologo.png" alt="Debook" style="height:25px;">
                 </a>
-                <span>Chat</span>
+                <span style="font-weight: bold;">Chat</span>
             </div>
             <div class="conversations-list">
                 <?php if($lista_chat->num_rows > 0): ?>
@@ -165,7 +198,7 @@ $lista_chat = $stmt_l->get_result();
                         </a>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p style="padding:20px; color:#999; text-align:center;">Nessuna conversazione attiva.</p>
+                    <p style="padding:40px 20px; color:#999; text-align:center;">Nessuna conversazione.<br><small>Contatta un venditore per iniziare!</small></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -176,9 +209,7 @@ $lista_chat = $stmt_l->get_result();
                     <div class="btn-back-chat" onclick="window.location.href='chat.php'">
                         <i class="fa-solid fa-arrow-left"></i>
                     </div>
-                    <div style="display:flex; flex-direction:column;">
-                        <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
-                    </div>
+                    <strong><?php echo htmlspecialchars($interlocutore['nome'] . " " . $interlocutore['cognome']); ?></strong>
                 </div>
 
                 <div class="messages-area" id="chatBox"></div>
@@ -194,9 +225,9 @@ $lista_chat = $stmt_l->get_result();
                 </form>
             <?php else: ?>
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#ccc; text-align:center; padding: 20px;">
-                    <i class="fa-solid fa-comments" style="font-size:4rem; margin-bottom:15px;"></i>
-                    <p>Seleziona una conversazione per iniziare a chattare</p>
-                    <a href="index.php" style="margin-top: 20px; color: #333; text-decoration: none; font-weight: bold;">Torna alla Home</a>
+                    <i class="fa-solid fa-comments" style="font-size:5rem; margin-bottom:15px; color:#eee;"></i>
+                    <p style="color:#999;">Seleziona una conversazione per iniziare</p>
+                    <a href="index.php" style="margin-top: 15px; color: #666; text-decoration: none; border: 1px solid #ddd; padding: 10px 20px; border-radius: 20px;">Torna alla Home</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -239,8 +270,8 @@ $lista_chat = $stmt_l->get_result();
                 });
             });
             
-            document.getElementById("foto_chat").addEventListener('change', () => {
-                if(document.getElementById("foto_chat").files.length > 0) {
+            document.getElementById("foto_chat").addEventListener('change', function() {
+                if(this.files.length > 0) {
                     msgForm.dispatchEvent(new Event('submit'));
                 }
             });
