@@ -17,14 +17,16 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
         .full-width { grid-column: span 2; }
         .input-group label { font-weight: bold; font-size: 0.8rem; color: #666; display: block; margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; outline: none; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; outline: none; box-sizing: border-box; }
 
-        /* Stile Lista Condizioni */
         .condition-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .condition-option { display: flex; align-items: center; padding: 15px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s; background: #fafafa; }
+        .condition-option { display: flex; align-items: center; padding: 15px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s; background: #fafafa; position: relative; }
         .condition-option input { margin-right: 15px; transform: scale(1.2); }
         .condition-option:hover { border-color: var(--accent-beige); }
+        
+        /* Evidenzia la scelta selezionata */
         .condition-option:has(input:checked) { border-color: var(--dark-text); background: #fff; box-shadow: var(--shadow); }
+        
         .cond-text strong { display: block; color: var(--dark-text); }
         .cond-text span { font-size: 0.8rem; color: #888; font-family: Arial; }
 
@@ -55,15 +57,15 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
                 <div class="input-group">
                     <label>ISBN</label>
-                    <input type="text" name="isbn" required placeholder="Es. 978-3-16-148410-0">
+                    <input type="text" name="isbn" required placeholder="Es. 9788800000000">
                 </div>
                 <div class="input-group">
                     <label>PREZZO (€)</label>
-                    <input type="number" name="prezzo" step="0.10" required placeholder="Es. 19.99">
+                    <input type="number" name="prezzo" step="0.01" required placeholder="Es. 15.50">
                 </div>
 
                 <div class="input-group full-width">
-                    <label>Condizioni del Libro</label>
+                    <label>CONDIZIONI FISICHE DEL LIBRO</label>
                     <select name="condizione" required>
                         <option value="" disabled selected>Scegli lo stato del libro...</option>
                         <option value="Come Nuovo">Come Nuovo (Nessun segno)</option>
@@ -74,11 +76,28 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
                 </div>
 
                 <div class="input-group full-width">
-                    <label>FOTO DEL LIBRO (Seleziona una o più foto)</label>
-                    <input type="file" name="immagini[]" accept="image/*" multiple required id="fotoInput">
-                    <p style="font-size: 0.8rem; color: #888; margin-top: 5px; font-family: Arial;">
-                    <i class="fa-solid fa-circle-info"></i> <strong>Consiglio:</strong> La prima foto che selezioni sarà quella visualizzata nel mercatino.
-                    </p>
+                    <label>VERSIONE DIGITALE (E-BOOK)</label>
+                    <div class="condition-list">
+                        <label class="condition-option">
+                            <input type="radio" name="digitale_usato" value="0" checked>
+                            <div class="cond-text">
+                                <strong>Codice Disponibile</strong>
+                                <span>Il codice per scaricare il libro digitale NON è mai stato usato.</span>
+                            </div>
+                        </label>
+                        <label class="condition-option">
+                            <input type="radio" name="digitale_usato" value="1">
+                            <div class="cond-text">
+                                <strong>Codice Già Usato</strong>
+                                <span>Il codice è già stato riscattato, è scaduto o non è presente.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>FOTO DEL LIBRO</label>
+                    <input type="file" name="immagini[]" accept="image/*" multiple required>
                 </div>
             </div>
             <button type="submit" class="btn-submit" style="width:100%; margin-top:30px;">PUBBLICA ORA</button>

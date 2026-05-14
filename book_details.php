@@ -79,6 +79,16 @@ if(!$libro) { die("Libro non trovato."); }
                 <tr><td class="label">ISBN</td><td><?php echo htmlspecialchars($libro['codISBN'] ?? 'N/D'); ?></td></tr>
                 <tr><td class="label">Condizione</td><td><strong><?php echo htmlspecialchars($libro['condizione'] ?? 'Usato'); ?></strong></td></tr>
                 <tr><td class="label">Venditore</td><td><i class="fa-solid fa-user-circle"></i> <?php echo htmlspecialchars($libro['nome_venditore']); ?></td></tr>
+                <tr>
+    <td class="specs-label">Libro Digitale</td>
+    <td>
+        <?php if($libro['digitale_usato'] == 0): ?>
+            <span style="color: #27ae60; font-weight: bold;"><i class="fa-solid fa-check-circle"></i> Codice Disponibile</span>
+        <?php else: ?>
+            <span style="color: #e74c3c; font-weight: bold;"><i class="fa-solid fa-circle-xmark"></i> Codice Già Usato</span>
+        <?php endif; ?>
+    </td>
+</tr>
             </table>
 
             <div class="actions" style="margin-top: 30px;">
