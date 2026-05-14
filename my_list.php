@@ -2,7 +2,7 @@
 session_start();
 require_once 'db_connection.php';
 
-// Protezione della pagina
+// Protezione della pagina: accesso solo per utenti loggati
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: login.php");
     exit;
@@ -33,7 +33,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: var(--bg-page); margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        .container { width: 95%; max-width: 900px; margin: 40px auto; }
+        .container { width: 95%; max-width: 1000px; margin: 40px auto; }
         
         .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
@@ -44,17 +44,26 @@ $result = $stmt->get_result();
             border-radius: 25px;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Spinge testo a sinistra e bottoni a destra */
             gap: 20px;
             margin-bottom: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             transition: 0.3s;
         }
         
+        .book-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1; /* Occupa lo spazio disponibile senza schiacciare i bottoni */
+            min-width: 0;
+        }
+
         .book-item img { 
-            width: 80px; 
-            height: 110px; 
+            width: 70px; 
+            height: 100px; 
             object-fit: cover; 
-            border-radius: 15px; 
+            border-radius: 12px; 
             flex-shrink: 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
@@ -63,29 +72,29 @@ $result = $stmt->get_result();
         .book-details h3 { 
             color: var(--dark-text); 
             margin: 0 0 5px 0; 
-            font-size: 1.2rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 1.1rem;
+            /* Rimosso il troncamento forzato per evitare che sparisca tutto il testo */
+            word-wrap: break-word;
         }
-        .book-details p { font-size: 0.9rem; color: #666; margin: 0; }
+        .book-details p { font-size: 0.85rem; color: #666; margin: 0; }
 
-        /* AZIONI (Tasti) */
+        /* AZIONI (Tasti sempre visibili) */
         .actions { 
             display: flex; 
-            gap: 12px; 
+            gap: 10px; 
             align-items: center; 
-            flex-shrink: 0;
+            flex-shrink: 0; /* IMPEDISCE AI TASTI DI RIMPICCIOLIRSI */
         }
         
         .btn-action {
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 50px;
             transition: 0.2s;
             text-align: center;
+            white-space: nowrap; /* Evita che il testo del bottone vada a capo */
         }
 
         .btn-view { background: #f0f7ff; color: #0288d1; border: 1px solid #0288d1; }
@@ -112,10 +121,14 @@ $result = $stmt->get_result();
                 padding: 25px;
             }
             
+            .book-content {
+                flex-direction: column;
+                width: 100%;
+            }
+
             .book-item img {
-                width: 120px;
-                height: 160px;
-                margin-bottom: 10px;
+                width: 100px;
+                height: 140px;
             }
 
             .actions { 
@@ -132,11 +145,6 @@ $result = $stmt->get_result();
                 padding: 12px;
                 font-size: 1rem;
             }
-            
-            .book-details h3 {
-                white-space: normal; /* Permette al titolo di andare a capo su mobile se lungo */
-                font-size: 1.3rem;
-            }
         }
     </style>
 </head>
@@ -152,7 +160,7 @@ $result = $stmt->get_result();
 
     <div class="container">
         <div class="list-header">
-            <h1>I miei annunci</h1>
+            <h1 style="font-family:'Arial Black';">I miei annunci</h1>
             <a href="vendi.php" class="btn-submit" style="width: auto; padding: 10px 20px; text-decoration: none; border-radius: 50px;">
                 <i class="fa-solid fa-plus"></i> Nuovo
             </a>
@@ -167,15 +175,17 @@ $result = $stmt->get_result();
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="book-item">
-                    <?php 
-                        $immagini = explode(',', $row['immagine']);
-                        $prima_img = !empty($immagini[0]) ? $immagini[0] : 'immagini/placeholder.jpg';
-                    ?>
-                    <img src="<?php echo htmlspecialchars($prima_img); ?>" alt="Copertina">
-                    
-                    <div class="book-details">
-                        <h3><?php echo htmlspecialchars($row['titolo']); ?></h3>
-                        <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
+                    <div class="book-content">
+                        <?php 
+                            $immagini = explode(',', $row['immagine']);
+                            $prima_img = !empty($immagini[0]) ? $immagini[0] : 'immagini/placeholder.jpg';
+                        ?>
+                        <img src="<?php echo htmlspecialchars($prima_img); ?>" alt="Copertina">
+                        
+                        <div class="book-details">
+                            <h3><?php echo htmlspecialchars($row['titolo']); ?></h3>
+                            <p><?php echo htmlspecialchars($row['autore']); ?> | <strong><?php echo htmlspecialchars($row['materia']); ?></strong></p>
+                        </div>
                     </div>
 
                     <div class="actions">
