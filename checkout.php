@@ -32,6 +32,7 @@ if (!$libro) {
     <meta charset="UTF-8">
     <title>Checkout - Debook</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.paypal.com/sdk/js?client-id=ATmdhu6fk7cVs8sfbvpMRBKNV2309B8cBbpauv9wJIIhgeR2GtAfywE6L8vU61EBOAWxqwXye4Q3opvF&currency=EUR"></script>
     <style>
         body { background-color: #f4f7f6; font-family: Arial, sans-serif; }
@@ -39,7 +40,6 @@ if (!$libro) {
         .price { font-size: 2.5rem; color: #27ae60; font-weight: bold; margin: 20px 0; font-family: 'Arial Black', sans-serif; }
         #paypal-button-container { margin-top: 20px; }
         
-        /* Stile per il tasto Torna Indietro */
         .btn-back {
             display: inline-block;
             margin-top: 25px;
@@ -81,7 +81,8 @@ if (!$libro) {
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert("Pagamento approvato! Aggiorno il database...");
+                    // Primo feedback visivo dopo la chiusura del popup PayPal
+                    console.log("Pagamento autorizzato, invio dati al server...");
 
                     const formData = new FormData();
                     formData.append('id_libro', '<?php echo $id_libro; ?>');
@@ -93,8 +94,10 @@ if (!$libro) {
                     .then(response => response.json())
                     .then(res => {
                         if(res.success) {
-                            alert('COMPLIMENTI! Acquisto completato.');
-                            window.location.href = 'profilo.php';
+                            // Messaggio di successo richiesto
+                            alert('PAGAMENTO EFFETTUATO! Il libro è tuo. Verrai reindirizzato al mercatino.');
+                            // Reindirizzamento al mercatino richiesto
+                            window.location.href = 'compra.php';
                         } else {
                             alert('Errore Server: ' + res.error);
                         }
