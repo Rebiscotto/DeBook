@@ -2,7 +2,6 @@
 session_start();
 require_once 'db_connection.php';
 
-// Protezione della pagina: accesso solo per utenti loggati
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: login.php");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 $id_utente = $_SESSION["id"];
 
-// Recuperiamo solo i libri con stato 'disponibile'
 $query = "SELECT L.IdLibro, L.immagine, A.titolo, A.autore, A.materia 
           FROM Libri L
           JOIN AnagraficaLibri A ON L.IdAnag = A.IdAnag
@@ -32,30 +30,32 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: var(--bg-page); margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        /* RESET E VARIABILI LOCALI PER EVITARE CONFLITTI CON STYLE.CSS */
+        body { background-color: #f4f7f6; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .container { width: 95%; max-width: 1000px; margin: 40px auto; }
         
         .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
-        /* CARD LIBRO */
+        /* CARD LIBRO - FORZIAMO IL LAYOUT */
         .book-item {
-            background: white;
-            padding: 20px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Spinge testo a sinistra e bottoni a destra */
-            gap: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: 0.3s;
+            background: white !important;
+            padding: 20px !important;
+            border-radius: 25px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 20px !important;
+            margin-bottom: 20px !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         .book-content {
             display: flex;
             align-items: center;
             gap: 20px;
-            flex: 1; /* Occupa lo spazio disponibile senza schiacciare i bottoni */
+            flex: 1;
             min-width: 0;
         }
 
@@ -65,36 +65,37 @@ $result = $stmt->get_result();
             object-fit: cover; 
             border-radius: 12px; 
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .book-details { flex: 1; min-width: 0; }
         .book-details h3 { 
-            color: var(--dark-text); 
+            color: #333; 
             margin: 0 0 5px 0; 
             font-size: 1.1rem;
-            /* Rimosso il troncamento forzato per evitare che sparisca tutto il testo */
             word-wrap: break-word;
         }
         .book-details p { font-size: 0.85rem; color: #666; margin: 0; }
 
-        /* AZIONI (Tasti sempre visibili) */
+        /* SEZIONE AZIONI - SEMPRE VISIBILE */
         .actions { 
-            display: flex; 
-            gap: 10px; 
-            align-items: center; 
-            flex-shrink: 0; /* IMPEDISCE AI TASTI DI RIMPICCIOLIRSI */
+            display: flex !important; /* Forza la visibilità */
+            gap: 10px !important; 
+            align-items: center !important; 
+            flex-shrink: 0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         .btn-action {
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 50px;
-            transition: 0.2s;
+            text-decoration: none !important;
+            font-size: 0.8rem !important;
+            font-weight: bold !important;
+            padding: 8px 12px !important;
+            border-radius: 50px !important;
+            display: inline-block !important; /* Evita che spariscano */
             text-align: center;
-            white-space: nowrap; /* Evita che il testo del bottone vada a capo */
+            white-space: nowrap;
+            transition: 0.2s;
         }
 
         .btn-view { background: #f0f7ff; color: #0288d1; border: 1px solid #0288d1; }
@@ -103,7 +104,6 @@ $result = $stmt->get_result();
 
         .btn-action:hover { opacity: 0.7; transform: translateY(-2px); }
 
-        /* HEADER NAV */
         .header-nav {
             display: flex;
             justify-content: space-between;
@@ -115,62 +115,33 @@ $result = $stmt->get_result();
 
         /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
-            .book-item { 
-                flex-direction: column; 
-                text-align: center; 
-                padding: 25px;
-            }
-            
-            .book-content {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .book-item img {
-                width: 100px;
-                height: 140px;
-            }
-
+            .book-item { flex-direction: column !important; text-align: center; }
+            .book-content { flex-direction: column; }
             .actions { 
-                width: 100%; 
-                flex-direction: column; 
-                gap: 10px;
-                margin-top: 15px;
-                padding-top: 15px;
+                width: 100% !important; 
+                flex-direction: column !important; 
                 border-top: 1px solid #eee;
+                padding-top: 15px;
             }
-
-            .btn-action {
-                width: 100%;
-                padding: 12px;
-                font-size: 1rem;
-            }
+            .btn-action { width: 100% !important; box-sizing: border-box; }
         }
     </style>
 </head>
 <body>
     <header class="header-nav">
-        <a href="index.php"><img src="immagini/tastologo.png" alt="Debook Logo" style="height: 35px;"></a>
-        <div>
-            <a href="dashboard.php" style="text-decoration: none; color: var(--dark-text); font-weight: bold;">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
-            </a>
-        </div>
+        <a href="index.php"><img src="immagini/tastologo.png" alt="Logo" style="height: 35px;"></a>
+        <a href="dashboard.php" style="text-decoration: none; color: #333; font-weight: bold;">
+            <i class="fa-solid fa-gauge-high"></i> Dashboard
+        </a>
     </header>
 
     <div class="container">
         <div class="list-header">
-            <h1 style="font-family:'Arial Black';">I miei annunci</h1>
-            <a href="vendi.php" class="btn-submit" style="width: auto; padding: 10px 20px; text-decoration: none; border-radius: 50px;">
+            <h1 style="margin:0;">I miei annunci</h1>
+            <a href="vendi.php" style="background:#333; color:white; padding:10px 20px; text-decoration:none; border-radius:50px; font-weight:bold;">
                 <i class="fa-solid fa-plus"></i> Nuovo
             </a>
         </div>
-
-        <?php if(isset($_GET['msg'])): ?>
-            <p style='color: #27ae60; background: #e8f5e9; padding: 15px; border-radius: 15px; font-weight: bold; margin-bottom: 25px;'>
-                <i class="fa-solid fa-check-circle"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
-            </p>
-        <?php endif; ?>
 
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
@@ -192,13 +163,11 @@ $result = $stmt->get_result();
                         <a href="book_details.php?id=<?php echo $row['IdLibro']; ?>" class="btn-action btn-view">
                             <i class="fa-solid fa-eye"></i> Visualizza
                         </a>
-                        
                         <a href="modifica_libro.php?id=<?php echo $row['IdLibro']; ?>" class="btn-action btn-edit">
                             <i class="fa-solid fa-pen"></i> Modifica
                         </a>
-                        
                         <a href="elimina_libro.php?id=<?php echo $row['IdLibro']; ?>" 
-                           onclick="return confirm('Sei sicuro di voler eliminare questo annuncio?');"
+                           onclick="return confirm('Sei sicuro?');"
                            class="btn-action btn-delete">
                             <i class="fa-solid fa-trash"></i> Elimina
                         </a>
@@ -206,10 +175,8 @@ $result = $stmt->get_result();
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
-            <div style="text-align: center; padding: 60px; background: white; border-radius: 30px; box-shadow: var(--shadow);">
-                <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #eee; margin-bottom: 20px;"></i>
-                <p style="color: #777; font-size: 1.1rem; margin-bottom: 20px;">Non hai ancora caricato nessun libro.</p>
-                <a href="vendi.php" class="btn-submit" style="text-decoration:none; padding: 12px 25px; border-radius: 50px; display:inline-block;">Vendi il tuo primo libro</a>
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 20px;">
+                <p>Nessun annuncio trovato.</p>
             </div>
         <?php endif; ?>
     </div>
