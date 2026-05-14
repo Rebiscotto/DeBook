@@ -14,6 +14,26 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
         body { background-color: var(--bg-page); padding-bottom: 50px; }
         .sell-card { background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); width: 95%; max-width: 700px; margin: 40px auto; text-align: center; }
         
+        /* Stile per il tasto Dashboard nell'header */
+        .btn-dashboard-nav {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 50px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-dashboard-nav:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
         .full-width { grid-column: span 2; }
         .input-group label { font-weight: bold; font-size: 0.8rem; color: #666; display: block; margin-bottom: 8px; }
@@ -24,19 +44,24 @@ if (!isset($_SESSION["loggedin"])) { header("Location: login.php"); exit; }
         .condition-option input { margin-right: 15px; transform: scale(1.2); }
         .condition-option:hover { border-color: var(--accent-beige); }
         
-        /* Evidenzia la scelta selezionata */
         .condition-option:has(input:checked) { border-color: var(--dark-text); background: #fff; box-shadow: var(--shadow); }
         
         .cond-text strong { display: block; color: var(--dark-text); }
         .cond-text span { font-size: 0.8rem; color: #888; font-family: Arial; }
 
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+        @media (max-width: 600px) { 
+            .form-grid { grid-template-columns: 1fr; } 
+            .full-width { grid-column: span 1; }
+            .header-nav { padding: 10px 20px; }
+        }
     </style>
 </head>
 <body>
     <header class="header-nav">
         <a href="index.php" class="logo-link"><img src="immagini/tastologo.png" alt="Debook Logo"></a>
-        <a href="index.php" style="text-decoration:none; color:black; font-family:Arial;">Annulla</a>
+        <a href="dashboard.php" class="btn-dashboard-nav">
+            <i class="fa-solid fa-house-user"></i> Dashboard
+        </a>
     </header>
 
     <div class="sell-card">
